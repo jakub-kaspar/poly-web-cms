@@ -1,0 +1,194 @@
+---
+layout: layouts/base.njk
+permalink: halove-vestavby.html
+navActive: vestavby
+meta_title: "{{ halove_vestavby.meta_title }}"
+meta_description: "{{ halove_vestavby.meta_description }}"
+---
+
+  <!-- HERO -->
+  <section class="sp-hero sp-hero--tall">
+    <img src="/{{ halove_vestavby.hero_image }}" alt="" class="sp-hero__img" style="object-position: center center;" />
+    <div class="sp-hero__overlay"></div>
+    <div class="sp-hero__inner">
+      <nav class="sp-hero__breadcrumb" aria-label="Drobečková navigace">
+        <a href="/index.html">Polymont</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Halové vestavby</span>
+      </nav>
+      <h1 class="sp-hero__title sp-hero__title--long">
+        {{ halove_vestavby.hero_heading_1 }}<br>
+        {{ halove_vestavby.hero_heading_2 }}<br>
+        <em>{{ halove_vestavby.hero_heading_em }}</em>
+      </h1>
+      <p class="sp-hero__sub">{{ halove_vestavby.hero_sub }}</p>
+      <div class="sp-hero__actions">
+        <a href="/inhaabit_style.html" class="cta-btn cta-btn--primary">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M10 2l1.5 4.5H16l-3.6 2.6 1.4 4.4L10 11l-3.8 2.5 1.4-4.4L4 6.5h4.5L10 2z" fill="currentColor"/></svg>
+          {{ halove_vestavby.hero_cta_primary }}
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#realizace" class="cta-btn cta-btn--secondary">
+          {{ halove_vestavby.hero_cta_secondary }}
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLÉM VS. ŘEŠENÍ -->
+  <section class="hv-problem">
+    <div class="hv-problem__head">
+      <p class="hv-problem__eyebrow">{{ halove_vestavby.problem_eyebrow }}</p>
+      <h2 class="hv-problem__heading">{{ halove_vestavby.problem_heading }}<br><em>{{ halove_vestavby.problem_heading_em }}</em></h2>
+    </div>
+    <div class="hv-problem__cols">
+      {% for col in halove_vestavby.problem_cols %}
+      <div class="hv-problem__col">
+        <div class="hv-problem__icon">
+          {% if loop.index == 1 %}
+          <svg viewBox="0 0 40 40" fill="none" width="40" height="40"><circle cx="20" cy="20" r="19" stroke="var(--red)" stroke-width="1.5"/><path d="M20 8v8M20 24v8M8 20h8M24 20h8" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="var(--red)"/></svg>
+          {% elif loop.index == 2 %}
+          <svg viewBox="0 0 40 40" fill="none" width="40" height="40"><circle cx="20" cy="20" r="19" stroke="var(--red)" stroke-width="1.5"/><path d="M13 20c0-3.9 3.1-7 7-7s7 3.1 7 7-3.1 7-7 7" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/><path d="M13 20l-3-3m3 3l-3 3" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {% else %}
+          <svg viewBox="0 0 40 40" fill="none" width="40" height="40"><circle cx="20" cy="20" r="19" stroke="var(--red)" stroke-width="1.5"/><path d="M20 10l9 4v6c0 4.4-3.8 8.5-9 10-5.2-1.5-9-5.6-9-10v-6l9-4z" stroke="var(--red)" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 20l3 3 6-6" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {% endif %}
+        </div>
+        <h3 class="hv-problem__col-title">{{ col.title }}</h3>
+        <p class="hv-problem__col-text">{{ col.text }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 3D KONFIGURÁTOR -->
+  <section class="hv-config" id="konfigurator">
+    <div class="hv-config__inner">
+      <div class="hv-config__visual">
+        <div class="hv-config__screen">
+          <div class="hv-config__screen-label">
+            <span class="hv-config__screen-tag">3D Konfigurátor</span>
+            <p>Interaktivní náhled spustíte kliknutím na tlačítko níže</p>
+          </div>
+          <svg class="hv-config__screen-icon" viewBox="0 0 80 80" fill="none" width="80" height="80"><rect x="8" y="16" width="64" height="40" rx="4" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/><rect x="16" y="24" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.40)" stroke-width="1.2"/><rect x="44" y="24" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.40)" stroke-width="1.2"/><rect x="16" y="44" width="48" height="4" rx="2" fill="rgba(255,255,255,0.12)"/><line x1="40" y1="56" x2="40" y2="64" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/><rect x="28" y="64" width="24" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/></svg>
+        </div>
+      </div>
+      <div class="hv-config__body">
+        <p class="hv-config__eyebrow">{{ halove_vestavby.config_eyebrow }}</p>
+        <h2 class="hv-config__heading">{{ halove_vestavby.config_heading }}<br><em>{{ halove_vestavby.config_heading_em }}</em></h2>
+        <p class="hv-config__text">{{ halove_vestavby.config_text }}</p>
+        <ul class="hv-config__checklist" aria-label="Co konfigurátor nabízí">
+          {% for item in halove_vestavby.config_checklist %}
+          <li class="hv-config__check">
+            <svg viewBox="0 0 18 18" fill="none" width="16" height="16"><circle cx="9" cy="9" r="8.25" stroke="var(--red)" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{ item }}
+          </li>
+          {% endfor %}
+        </ul>
+        <a href="/inhaabit_style.html" class="cta-btn cta-btn--primary">
+          {{ halove_vestavby.config_cta }}
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBLASTI VYUŽITÍ -->
+  <section class="hv-usecases" id="realizace">
+    <p class="hv-usecases__eyebrow">{{ halove_vestavby.usecases_eyebrow }}</p>
+    <h2 class="hv-usecases__heading">{{ halove_vestavby.usecases_heading }}<br><em>{{ halove_vestavby.usecases_heading_em }}</em></h2>
+    <div class="hv-usecases__grid">
+      {% for card in halove_vestavby.usecases %}
+      <div class="hv-usecard">
+        <div class="hv-usecard__img">
+          <img src="/{{ card.image }}" alt="{{ card.alt }}" loading="lazy" />
+        </div>
+        <div class="hv-usecard__body">
+          <h3 class="hv-usecard__title">{{ card.title }}</h3>
+          <p class="hv-usecard__desc">{{ card.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- TECHNICKÉ PARAMETRY -->
+  <section class="hv-tech">
+    <div class="hv-tech__inner">
+      <div class="hv-tech__visual">
+        <div class="hv-tech__img-wrap">
+          <img src="/{{ halove_vestavby.tech_image }}" alt="{{ halove_vestavby.tech_image_alt }}" loading="lazy" />
+        </div>
+      </div>
+      <div class="hv-tech__body">
+        <p class="hv-tech__eyebrow">{{ halove_vestavby.tech_eyebrow }}</p>
+        <h2 class="hv-tech__heading">{{ halove_vestavby.tech_heading }}<br>{{ halove_vestavby.tech_heading_2 }}<br><em>{{ halove_vestavby.tech_heading_em }}</em></h2>
+        <ul class="hv-tech__list">
+          {% for spec in halove_vestavby.tech_specs %}
+          <li>
+            <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M2 8.5L6 13l8-9" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{ spec }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF -->
+  <section class="hv-proof">
+    <div class="hv-proof__stats">
+      {% for stat in halove_vestavby.proof_stats %}
+      <div class="hv-proof__stat">
+        <span class="hv-proof__stat-num">{{ stat.num }}{% if stat.suffix %}<em>{{ stat.suffix }}</em>{% endif %}</span>
+        <span class="hv-proof__stat-label">{{ stat.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="hv-proof__testimonial">
+      <svg class="hv-proof__quote" viewBox="0 0 40 30" fill="none" width="40" height="30"><path d="M0 30V18C0 10 4 4 12 0l3 4C10 6 8 10 8 14h6v16H0zm22 0V18c0-8 4-14 12-18l3 4c-5 2-7 6-7 10h6v16H22z" fill="var(--red)" opacity="0.25"/></svg>
+      <blockquote class="hv-proof__blockquote">„{{ halove_vestavby.proof_quote }}"</blockquote>
+      <p class="hv-proof__attribution">{{ halove_vestavby.proof_attribution }}</p>
+    </div>
+    <div class="hv-proof__clients">
+      <p class="hv-proof__clients-label">Důvěřují nám společnosti po celé ČR</p>
+      <div class="clients__track-wrap">
+        <div class="clients__track">
+          {% for client in clients %}<span>{{ client }}</span>{% endfor %}
+          {% for client in clients %}<span aria-hidden="true">{{ client }}</span>{% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band" id="kontakt">
+    <div class="cta-band__text">
+      <p class="cta-band__eyebrow">{{ halove_vestavby.cta_eyebrow }}</p>
+      <h2 class="cta-band__heading">
+        {{ halove_vestavby.cta_heading }}<br>
+        nebo potřebujete<br>
+        <em>{{ halove_vestavby.cta_heading_em }}</em>
+      </h2>
+      <p class="cta-band__sub">{{ halove_vestavby.cta_sub }}</p>
+    </div>
+    <div class="cta-band__actions">
+      <a href="/inhaabit_style.html" class="cta-btn cta-btn--primary">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M3 17l4-4m0 0l3-7 4 4-7 3zm4-4l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {{ halove_vestavby.cta_primary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="/kontakt.html" class="cta-btn cta-btn--secondary">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 4h4l2 4-2 2a12 12 0 004 4l2-2 4 2v4a2 2 0 01-2 2C6 18 2 14 2 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {{ halove_vestavby.cta_secondary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+{% block scripts %}
+  <script>
+    const y = document.getElementById('footer-year');
+    if (y) y.textContent = new Date().getFullYear();
+  </script>
+{% endblock %}

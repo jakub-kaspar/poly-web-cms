@@ -1,0 +1,247 @@
+---
+layout: layouts/base.njk
+permalink: kontakt.html
+navActive: kontakt
+meta_title: "Kontakt – Polymont"
+meta_description: "Kontaktujte Polymont s.r.o. — Hrnčířská 296, Kutná Hora. Telefon: 327 523 268. E-mail: polymont@polymont.cz. Navštivte naši vzorkovnu."
+---
+
+  <!-- PAGE HEADER -->
+  <section class="ct-header">
+    <div class="ct-header__inner">
+      <nav class="sp-hero__breadcrumb" aria-label="Drobečková navigace">
+        <a href="/index.html">Polymont</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Kontakt</span>
+      </nav>
+      <h1 class="ct-header__title">{{ settings.kontakt_heading }}<br><em>{{ settings.kontakt_heading_em }}</em></h1>
+      <p class="ct-header__sub">{{ settings.kontakt_sub }}</p>
+    </div>
+    <div class="ct-header__photo">
+      <img src="/hala_aerial_2.jpg" alt="Výrobní hala Polymont, Kutná Hora" />
+    </div>
+  </section>
+
+  <!-- CONTACT CARDS + MAP -->
+  <section class="ct-main">
+    <div class="ct-cards">
+
+      <div class="ct-card">
+        <div class="ct-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="var(--red)"/></svg>
+        </div>
+        <div class="ct-card__body">
+          <span class="ct-card__label">Adresa</span>
+          <p class="ct-card__main">{{ settings.address_street }}<br>{{ settings.address_city }}, {{ settings.address_zip }}</p>
+          <a href="{{ settings.maps_url }}" target="_blank" rel="noopener" class="ct-card__link">
+            Otevřít v mapách
+            <svg viewBox="0 0 14 14" fill="none" width="11" height="11"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="ct-card">
+        <div class="ct-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" fill="var(--red)"/></svg>
+        </div>
+        <div class="ct-card__body">
+          <span class="ct-card__label">Telefon</span>
+          <a href="tel:{{ settings.phone_href }}" class="ct-card__main ct-card__main--link">{{ settings.phone }}</a>
+          <span class="ct-card__sub">{{ settings.hours }}</span>
+        </div>
+      </div>
+
+      <div class="ct-card">
+        <div class="ct-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6l-10 7L2 6" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="ct-card__body">
+          <span class="ct-card__label">E-mail</span>
+          <a href="mailto:{{ settings.email }}" class="ct-card__main ct-card__main--link">{{ settings.email }}</a>
+          <span class="ct-card__sub">{{ settings.email_response }}</span>
+        </div>
+      </div>
+
+      <div class="ct-card">
+        <div class="ct-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--red)" stroke-width="1.8"/><path d="M3 9h18" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/><path d="M8 3v6M16 3v6" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="ct-card__body">
+          <span class="ct-card__label">Vzorkovna</span>
+          <p class="ct-card__main">Návštěva po domluvě</p>
+          <a href="tel:{{ settings.phone_href }}" class="ct-card__link">
+            Domluvit termín
+            <svg viewBox="0 0 14 14" fill="none" width="11" height="11"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ct-map">
+      <iframe
+        src="https://maps.google.com/maps?q=49.9535837475202,15.288792535489224&hl=cs&z=16&output=embed"
+        title="Polymont s.r.o. – {{ settings.address_street }}, {{ settings.address_city }}"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM -->
+  <section class="ct-form-section">
+    <div class="ct-form-inner">
+      <div class="ct-form-head">
+        <p class="ct-form-eyebrow">Napište nám</p>
+        <h2 class="ct-form-heading">Vyžádejte si<br><em>cenovou nabídku.</em></h2>
+        <p class="ct-form-desc">Pro zpracování Vaší poptávky potřebujeme základní technické a kontaktní informace. Popište prosím Váš záměr, doplňte orientační rozměry, fotografie prostoru či jinou dostupnou dokumentaci. Na došlou poptávku budeme v krátkém termínu reagovat. Pokud je to pro zpracování nabídky vhodné, nabízíme bezplatnou technickou konzultaci na místě montáže.</p>
+
+        <div class="ct-accordion">
+          <details class="ct-accordion__item">
+            <summary class="ct-accordion__summary">
+              <span>Garážová a průmyslová vrata</span>
+              <svg class="ct-accordion__chevron" viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <ul class="ct-accordion__list">
+              <li>Rozměr stavebního otvoru — šířka × výška</li>
+              <li>Typ vrat — sekční, rolovací, rychloběžná, posuvná</li>
+              <li>Výška překladu (od spodní hrany pod střechu)</li>
+              <li>Rozměr vpravo a vlevo od stavebního otvoru</li>
+              <li>Hloubka garáže</li>
+              <li>Barevný odstín</li>
+              <li class="ct-accordion__list-note">Případně použijte <a href="/images/Polymont-list-pro-zamereni-garazova-vrata.jpg" target="_blank" download="Polymont-list-pro-zamereni-garazova-vrata.jpg">list pro zaměření</a></li>
+            </ul>
+          </details>
+          <details class="ct-accordion__item">
+            <summary class="ct-accordion__summary">
+              <span>Halové vestavby a příčky</span>
+              <svg class="ct-accordion__chevron" viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <ul class="ct-accordion__list">
+              <li>Rozměry — délka × šířka × výška</li>
+              <li>Výběr stěnové konstrukce — panel s tvrzenou pěnou / přestavitelné příčky</li>
+              <li>Zastropení — nepochozí, pochozí pro údržbu, skladovací prostor, kancelář 2.&nbsp;NP</li>
+              <li>Prostředí v hale + účel místnosti</li>
+              <li>Vstupy, okna, vrata</li>
+              <li>Požadavky na zásuvkové okruhy, osvětlení, klimatizaci, vzduchotechniku atd.</li>
+              <li>Požadavky na interiérové vybavení</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="ct-form-details">
+          <p><strong>{{ settings.company }}</strong></p>
+          <p>IČO: {{ settings.ico }}</p>
+        </div>
+      </div>
+
+      <form class="ct-form" action="mailto:{{ settings.email }}" method="get" enctype="text/plain">
+        <div class="ct-form__row">
+          <div class="ct-form__field">
+            <label class="ct-form__label" for="ct-name">Jméno a příjmení *</label>
+            <input class="ct-form__input" type="text" id="ct-name" name="Jmeno" required placeholder="Jan Novák" />
+          </div>
+          <div class="ct-form__field">
+            <label class="ct-form__label" for="ct-company">Firma</label>
+            <input class="ct-form__input" type="text" id="ct-company" name="Firma" placeholder="Název firmy" />
+          </div>
+        </div>
+        <div class="ct-form__row">
+          <div class="ct-form__field">
+            <label class="ct-form__label" for="ct-email">E-mail *</label>
+            <input class="ct-form__input" type="email" id="ct-email" name="Email" required placeholder="jan@example.cz" />
+          </div>
+          <div class="ct-form__field">
+            <label class="ct-form__label" for="ct-phone">Telefon</label>
+            <input class="ct-form__input" type="tel" id="ct-phone" name="Telefon" placeholder="+420 xxx xxx xxx" />
+          </div>
+        </div>
+        <div class="ct-form__field">
+          <label class="ct-form__label" for="ct-subject">Oblast zájmu</label>
+          <select class="ct-form__input ct-form__select" id="ct-subject" name="Oblast">
+            <option value="">Vyberte oblast…</option>
+            <option value="Halové vestavby">Halové vestavby</option>
+            <option value="Garážová vrata">Garážová vrata</option>
+            <option value="Průmyslová vrata">Průmyslová vrata</option>
+            <option value="Vchodové dveře">Vchodové a objektové dveře</option>
+            <option value="Servis">Servis a opravy</option>
+            <option value="Jiné">Jiné</option>
+          </select>
+        </div>
+        <div class="ct-form__field">
+          <label class="ct-form__label" for="ct-message">Zpráva *</label>
+          <textarea class="ct-form__input ct-form__textarea" id="ct-message" name="Zprava" required placeholder="Popište stručně svůj záměr nebo dotaz…" rows="5"></textarea>
+        </div>
+        <div class="ct-form__field">
+          <label class="ct-form__label" for="ct-files">Přílohy</label>
+          <label class="ct-upload" for="ct-files" id="ct-upload-label">
+            <div class="ct-upload__icon">
+              <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 8 12 3 7 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ct-upload__text">
+              <span class="ct-upload__main" id="ct-upload-main">Klikněte nebo přetáhněte soubory sem</span>
+              <span class="ct-upload__sub">Fotografie, výkresy, dokumentace — max. 10 MB</span>
+            </div>
+          </label>
+          <input class="ct-upload__input" type="file" id="ct-files" name="Prilohy" multiple accept="image/*,.pdf,.dwg,.dxf,.doc,.docx,.xls,.xlsx" />
+          <ul class="ct-upload__list" id="ct-file-list" aria-live="polite"></ul>
+        </div>
+        <div class="ct-form__check">
+          <input class="ct-check__input" type="checkbox" id="ct-gdpr" name="Souhlas" required />
+          <label class="ct-check__label" for="ct-gdpr">
+            Souhlasím se zpracováním osobních údajů za účelem vyřízení poptávky v souladu s <a href="/ochrana-osobnich-udaju.html" class="ct-check__link" target="_blank">podmínkami ochrany osobních údajů</a>. *
+          </label>
+        </div>
+        <div class="ct-form__footer">
+          <p class="ct-form__note">* Povinné pole.</p>
+          <button type="submit" class="cta-btn cta-btn--primary">
+            Odeslat zprávu
+            <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+{% block scripts %}
+  <script>
+    const y = document.getElementById('footer-year');
+    if (y) y.textContent = new Date().getFullYear();
+
+    const fileInput   = document.getElementById('ct-files');
+    const fileList    = document.getElementById('ct-file-list');
+    const uploadLabel = document.getElementById('ct-upload-label');
+    const uploadMain  = document.getElementById('ct-upload-main');
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(0) + ' kB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    function renderFiles(files) {
+      fileList.innerHTML = '';
+      [...files].forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'ct-upload__file';
+        li.innerHTML = `<span class="ct-upload__file-name">${f.name}</span><span class="ct-upload__file-size">${formatSize(f.size)}</span>`;
+        fileList.appendChild(li);
+      });
+      const count = files.length;
+      uploadMain.textContent = count > 0
+        ? `${count} soubor${count === 1 ? '' : count < 5 ? 'y' : 'ů'} vybrán${count === 1 ? '' : count < 5 ? 'y' : 'o'}`
+        : 'Klikněte nebo přetáhněte soubory sem';
+    }
+    fileInput.addEventListener('change', () => renderFiles(fileInput.files));
+    uploadLabel.addEventListener('dragover', e => { e.preventDefault(); uploadLabel.classList.add('ct-upload--active'); });
+    uploadLabel.addEventListener('dragleave', () => uploadLabel.classList.remove('ct-upload--active'));
+    uploadLabel.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadLabel.classList.remove('ct-upload--active');
+      const dt = new DataTransfer();
+      [...e.dataTransfer.files].forEach(f => dt.items.add(f));
+      fileInput.files = dt.files;
+      renderFiles(fileInput.files);
+    });
+  </script>
+{% endblock %}
