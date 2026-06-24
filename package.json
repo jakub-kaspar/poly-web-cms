@@ -1,0 +1,13 @@
+{
+  "name": "polymont-web",
+  "version": "1.0.0",
+  "description": "Polymont s.r.o. website",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve --incremental",
+    "cms": "npx decap-server"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
