@@ -1,57 +1,93 @@
 {
-  "meta_title": "O nás – Polymont",
+  "mission_text": "Klademe si za cíl poskytnout vstřícné technické poradenství podložené mnohaletými zkušenostmi, pečlivou montáž a zejména kdykoli dostupný záruční a pozáruční servis — daný stabilitou firmy a jejich dodavatelů.",
+  "timeline": [
+    {
+      "year": "1995",
+      "accent": false,
+      "title": "Vznik firmy",
+      "text": "Petr Rajchman zakládá obchodní a montážní firmu specializovanou na plastová, hliníková a EURO okna."
+    },
+    {
+      "year": "2003",
+      "accent": false,
+      "title": "Partnerství HÖRMANN",
+      "text": "Rozšíření portfolia o montáž garážových a průmyslových vrat a dveří značky HÖRMANN."
+    },
+    {
+      "year": "2000+",
+      "accent": false,
+      "title": "Halové vestavby",
+      "text": "Postupný rozvoj výroby a montáže halových vestaveb — od jednoduchých přízemních po rozsáhlé vícepodlažní stavby s osvětlením, elektroinstalací a vzduchotechnikou."
+    },
+    {
+      "year": "2015",
+      "accent": false,
+      "title": "Polymont s.r.o.",
+      "text": "Změna formy podnikání a vznik společnosti s ručením omezeným. Základ pro další růst a rozvoj."
+    },
+    {
+      "year": "2025",
+      "accent": true,
+      "title": "Vlastní výrobní hala",
+      "text": "Dokončení vlastní haly v Kutné Hoře se vzorkovnou a kancelářemi. Zahájení vlastní produkce hliníkových oken a interiérových prosklených příček."
+    }
+  ],
   "meta_description": "Rodinná firma Polymont s.r.o. z Kutné Hory. Třicet let zkušeností v montáži oken, vrat HÖRMANN a halových vestaveb. Poznejte náš příběh.",
-
-  "hero_image": "images/polymont-hall-3.jpg",
-  "hero_heading_1": "Od oken",
-  "hero_heading_2": "k vlastní",
-  "hero_heading_em": "výrobní hale.",
-  "hero_sub": "Rodinná firma z Kutné Hory. Třicet let zkušeností, stovky spokojených zákazníků a vlastní výrobní zázemí od roku 2025.",
-
-  "intro_eyebrow": "Náš příběh",
-  "intro_quote": "Klademe si za cíl poskytnout vstřícné technické poradenství, pečlivou montáž a kdykoli dostupný servis.",
+  "hall_eyebrow": "Náš největší milník",
+  "timeline_heading_em": "krok za krokem.",
+  "timeline_heading": "Třicet let",
   "intro_attr": "Petr Rajchman, zakladatel",
+  "cta_secondary": "Zavolat: 327 523 268",
+  "cta_heading_2": "nebo si vyžádejte nabídku",
+  "hall_photos": [
+    {
+      "src": "images/polymont-hall.jpg",
+      "alt": "Výrobní hala Polymont, Kutná Hora",
+      "position": "center 60%"
+    },
+    {
+      "src": "images/polymont-hall-2.jpg",
+      "alt": "Výrobní hala Polymont z ptačí perspektivy",
+      "position": "center 40%"
+    }
+  ],
+  "intro_quote": "Klademe si za cíl poskytnout vstřícné technické poradenství, pečlivou montáž a kdykoli dostupný servis.",
+  "hall_cta": "Domluvit návštěvu",
+  "hero_heading_em": "výrobní hale.",
+  "timeline_eyebrow": "Klíčové milníky",
+  "hall_heading_em": "hala a vzorkovna",
+  "hall_heading_2": "v Kutné Hoře.",
+  "mission_heading": "Náš závazek",
+  "hero_heading_1": "Od montáže oken",
+  "hero_heading_2": "k vlastní",
+  "cta_heading": "Navštivte nás",
+  "cta_primary": "Vyžádat cenovou nabídku",
+  "cta_heading_em": "v Kutné Hoře",
+  "hero_image": "images/polymont-hall-3.jpg",
+  "intro_eyebrow": "Náš příběh",
+  "mission_pillars": [
+    {
+      "title": "Poradenství",
+      "desc": "Vstřícné a zkušenostmi podložené technické konzultace"
+    },
+    {
+      "title": "Montáž",
+      "desc": "Precizní provedení vlastními proškolenými techniky"
+    },
+    {
+      "title": "Servis",
+      "desc": "Záruční i pozáruční péče kdykoli, po celou dobu životnosti"
+    }
+  ],
+  "hall_desc": "Výrobní zázemí s kancelářemi a vzorkovnou nám umožnilo zavést vlastní produkci hliníkových oken a zejména interiérových prosklených příček. Přijďte nás navštívit — doporučujeme zavolat předem.",
   "intro_paragraphs": [
     "Historie firmy sahá do roku 1995, kdy se zakladatel Petr Rajchman rozhodl opustit jistotu zaměstnání a založit obchodní a montážní firmu se specializací na otvorové výplně — plastová, hliníková a EURO okna.",
     "Od roku 2003 se činnost rozšířila o montáž garážových a průmyslových vrat značky HÖRMANN. V období po roce 2000 jsme začali navrhovat a montovat halové vestavby pro výrobní a logistické firmy — z původně několika jednotek malých kanceláří ročně se tato oblast stala klíčovou náplní naší práce.",
     "Našimi zákazníky jsou jak firemní zákazníci a stavební společnosti, tak soukromí stavebníci. Stabilita firmy a jejich dodavatelů nám umožňuje plnit záruční i pozáruční závazky kdykoli."
   ],
-
-  "timeline_eyebrow": "Klíčové milníky",
-  "timeline_heading": "Třicet let",
-  "timeline_heading_em": "krok za krokem.",
-  "timeline": [
-    { "year": "1995",  "accent": false, "title": "Vznik firmy",          "text": "Petr Rajchman zakládá obchodní a montážní firmu specializovanou na plastová, hliníková a EURO okna." },
-    { "year": "2003",  "accent": false, "title": "Partnerství HÖRMANN",  "text": "Rozšíření portfolia o montáž garážových a průmyslových vrat a dveří značky HÖRMANN." },
-    { "year": "2000+", "accent": false, "title": "Halové vestavby",      "text": "Postupný rozvoj výroby a montáže halových vestaveb — od jednoduchých přízemních po rozsáhlé vícepodlažní stavby s osvětlením, elektroinstalací a vzduchotechnikou." },
-    { "year": "2015",  "accent": false, "title": "Polymont s.r.o.",      "text": "Změna formy podnikání a vznik společnosti s ručením omezeným. Základ pro další růst a rozvoj." },
-    { "year": "2025",  "accent": true,  "title": "Vlastní výrobní hala", "text": "Dokončení vlastní haly v Kutné Hoře se vzorkovnou a kancelářemi. Zahájení vlastní produkce hliníkových oken a interiérových prosklených příček." }
-  ],
-
-  "hall_eyebrow": "Náš největší milník",
-  "hall_heading": "Vlastní výrobní",
-  "hall_heading_em": "hala a vzorkovna",
-  "hall_heading_2": "v Kutné Hoře.",
-  "hall_desc": "Výrobní zázemí s kancelářemi a vzorkovnou nám umožnilo zavést vlastní produkci hliníkových oken a zejména interiérových prosklených příček. Přijďte nás navštívit — doporučujeme zavolat předem.",
-  "hall_cta": "Domluvit návštěvu",
-  "hall_photos": [
-    { "src": "images/polymont-hall.jpg",   "alt": "Výrobní hala Polymont, Kutná Hora",        "position": "center 60%" },
-    { "src": "images/polymont-hall-2.jpg", "alt": "Výrobní hala Polymont z ptačí perspektivy", "position": "center 40%" }
-  ],
-
-  "mission_heading": "Náš závazek",
   "mission_heading_em": "vůči zákazníkům.",
-  "mission_text": "Klademe si za cíl poskytnout vstřícné technické poradenství podložené mnohaletými zkušenostmi, pečlivou montáž a zejména kdykoli dostupný záruční a pozáruční servis — daný stabilitou firmy a jejich dodavatelů.",
-  "mission_pillars": [
-    { "title": "Poradenství", "desc": "Vstřícné a zkušenostmi podložené technické konzultace" },
-    { "title": "Montáž",      "desc": "Precizní provedení vlastními proškolenými techniky" },
-    { "title": "Servis",      "desc": "Záruční i pozáruční péče kdykoli, po celou dobu životnosti" }
-  ],
-
   "cta_eyebrow": "Pojďme spolupracovat",
-  "cta_heading": "Navštivte nás",
-  "cta_heading_em": "v Kutné Hoře",
-  "cta_heading_2": "nebo si vyžádejte nabídku",
-  "cta_primary": "Vyžádat cenovou nabídku",
-  "cta_secondary": "Zavolat: 327 523 268"
+  "hero_sub": "Rodinná firma z Kutné Hory. Třicet let zkušeností, stovky spokojených zákazníků a vlastní výrobní zázemí od roku 2025.",
+  "hall_heading": "Vlastní výrobní",
+  "meta_title": "O nás – Polymont"
 }
