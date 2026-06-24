@@ -204,11 +204,7 @@ meta_description: "Kontaktujte Polymont s.r.o. — Hrnčířská 296, Kutná Hor
     </div>
   </section>
 
-{% block scripts %}
   <script>
-    const y = document.getElementById('footer-year');
-    if (y) y.textContent = new Date().getFullYear();
-
     const fileInput   = document.getElementById('ct-files');
     const fileList    = document.getElementById('ct-file-list');
     const uploadLabel = document.getElementById('ct-upload-label');
@@ -244,4 +240,3 @@ meta_description: "Kontaktujte Polymont s.r.o. — Hrnčířská 296, Kutná Hor
       renderFiles(fileInput.files);
     });
   </script>
-{% endblock %}
