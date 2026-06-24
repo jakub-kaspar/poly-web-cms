@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css?v=11" />
-  {% block head %}{% endblock %}
+
 </head>
 <body>
 
@@ -30,7 +30,7 @@
     </a>
   </nav>
 
-  {% block content %}{% endblock %}
+  {{ content | safe }}
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -75,12 +75,10 @@
     </div>
   </footer>
 
-  {% block scripts %}
   <script>
     const y = document.getElementById('footer-year');
     if (y) y.textContent = new Date().getFullYear();
   </script>
-  {% endblock %}
 
 </body>
 </html>
