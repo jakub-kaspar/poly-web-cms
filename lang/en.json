@@ -1,0 +1,19 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+
+  "nav.menu": "Menu",
+  "nav.logo_alt": "Polymont",
+
+  "hero.left.title": "Mezzanine Floors",
+  "hero.left.subtitle": "partitions and glazed aluminium structures",
+  "hero.left.img_alt": "Mezzanine floors, partitions and glazed aluminium structures",
+
+  "hero.right.title": "Doors & Gates",
+  "hero.right.subtitle": "industrial, garage, residential",
+  "hero.right.img_alt": "Industrial and garage doors, residential and industrial doors",
+
+  "hero.label.consulting": "CONSULTING",
+  "hero.label.management": "MANAGEMENT",
+  "hero.label.control": "CONTROL"
+}
