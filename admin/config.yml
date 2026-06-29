@@ -295,6 +295,14 @@ collections:
                   - { label: "Název",       name: name,  widget: string }
                   - { label: "Fotografie",  name: image, widget: image  }
                   - { label: "URL (HÖRMANN)", name: url, widget: string }
+          - label: "Statistiky"
+            name: proof_stats
+            widget: list
+            summary: "{{fields.num}}{{fields.suffix}} – {{fields.label}}"
+            fields:
+              - { label: "Číslo / text", name: num,    widget: string }
+              - { label: "Přípona",      name: suffix, widget: string, required: false, hint: "Např. + nebo prázdné" }
+              - { label: "Popisek",      name: label,  widget: string }
           - label: "Servis – eyebrow"
             name: service_eyebrow
             widget: string
@@ -331,6 +339,88 @@ collections:
               - { label: "Popis",     name: label, widget: string }
               - { label: "PDF soubor", name: pdf,  widget: file,  media_folder: "/certs", public_folder: "certs" }
               - { label: "Náhled",    name: thumb, widget: image, media_folder: "/certs", public_folder: "certs" }
+
+  # ── Poptávky z konfigurátoru ────────────────────────────────────────────────
+  - name: "offers"
+    label: "Poptávky"
+    label_singular: "Poptávka"
+    folder: "offers"
+    extension: "json"
+    format: "json"
+    create: false
+    identifier_field: "id"
+    summary: "{{contact_name}} – {{contact_email}} | v.{{offer_version}} | {{submitted_at}}"
+    fields:
+      - { label: "ID",               name: id,                 widget: string   }
+      - { label: "Datum poptávky",   name: submitted_at,       widget: datetime }
+      - { label: "Jméno",            name: contact_name,       widget: string   }
+      - { label: "E-mail",           name: contact_email,      widget: string   }
+      - { label: "Telefon",          name: contact_phone,      widget: string,   required: false }
+      - { label: "Poznámka",         name: contact_note,       widget: text,     required: false }
+      - { label: "Verze ceníku",     name: pricelist_version,  widget: string   }
+      - { label: "Verze nabídky",    name: offer_version,      widget: number,  value_type: int }
+      - label: "Stav"
+        name: status
+        widget: select
+        default: "new"
+        options:
+          - { label: "🆕 Nová",        value: "new"         }
+          - { label: "🔄 Probíhá",     value: "in-progress" }
+          - { label: "✅ Dokončeno",   value: "done"        }
+          - { label: "❌ Odmítnuto",   value: "rejected"    }
+      - label: "Otevřít v konfigurátoru"
+        name: configurator_link
+        widget: markdown
+        hint: "Klikněte na odkaz v náhledu vpravo pro otevření konfigurátoru s touto nabídkou."
+
+  # ── Konfigurátor – ceník ────────────────────────────────────────────────────
+  - name: "konfigurator"
+    label: "Konfigurátor vestaveb"
+    files:
+
+      - name: "konfigurator_prices"
+        label: "Ceník modulů"
+        description: "Ceny jednotlivých komponent konfiguratoru (v Kč bez DPH)."
+        file: "_data/konfigurator_prices.json"
+        fields:
+          - label: "Verze ceníku"
+            name: version
+            widget: string
+            default: "06/26"
+            hint: "Např. 06/26 (měsíc/rok). Zobrazí se v PDF nabídce."
+          - { label: "— DUO: Přední stěna (plná)",          name: duo_stena_plna_predni,    widget: string, default: "16200" }
+          - { label: "— DUO: Strop – standardní",            name: duo_strop_nepochozi,      widget: string, default: "21000" }
+          - { label: "— DUO: Skelet – pochůzí 90 kg/m²",    name: duo_skelet_pochozi_90,    widget: string, default: "23330" }
+          - { label: "— DUO: Mezipatro 250 kg/m²",          name: duo_skelet_mezipatro_250, widget: string, default: "60650" }
+          - { label: "— DUO: Podlaha PVC 2,0 mm",           name: duo_podlaha_pvc,          widget: string, default: "9920"  }
+          - { label: "— DUO: Podlaha vinyl 5,5 mm",         name: duo_podlaha_vinyl,        widget: string, default: "14000" }
+          - { label: "— DUO: Zavěšený podhled",             name: duo_podhled,              widget: string, default: "13420" }
+          - { label: "— DUO: Podesta (2. NP)",              name: duo_podesta,              widget: string, default: "60650" }
+          - { label: "— DUO: Příplatek celosklo (přední)",   name: duo_priplatek_sklo_celo,  widget: string, default: "19930" }
+          - { label: "— DUO: LED osvětlení",                name: duo_osvetleni,            widget: string, default: "10590" }
+          - { label: "— DUO: Zásuvky vč. rozvaděče",        name: duo_rozvadec,             widget: string, default: "13830" }
+          - { label: "— DUO: Klimatizace",                  name: duo_klima,                widget: string, default: "30240" }
+          - { label: "— TRIO: Přední stěna (plná)",         name: trio_stena_plna_predni,    widget: string, default: "24300" }
+          - { label: "— TRIO: Strop – standardní",           name: trio_strop_nepochozi,      widget: string, default: "31500" }
+          - { label: "— TRIO: Skelet – pochůzí 90 kg/m²",   name: trio_skelet_pochozi_90,    widget: string, default: "35000" }
+          - { label: "— TRIO: Mezipatro 250 kg/m²",         name: trio_skelet_mezipatro_250, widget: string, default: "90980" }
+          - { label: "— TRIO: Podlaha PVC 2,0 mm",          name: trio_podlaha_pvc,          widget: string, default: "14880" }
+          - { label: "— TRIO: Podlaha vinyl 5,5 mm",        name: trio_podlaha_vinyl,        widget: string, default: "21000" }
+          - { label: "— TRIO: Zavěšený podhled",            name: trio_podhled,              widget: string, default: "20130" }
+          - { label: "— TRIO: Podesta (2. NP)",             name: trio_podesta,              widget: string, default: "90980" }
+          - { label: "— TRIO: Příplatek celosklo (přední)",  name: trio_priplatek_sklo_celo,  widget: string, default: "29890" }
+          - { label: "— TRIO: LED osvětlení",               name: trio_osvetleni,            widget: string, default: "15880" }
+          - { label: "— TRIO: Zásuvky vč. rozvaděče",       name: trio_rozvadec,             widget: string, default: "20740" }
+          - { label: "— TRIO: Klimatizace",                 name: trio_klima,                widget: string, default: "33650" }
+          - { label: "— Společné: Boční stěna (plná)",      name: sp_stena_plna_bocni,          widget: string, default: "19440" }
+          - { label: "— Společné: Příplatek 1 okno",        name: sp_priplatek_sklo_1,          widget: string, default: "5620"  }
+          - { label: "— Společné: Příplatek 2 okna",        name: sp_priplatek_sklo_2,          widget: string, default: "11240" }
+          - { label: "— Společné: Příplatek 3 okna",        name: sp_priplatek_sklo_3,          widget: string, default: "15560" }
+          - { label: "— Společné: Příplatek celosklo (boční)", name: sp_priplatek_sklo_celo_bocni, widget: string, default: "23920" }
+          - { label: "— Společné: Spojovací rám",           name: sp_spojovaci_ram,             widget: string, default: "8430"  }
+          - { label: "— Společné: Dveře",                   name: sp_dvere,                     widget: string, default: "15990" }
+          - { label: "— Společné: Ventilátor",              name: sp_ventilator,                widget: string, default: "3030"  }
+          - { label: "— Společné: Schodiště",               name: sp_schodiste,                 widget: string, default: "42770" }
 
   # ── O nás ───────────────────────────────────────────────────────────────────
   - name: "o_nas"
