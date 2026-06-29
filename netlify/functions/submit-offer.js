@@ -55,10 +55,8 @@ exports.handler = async (event) => {
 
     const commitMsg = `Poptávka: ${contactName} <${email}>`;
 
-    await Promise.all([
-      ghPut(`offers/${id}.json`,        JSON.stringify(meta, null, 2),                           commitMsg),
-      ghPut(`offers/${id}-state.json`,  JSON.stringify({ version: offerVersion || 1, state }, null, 2), commitMsg),
-    ]);
+    await ghPut(`offers/${id}.json`,       JSON.stringify(meta, null, 2),                                  commitMsg);
+    await ghPut(`offers/${id}-state.json`, JSON.stringify({ version: offerVersion || 1, state }, null, 2), commitMsg);
 
     return {
       statusCode: 200,
