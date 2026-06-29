@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "state": {
+    "modules": [
+      {
+        "id": "jfd79wzyh",
+        "type": "DUO",
+        "ix": 0,
+        "iy": 1,
+        "iz": 0,
+        "windows": {
+          "front": "solid",
+          "back": "solid",
+          "left": "solid",
+          "right": "solid"
+        },
+        "doors": 1,
+        "partition": false,
+        "placement": "4",
+        "roof": "nepochozi",
+        "floor": "pvc",
+        "light": true,
+        "power": true,
+        "fan": false,
+        "ac": true,
+        "stairs": true,
+        "elevated": true,
+        "ceiling": false,
+        "price": 249270
+      },
+      {
+        "id": "yj0c543qw",
+        "type": "TRIO",
+        "ix": 1,
+        "iy": 0,
+        "iz": 0,
+        "windows": {
+          "front": "solid",
+          "back": "solid",
+          "left": "solid",
+          "right": "solid"
+        },
+        "doors": 0,
+        "partition": false,
+        "placement": "4",
+        "roof": "mezipatro_250",
+        "floor": "osb",
+        "light": true,
+        "power": true,
+        "fan": false,
+        "ac": false,
+        "stairs": false,
+        "elevated": false,
+        "ceiling": false,
+        "price": 199210
+      },
+      {
+        "id": "uu80xiqsd",
+        "type": "TRIO",
+        "ix": 1,
+        "iy": 0,
+        "iz": 1,
+        "windows": {
+          "front": "door_r_w2",
+          "back": "solid",
+          "left": "solid",
+          "right": "solid"
+        },
+        "doors": 0,
+        "partition": false,
+        "placement": "4",
+        "roof": "nepochozi",
+        "floor": "osb",
+        "light": true,
+        "power": true,
+        "fan": false,
+        "ac": false,
+        "stairs": false,
+        "elevated": false,
+        "ceiling": false,
+        "price": 158530
+      },
+      {
+        "id": "e88nankxq",
+        "type": "TRIO",
+        "ix": 1,
+        "iy": 1,
+        "iz": 0,
+        "windows": {
+          "front": "solid",
+          "back": "solid",
+          "left": "solid",
+          "right": "solid"
+        },
+        "doors": 0,
+        "partition": false,
+        "placement": "4",
+        "roof": "nepochozi",
+        "floor": "osb",
+        "light": true,
+        "power": true,
+        "fan": false,
+        "ac": false,
+        "stairs": false,
+        "elevated": true,
+        "ceiling": false,
+        "price": 136160
+      }
+    ],
+    "selectedId": null,
+    "discountPercent": 4,
+    "discountAmount": 29726.8
+  }
+}
