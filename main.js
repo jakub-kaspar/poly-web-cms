@@ -180,7 +180,7 @@ function renderRefs() {
 
 // Fetch references from CMS data file, fall back gracefully
 if (document.getElementById('refs-grid')) {
-  fetch('_data/references.json')
+  fetch('/references.json')
     .then(r => r.json())
     .then(data => {
       // Decap CMS wraps list collections in { items: [...] }
