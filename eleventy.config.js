@@ -13,6 +13,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("certs");
   eleventyConfig.addPassthroughCopy("lang");
   eleventyConfig.addPassthroughCopy("admin");
+  eleventyConfig.addPassthroughCopy("konfigurator.html");
+  eleventyConfig.addPassthroughCopy("offers");
+  eleventyConfig.addWatchTarget("konfigurator.html");
 
   // ── Source / output dirs ─────────────────────────────────────────────────────
   return {
