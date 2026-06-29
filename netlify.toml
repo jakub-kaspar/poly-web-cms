@@ -18,6 +18,12 @@
   to   = "/admin/index.html"
   status = 200
 
+# Decap CMS resolves config.yml relative to the page URL (/admin/cms/)
+[[redirects]]
+  from = "/admin/cms/config.yml"
+  to   = "/admin/config.yml"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
