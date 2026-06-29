@@ -63,6 +63,12 @@
     { "label": "Suchá výstavba",       "pdf": "certs/rigips.pdf",       "thumb": "certs/rigips_thumb.png" }
   ],
 
+  "proof_stats": [
+    { "num": "30",      "suffix": "+", "label": "let na trhu" },
+    { "num": "250",     "suffix": "+", "label": "realizovaných vrat a dveří" },
+    { "num": "HÖRMANN", "suffix": "",  "label": "Certifikovaný partner" }
+  ],
+
   "cta_eyebrow": "Neváhejte nás kontaktovat",
   "cta_heading": "Navštivte nás",
   "cta_heading_em": "v Kutné Hoře",
