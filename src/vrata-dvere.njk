@@ -55,6 +55,18 @@ meta_description: "{{ vrata_dvere.meta_description }}"
     </div>
   </section>
 
+  <!-- STATS -->
+  <section class="hv-proof hv-proof--stats-only">
+    <div class="hv-proof__stats">
+      {% for stat in vrata_dvere.proof_stats %}
+      <div class="hv-proof__stat">
+        <span class="hv-proof__stat-num">{{ stat.num }}{% if stat.suffix %}<em>{{ stat.suffix }}</em>{% endif %}</span>
+        <span class="hv-proof__stat-label">{{ stat.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
   <!-- SERVIS -->
   <section class="service" id="servis">
     <div class="service__left">
