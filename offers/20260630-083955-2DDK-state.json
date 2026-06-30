@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "state": {
     "modules": [
       {
@@ -139,7 +139,7 @@
         "iy": 0,
         "iz": 1,
         "windows": {
-          "front": "solid",
+          "front": "full",
           "back": "solid",
           "left": "solid",
           "right": "solid"
@@ -156,7 +156,7 @@
         "stairs": false,
         "elevated": false,
         "ceiling": false,
-        "price": 70050
+        "price": 89980
       },
       {
         "id": "xwqe5ic9j",
@@ -165,7 +165,7 @@
         "iy": 0,
         "iz": 1,
         "windows": {
-          "front": "solid",
+          "front": "double",
           "back": "solid",
           "left": "solid",
           "right": "solid"
@@ -182,11 +182,11 @@
         "stairs": false,
         "elevated": false,
         "ceiling": false,
-        "price": 111860
+        "price": 123100
       }
     ],
     "selectedId": null,
     "discountPercent": 7,
-    "discountAmount": 48526.8
+    "discountAmount": 50708.700000000004
   }
 }
