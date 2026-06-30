@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ceník konfigurátoru – Polymont</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:   #e62a20;
+      --dark:  #1a1a18;
+      --black: #0a0a09;
+      --light: #f7f6f3;
+      --white: #ffffff;
+      --border: rgba(26,26,24,.10);
+      --muted: rgba(26,26,24,.45);
+      --nav-h: 60px;
+    }
+
+    html { font-family: "DM Sans", system-ui, sans-serif; background: var(--light); color: var(--dark); }
+    body  { min-height: 100vh; }
+
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+    }
+    .nav__logo { display: flex; align-items: center; text-decoration: none; }
+    .nav__logo img { height: 28px; width: auto; display: block; }
+
+    .nav__links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav__link {
+      font-size: 11px; font-weight: 500; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border-radius: 100px;
+      transition: color .2s, background .2s; white-space: nowrap;
+    }
+    .nav__link:hover  { color: var(--dark); background: var(--light); }
+    .nav__link--active { color: var(--dark); font-weight: 600; background: var(--light); }
+
+    .nav__cta {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--white);
+      text-decoration: none; padding: 8px 18px;
+      background: var(--dark); border-radius: 100px;
+      transition: background .2s; white-space: nowrap;
+      display: flex; align-items: center; gap: 8px; border: none; cursor: pointer;
+      font-family: inherit;
+    }
+    .nav__cta:hover { background: var(--black); }
+    .nav__cta:disabled { opacity: .4; cursor: not-allowed; }
+
+    .page-header {
+      padding: 40px 28px 0;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 24px;
+    }
+    .page-header__eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .page-header__title {
+      font-size: 26px; font-weight: 700; line-height: 1.15; color: var(--dark);
+    }
+
+    .panel {
+      margin: 28px 28px 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .field-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+    .field {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .field label {
+      font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+    }
+    .field input {
+      font-family: inherit; font-size: 14px; color: var(--dark);
+      border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px;
+      outline: none; transition: border-color .15s; background: var(--white);
+    }
+    .field input:focus { border-color: rgba(26,26,24,.35); }
+
+    #version { width: 140px; }
+    #bump-pct { width: 100px; }
+
+    .bump-btn {
+      font-size: 12px; font-weight: 600; letter-spacing: .3px;
+      color: var(--dark); background: var(--light);
+      border: 1px solid var(--border); border-radius: 100px;
+      padding: 9px 18px; cursor: pointer; transition: background .15s;
+      white-space: nowrap;
+    }
+    .bump-btn:hover { background: #eeece6; }
+    .bump-hint { font-size: 11.5px; color: var(--muted); width: 100%; margin-top: 2px; }
+
+    .group-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); margin: 28px 28px 10px;
+    }
+    .group-title:first-of-type { margin-top: 8px; }
+
+    .price-grid {
+      margin: 0 28px;
+      background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden;
+    }
+    .price-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+    }
+    .price-row:last-child { border-bottom: none; }
+    .price-row__label { font-size: 13px; color: var(--dark); }
+    .price-row input {
+      width: 130px; text-align: right; font-family: inherit; font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+      outline: none; transition: border-color .15s, background .2s;
+    }
+    .price-row input:focus { border-color: rgba(26,26,24,.35); }
+    .price-row input.changed { background: #fff7e6; border-color: #f3d38a; }
+
+    .save-bar {
+      margin: 24px 28px 48px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .save-status { font-size: 12.5px; color: var(--muted); }
+    .save-status.ok  { color: #166534; }
+    .save-status.err { color: var(--red); }
+
+    .state-cell { text-align: center; padding: 56px 16px; color: var(--muted); font-size: 14px; }
+    .spinner {
+      width: 24px; height: 24px; margin: 0 auto 14px;
+      border: 2px solid var(--border); border-top-color: var(--dark);
+      border-radius: 50%; animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__logo" href="/">
+    <img src="/polymont_logo_nav_new.png" alt="Polymont" />
+  </a>
+  <ul class="nav__links">
+    <li><a class="nav__link" href="/admin/dashboard.html">Poptávky</a></li>
+    <li><a class="nav__link nav__link--active" href="/admin/pricelist.html">Ceník konfigurátoru</a></li>
+    <li><a class="nav__link" href="/admin/cms/">Správa obsahu</a></li>
+  </ul>
+  <button class="nav__cta" id="btn-save" onclick="savePricelist()" disabled>Uložit ceník</button>
+</nav>
+
+<div class="page-header">
+  <div>
+    <p class="page-header__eyebrow">Konfigurátor vestaveb</p>
+    <h1 class="page-header__title">Ceník modulů</h1>
+  </div>
+</div>
+
+<div id="content">
+  <div class="state-cell"><div class="spinner"></div>Načítám ceník…</div>
+</div>
+
+<script>
+  const FIELDS = [
+    { group: "DUO", key: "duo_stena_plna_predni",    label: "Přední stěna (plná)" },
+    { group: "DUO", key: "duo_strop_nepochozi",       label: "Strop – standardní" },
+    { group: "DUO", key: "duo_skelet_pochozi_90",     label: "Skelet – pochůzí 90 kg/m²" },
+    { group: "DUO", key: "duo_skelet_mezipatro_250",  label: "Mezipatro 250 kg/m²" },
+    { group: "DUO", key: "duo_podlaha_pvc",           label: "Podlaha PVC 2,0 mm" },
+    { group: "DUO", key: "duo_podlaha_vinyl",         label: "Podlaha vinyl 5,5 mm" },
+    { group: "DUO", key: "duo_podhled",               label: "Zavěšený podhled" },
+    { group: "DUO", key: "duo_podesta",               label: "Podesta (2. NP)" },
+    { group: "DUO", key: "duo_priplatek_sklo_celo",   label: "Příplatek celosklo (přední)" },
+    { group: "DUO", key: "duo_osvetleni",             label: "LED osvětlení" },
+    { group: "DUO", key: "duo_rozvadec",              label: "Zásuvky vč. rozvaděče" },
+    { group: "DUO", key: "duo_klima",                 label: "Klimatizace" },
+    { group: "TRIO", key: "trio_stena_plna_predni",    label: "Přední stěna (plná)" },
+    { group: "TRIO", key: "trio_strop_nepochozi",      label: "Strop – standardní" },
+    { group: "TRIO", key: "trio_skelet_pochozi_90",    label: "Skelet – pochůzí 90 kg/m²" },
+    { group: "TRIO", key: "trio_skelet_mezipatro_250", label: "Mezipatro 250 kg/m²" },
+    { group: "TRIO", key: "trio_podlaha_pvc",          label: "Podlaha PVC 2,0 mm" },
+    { group: "TRIO", key: "trio_podlaha_vinyl",        label: "Podlaha vinyl 5,5 mm" },
+    { group: "TRIO", key: "trio_podhled",              label: "Zavěšený podhled" },
+    { group: "TRIO", key: "trio_podesta",              label: "Podesta (2. NP)" },
+    { group: "TRIO", key: "trio_priplatek_sklo_celo",  label: "Příplatek celosklo (přední)" },
+    { group: "TRIO", key: "trio_osvetleni",            label: "LED osvětlení" },
+    { group: "TRIO", key: "trio_rozvadec",             label: "Zásuvky vč. rozvaděče" },
+    { group: "TRIO", key: "trio_klima",                label: "Klimatizace" },
+    { group: "Společné", key: "sp_stena_plna_bocni",          label: "Boční stěna (plná)" },
+    { group: "Společné", key: "sp_priplatek_sklo_1",          label: "Příplatek 1 okno" },
+    { group: "Společné", key: "sp_priplatek_sklo_2",          label: "Příplatek 2 okna" },
+    { group: "Společné", key: "sp_priplatek_sklo_3",          label: "Příplatek 3 okna" },
+    { group: "Společné", key: "sp_priplatek_sklo_celo_bocni", label: "Příplatek celosklo (boční)" },
+    { group: "Společné", key: "sp_spojovaci_ram",             label: "Spojovací rám" },
+    { group: "Společné", key: "sp_dvere",                     label: "Dveře" },
+    { group: "Společné", key: "sp_ventilator",                label: "Ventilátor" },
+    { group: "Společné", key: "sp_schodiste",                 label: "Schodiště" },
+  ];
+
+  let originalPrices = {};
+
+  async function load() {
+    try {
+      const resp = await fetch("/.netlify/functions/get-pricelist");
+      if (!resp.ok) throw new Error("Nepodařilo se načíst ceník");
+      originalPrices = await resp.json();
+      render();
+    } catch (e) {
+      document.getElementById("content").innerHTML =
+        `<div class="state-cell">Chyba při načítání ceníku: ${esc(e.message)}</div>`;
+    }
+  }
+
+  function render() {
+    const groups = [...new Set(FIELDS.map(f => f.group))];
+
+    let html = `
+      <div class="panel">
+        <div class="field-row">
+          <div class="field">
+            <label>Verze ceníku</label>
+            <input id="version" type="text" value="${esc(originalPrices.version || "")}" oninput="markDirty()" />
+          </div>
+          <div class="field">
+            <label>Navýšit všechny ceny o (%)</label>
+            <input id="bump-pct" type="number" step="0.1" placeholder="např. 5" />
+          </div>
+          <button class="bump-btn" type="button" onclick="applyBump()">Navýšit ceny</button>
+          <p class="bump-hint">Přepočítá všechny ceny níže o zadané procento a zaokrouhlí na celé stovky. Změny se uloží až po kliknutí na „Uložit ceník“.</p>
+        </div>
+      </div>
+    `;
+
+    groups.forEach(group => {
+      html += `<div class="group-title">${esc(group)}</div><div class="price-grid">`;
+      FIELDS.filter(f => f.group === group).forEach(f => {
+        const val = originalPrices[f.key] || "0";
+        html += `
+          <div class="price-row">
+            <span class="price-row__label">${esc(f.label)}</span>
+            <input type="number" step="1" id="price-${f.key}" data-key="${f.key}" value="${esc(val)}" oninput="markDirty(this)" />
+          </div>`;
+      });
+      html += `</div>`;
+    });
+
+    html += `
+      <div class="save-bar">
+        <span class="save-status" id="save-status"></span>
+      </div>
+    `;
+
+    document.getElementById("content").innerHTML = html;
+  }
+
+  function markDirty(el) {
+    if (el) {
+      const original = originalPrices[el.dataset.key] || "0";
+      el.classList.toggle("changed", String(el.value) !== String(original));
+    }
+    document.getElementById("btn-save").disabled = false;
+    const status = document.getElementById("save-status");
+    if (status) { status.textContent = ""; status.className = "save-status"; }
+  }
+
+  function applyBump() {
+    const pct = parseFloat(document.getElementById("bump-pct").value);
+    if (!pct || isNaN(pct)) return;
+    FIELDS.forEach(f => {
+      const input = document.getElementById(`price-${f.key}`);
+      const current = parseFloat(input.value) || 0;
+      const bumped = Math.round((current * (1 + pct / 100)) / 100) * 100;
+      input.value = bumped;
+      markDirty(input);
+    });
+  }
+
+  async function savePricelist() {
+    const btn = document.getElementById("btn-save");
+    const status = document.getElementById("save-status");
+    btn.disabled = true;
+    status.textContent = "Ukládám…";
+    status.className = "save-status";
+
+    const prices = { version: document.getElementById("version").value };
+    FIELDS.forEach(f => {
+      prices[f.key] = String(document.getElementById(`price-${f.key}`).value);
+    });
+
+    try {
+      const resp = await fetch("/.netlify/functions/save-pricelist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prices }),
+      });
+      const result = await resp.json();
+      if (!result.success) throw new Error(result.error || "Neznámá chyba");
+      originalPrices = prices;
+      document.querySelectorAll(".price-row input.changed").forEach(el => el.classList.remove("changed"));
+      status.textContent = "Uloženo.";
+      status.className = "save-status ok";
+    } catch (e) {
+      status.textContent = "Chyba: " + e.message;
+      status.className = "save-status err";
+      btn.disabled = false;
+    }
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  load();
+</script>
+</body>
+</html>
