@@ -3,6 +3,7 @@ module.exports = function (eleventyConfig) {
   // ── Pass-through static assets ──────────────────────────────────────────────
   eleventyConfig.addPassthroughCopy("style.css");
   eleventyConfig.addPassthroughCopy("main.js");
+  eleventyConfig.addPassthroughCopy("references.js");
   eleventyConfig.addPassthroughCopy("i18n.js");
   eleventyConfig.addPassthroughCopy("*.png");
   eleventyConfig.addPassthroughCopy("*.svg");

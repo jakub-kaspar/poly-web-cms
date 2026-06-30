@@ -2,8 +2,8 @@
 layout: layouts/base.njk
 permalink: kontakt.html
 navActive: kontakt
-meta_title: "Kontakt – Polymont"
-meta_description: "Kontaktujte Polymont s.r.o. — Hrnčířská 296, Kutná Hora. Telefon: 327 523 268. E-mail: polymont@polymont.cz. Navštivte naši vzorkovnu."
+meta_title: "Kontakt – Polymont s.r.o. | Kutná Hora"
+meta_description: "Kontaktujte Polymont s.r.o. v Kutné Hoře. Hrnčířská 296, tel. 327 523 268, e-mail polymont@polymont.cz. Otevírací doba Po–Pá 7:00–16:00."
 ---
 
   <!-- PAGE HEADER -->
@@ -86,6 +86,34 @@ meta_description: "Kontaktujte Polymont s.r.o. — Hrnčířská 296, Kutná Hor
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade">
       </iframe>
+    </div>
+  </section>
+
+  <!-- TEAM CONTACTS -->
+  <section class="ct-team">
+    <p class="ct-team__eyebrow">Kontaktní osoby</p>
+    <h2 class="ct-team__heading">Komu zavolat<br><em>nebo napsat.</em></h2>
+    <div class="ct-team__grid">
+      {% for member in settings.team %}
+      <div class="ct-team__card">
+        <span class="ct-team__role">{{ member.role }}</span>
+        <p class="ct-team__name">{{ member.name }}</p>
+        <div class="ct-team__contacts">
+          <a href="tel:{{ member.phone_href }}" class="ct-team__link">{{ member.phone }}</a>
+          {% if member.email %}
+          <a href="mailto:{{ member.email }}" class="ct-team__link">{{ member.email }}</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      <div class="ct-team__card ct-team__card--general">
+        <span class="ct-team__role">Obecný kontakt</span>
+        <p class="ct-team__name">{{ settings.company }}</p>
+        <div class="ct-team__contacts">
+          <a href="tel:{{ settings.phone_href }}" class="ct-team__link">{{ settings.phone }}</a>
+          <a href="mailto:{{ settings.email }}" class="ct-team__link">{{ settings.email }}</a>
+        </div>
+      </div>
     </div>
   </section>
 

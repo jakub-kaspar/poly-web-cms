@@ -1,8 +1,9 @@
 ---
 layout: layouts/base.njk
 permalink: index.html
-meta_title: "{{ homepage.meta_title }}"
-meta_description: "{{ homepage.meta_description }}"
+eleventyComputed:
+  meta_title: "{{ homepage.meta_title }}"
+  meta_description: "{{ homepage.meta_description }}"
 ---
 
   <!-- HERO -->
@@ -87,38 +88,7 @@ meta_description: "{{ homepage.meta_description }}"
     </div>
   </section>
 
-  <!-- REFERENCES GALLERY -->
-  <section class="refs">
-    <div class="refs__header">
-      <div class="refs__title-wrap">
-        <p class="refs__eyebrow">Reference</p>
-        <h2 class="refs__title">{{ homepage.refs_title }}</h2>
-      </div>
-      <div class="refs__filters" role="group">
-        <button class="refs__chip refs__chip--active" data-filter="all">Vše</button>
-        <button class="refs__chip" data-filter="vestavby">Vestavby</button>
-        <button class="refs__chip" data-filter="vrata">Vrata a dveře</button>
-      </div>
-    </div>
-    <div class="refs__grid" id="refs-grid"></div>
-    <div class="refs__pager" id="refs-pager"></div>
-  </section>
-
-  <!-- LIGHTBOX -->
-  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Zobrazení fotografie" hidden>
-    <button class="lb__close" id="lb-close" aria-label="Zavřít">
-      <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <button class="lb__arrow lb__arrow--prev" id="lb-prev" aria-label="Předchozí">
-      <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="lb__stage" id="lb-stage">
-      <img class="lb__img" id="lb-img" src="" alt="" />
-    </div>
-    <button class="lb__arrow lb__arrow--next" id="lb-next" aria-label="Další">
-      <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <p class="lb__counter" id="lb-counter"></p>
-  </div>
+  {% set refs_title = homepage.refs_title %}
+  {% include "components/references.njk" %}
 
   <script src="/main.js?v=4" defer></script>

@@ -109,6 +109,16 @@ collections:
           - label: "Perex stránky Kontakt"
             name: kontakt_sub
             widget: text
+          - label: "Kontaktní osoby"
+            name: team
+            widget: list
+            summary: "{{fields.name}} — {{fields.role}}"
+            fields:
+              - { label: "Pozice / role", name: role,  widget: string }
+              - { label: "Jméno",         name: name,  widget: string }
+              - { label: "Telefon (zobrazený)", name: phone, widget: string, hint: "Např. 731 455 545" }
+              - { label: "Telefon (odkaz href)", name: phone_href, widget: string, hint: "Např. +420731455545" }
+              - { label: "E-mail", name: email, widget: string, required: false }
 
   # ── Úvodní stránka ──────────────────────────────────────────────────────────
   - name: "homepage"
