@@ -6,7 +6,26 @@
   "contact_phone": "721070229",
   "contact_note": "Test 3",
   "pricelist_version": "06/26",
-  "offer_version": 1,
+  "offer_version": 2,
   "status": "new",
-  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260630-072814-HVUX)"
+  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260630-072814-HVUX)",
+  "history": [
+    {
+      "version": 2,
+      "date": "2026-06-30T08:33:47.769Z",
+      "changes": [
+        "Odebrán modul DUO (0, 0, 0)",
+        "TRIO (1, 0, 0): schodiště false → true",
+        "DUO (2, 1, 0): okno vpředu solid → full",
+        "DUO (2, 1, 0): okno vlevo solid → door_r_w2",
+        "DUO (2, 1, 0): okno vpravo solid → full",
+        "DUO (2, 1, 0): příčka false → true",
+        "DUO (2, 1, 0): podlaha osb → vinyl",
+        "DUO (2, 1, 0): podhled false → true",
+        "TRIO (1, 1, 0): okno vpravo solid → door_r_w2",
+        "TRIO (1, 1, 0): podlaha osb → pvc",
+        "TRIO (1, 1, 0): podhled false → true"
+      ]
+    }
+  ]
 }
