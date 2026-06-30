@@ -252,6 +252,28 @@ collections:
               - { label: "Alt text",      name: alt,    widget: string }
               - { label: "Nadpis",        name: title,  widget: string }
               - { label: "Popis",         name: desc,   widget: text   }
+          - label: "Technické parametry – fotografie"
+            name: tech_image
+            widget: image
+          - label: "Technické parametry – alt text fotografie"
+            name: tech_image_alt
+            widget: string
+          - label: "Technické parametry – eyebrow"
+            name: tech_eyebrow
+            widget: string
+          - label: "Technické parametry – nadpis řádek 1"
+            name: tech_heading
+            widget: string
+          - label: "Technické parametry – nadpis řádek 2"
+            name: tech_heading_2
+            widget: string
+          - label: "Technické parametry – nadpis kurzíva"
+            name: tech_heading_em
+            widget: string
+          - label: "Technické parametry – odrážky"
+            name: tech_specs
+            widget: list
+            field: { label: "Položka", name: item, widget: string }
 
   # ── Vrata a dveře ───────────────────────────────────────────────────────────
   - name: "vrata_dvere"
