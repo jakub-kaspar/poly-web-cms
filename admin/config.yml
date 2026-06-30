@@ -1,0 +1,545 @@
+# Decap CMS — Polymont s.r.o.
+# Docs: https://decapcms.org/docs/
+
+backend:
+  name: github
+  repo: jakub-kaspar/poly-web-cms   # ← update before deploying
+  branch: main
+
+# Enables the CMS to run locally without GitHub auth
+# Run: npx decap-server  (in the project root)
+local_backend: true
+
+# Where uploaded media goes
+media_folder: "references_graded"
+public_folder: "references_graded"
+
+# ─── Collections ──────────────────────────────────────────────────────────────
+collections:
+
+  # ── Reference gallery ───────────────────────────────────────────────────────
+  - name: "references"
+    label: "Reference (galerie)"
+    label_singular: "Referenční foto"
+    description: "Fotografie realizovaných projektů zobrazené v galerii na úvodní stránce."
+    files:
+      - name: "gallery"
+        label: "Seznam fotek"
+        file: "_data/references.json"
+        fields:
+          - name: items
+            label: Fotografie
+            widget: list
+            summary: "{{fields.src}} ({{fields.cat}})"
+            fields:
+              - label: "Soubor"
+                name: src
+                widget: image
+                media_folder: "/references_graded"
+                public_folder: "references_graded"
+                hint: "Vyberte nebo nahrajte fotografii z galerie references_graded/"
+              - label: "Kategorie"
+                name: cat
+                widget: select
+                options:
+                  - { label: "Halové vestavby", value: "vestavby" }
+                  - { label: "Vrata a dveře",   value: "vrata" }
+              - label: "Popis (alt text)"
+                name: alt
+                widget: string
+                required: false
+                hint: "Krátký popis fotografie pro přístupnost (nepovinné)"
+
+  # ── Nastavení webu ──────────────────────────────────────────────────────────
+  - name: "settings"
+    label: "Nastavení"
+    files:
+
+      - name: "contact"
+        label: "Kontaktní údaje"
+        description: "Telefon, e-mail, adresa a provozní doba. Změny se projeví po aktualizaci webu."
+        file: "_data/settings.json"
+        fields:
+          - label: "Název firmy"
+            name: company
+            widget: string
+          - label: "IČO"
+            name: ico
+            widget: string
+          - label: "Ulice a číslo"
+            name: address_street
+            widget: string
+          - label: "Město"
+            name: address_city
+            widget: string
+          - label: "PSČ"
+            name: address_zip
+            widget: string
+          - label: "Telefon (zobrazený)"
+            name: phone
+            widget: string
+            hint: "Např. 327 523 268"
+          - label: "Telefon (odkaz href)"
+            name: phone_href
+            widget: string
+            hint: "Např. +420327523268 — bez mezer, s předvolbou"
+          - label: "E-mail"
+            name: email
+            widget: string
+          - label: "URL Google Maps"
+            name: maps_url
+            widget: string
+            hint: "Zkrácený odkaz z Google Maps na provozovnu"
+          - label: "Provozní doba"
+            name: hours
+            widget: string
+            hint: "Např. Po–Pá 7:00–16:00"
+          - label: "Čas odpovědi na e-mail"
+            name: email_response
+            widget: string
+            hint: "Např. Odpovídáme do 24 hodin"
+          - label: "Nadpis stránky Kontakt"
+            name: kontakt_heading
+            widget: string
+            hint: "Např. Pojďme probrat"
+          - label: "Nadpis stránky Kontakt (kurzíva)"
+            name: kontakt_heading_em
+            widget: string
+            hint: "Např. vaše potřeby."
+          - label: "Perex stránky Kontakt"
+            name: kontakt_sub
+            widget: text
+
+  # ── Úvodní stránka ──────────────────────────────────────────────────────────
+  - name: "homepage"
+    label: "Úvodní stránka"
+    files:
+
+      - name: "homepage"
+        label: "Obsah úvodní stránky"
+        file: "_data/homepage.json"
+        fields:
+          - label: "Meta title"
+            name: meta_title
+            widget: string
+          - label: "Meta description"
+            name: meta_description
+            widget: text
+          - label: "O nás – řádek 1"
+            name: about_heading_l1
+            widget: string
+          - label: "O nás – řádek 2"
+            name: about_heading_l2
+            widget: string
+          - label: "O nás – řádek 3 (červeně)"
+            name: about_heading_l3
+            widget: string
+          - label: "O nás – fotografie"
+            name: about_image
+            widget: image
+            media_folder: "/images"
+            public_folder: "images"
+          - label: "O nás – popis fotografie (alt)"
+            name: about_image_alt
+            widget: string
+          - label: "O nás – text sloupec 1"
+            name: about_col1
+            widget: text
+          - label: "O nás – text sloupec 2"
+            name: about_col2
+            widget: text
+          - label: "Nadpis sekce Reference"
+            name: refs_title
+            widget: string
+
+  # ── Halové vestavby ─────────────────────────────────────────────────────────
+  - name: "halove_vestavby"
+    label: "Halové vestavby"
+    files:
+
+      - name: "halove_vestavby"
+        label: "Obsah stránky Halové vestavby"
+        file: "_data/halove_vestavby.json"
+        fields:
+          - label: "Meta title"
+            name: meta_title
+            widget: string
+          - label: "Meta description"
+            name: meta_description
+            widget: text
+          - label: "Hero – fotografie"
+            name: hero_image
+            widget: image
+            hint: "Soubor v kořenové složce (např. hero-1.png)"
+          - label: "Hero – nadpis řádek 1"
+            name: hero_heading_1
+            widget: string
+          - label: "Hero – nadpis řádek 2"
+            name: hero_heading_2
+            widget: string
+          - label: "Hero – nadpis kurzíva"
+            name: hero_heading_em
+            widget: string
+          - label: "Hero – perex"
+            name: hero_sub
+            widget: text
+          - label: "Hero – primární tlačítko"
+            name: hero_cta_primary
+            widget: string
+          - label: "Hero – sekundární tlačítko"
+            name: hero_cta_secondary
+            widget: string
+          - label: "Proč vestavba – eyebrow"
+            name: problem_eyebrow
+            widget: string
+          - label: "Proč vestavba – nadpis"
+            name: problem_heading
+            widget: string
+          - label: "Proč vestavba – nadpis kurzíva"
+            name: problem_heading_em
+            widget: string
+          - label: "Proč vestavba – sloupce (3)"
+            name: problem_cols
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Nadpis", name: title, widget: string }
+              - { label: "Text",   name: text,  widget: text   }
+          - label: "Konfigurátor – eyebrow"
+            name: config_eyebrow
+            widget: string
+          - label: "Konfigurátor – nadpis"
+            name: config_heading
+            widget: string
+          - label: "Konfigurátor – nadpis kurzíva"
+            name: config_heading_em
+            widget: string
+          - label: "Konfigurátor – popis"
+            name: config_text
+            widget: text
+          - label: "Konfigurátor – odrážky"
+            name: config_checklist
+            widget: list
+            field: { label: "Položka", name: item, widget: string }
+          - label: "Konfigurátor – tlačítko"
+            name: config_cta
+            widget: string
+          - label: "Oblasti využití – eyebrow"
+            name: usecases_eyebrow
+            widget: string
+          - label: "Oblasti využití – nadpis"
+            name: usecases_heading
+            widget: string
+          - label: "Oblasti využití – nadpis kurzíva"
+            name: usecases_heading_em
+            widget: string
+          - label: "Oblasti využití – karty"
+            name: usecases
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Fotografie",    name: image,  widget: image  }
+              - { label: "Alt text",      name: alt,    widget: string }
+              - { label: "Nadpis",        name: title,  widget: string }
+              - { label: "Popis",         name: desc,   widget: text   }
+
+  # ── Vrata a dveře ───────────────────────────────────────────────────────────
+  - name: "vrata_dvere"
+    label: "Vrata a dveře"
+    files:
+
+      - name: "vrata_dvere"
+        label: "Obsah stránky Vrata a dveře"
+        file: "_data/vrata_dvere.json"
+        fields:
+          - label: "Meta title"
+            name: meta_title
+            widget: string
+          - label: "Meta description"
+            name: meta_description
+            widget: text
+          - label: "Hero – fotografie"
+            name: hero_image
+            widget: image
+          - label: "Hero – nadpis"
+            name: hero_heading
+            widget: string
+          - label: "Hero – nadpis kurzíva"
+            name: hero_heading_em
+            widget: string
+          - label: "Hero – perex"
+            name: hero_sub
+            widget: text
+          - label: "Portfolio – eyebrow"
+            name: portfolio_eyebrow
+            widget: string
+          - label: "Portfolio – nadpis"
+            name: portfolio_heading
+            widget: string
+          - label: "Portfolio – kategorie"
+            name: portfolio_categories
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Číslo",         name: num,       widget: string                                       }
+              - { label: "Fotografie",    name: image,     widget: image                                        }
+              - { label: "Alt text",      name: image_alt, widget: string                                       }
+              - { label: "Nadpis",        name: title,     widget: string                                       }
+              - { label: "Popis",         name: desc,      widget: text                                         }
+              - { label: "Přehodit strany", name: reverse, widget: boolean, default: false                      }
+              - label: "Produktové dlaždice"
+                name: tiles
+                widget: list
+                summary: "{{fields.name}}"
+                fields:
+                  - { label: "Název",       name: name,  widget: string }
+                  - { label: "Fotografie",  name: image, widget: image  }
+                  - { label: "URL (HÖRMANN)", name: url, widget: string }
+          - label: "Statistiky"
+            name: proof_stats
+            widget: list
+            summary: "{{fields.num}}{{fields.suffix}} – {{fields.label}}"
+            fields:
+              - { label: "Číslo / text", name: num,    widget: string }
+              - { label: "Přípona",      name: suffix, widget: string, required: false, hint: "Např. + nebo prázdné" }
+              - { label: "Popisek",      name: label,  widget: string }
+          - label: "Servis – eyebrow"
+            name: service_eyebrow
+            widget: string
+          - label: "Servis – nadpis 1"
+            name: service_heading_1
+            widget: string
+          - label: "Servis – nadpis 2"
+            name: service_heading_2
+            widget: string
+          - label: "Servis – nadpis kurzíva"
+            name: service_heading_em
+            widget: string
+          - label: "Servis – nadpis 3"
+            name: service_heading_3
+            widget: string
+          - label: "Servis – perex"
+            name: service_lead
+            widget: text
+          - label: "Servis – položky"
+            name: service_items
+            widget: list
+            field: { label: "Položka", name: item, widget: string }
+          - label: "Certifikáty – eyebrow"
+            name: certs_eyebrow
+            widget: string
+          - label: "Certifikáty – nadpis"
+            name: certs_heading
+            widget: string
+          - label: "Certifikáty"
+            name: certs
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "Popis",     name: label, widget: string }
+              - { label: "PDF soubor", name: pdf,  widget: file,  media_folder: "/certs", public_folder: "certs" }
+              - { label: "Náhled",    name: thumb, widget: image, media_folder: "/certs", public_folder: "certs" }
+
+  # ── Poptávky z konfigurátoru ────────────────────────────────────────────────
+  - name: "offers"
+    label: "Poptávky"
+    label_singular: "Poptávka"
+    folder: "offers"
+    extension: "json"
+    format: "json"
+    create: false
+    identifier_field: "id"
+    summary: "{{contact_name}} – {{contact_email}} | v.{{offer_version}} | {{submitted_at}}"
+    fields:
+      - { label: "ID",               name: id,                 widget: string   }
+      - { label: "Datum poptávky",   name: submitted_at,       widget: datetime }
+      - { label: "Jméno",            name: contact_name,       widget: string   }
+      - { label: "E-mail",           name: contact_email,      widget: string   }
+      - { label: "Telefon",          name: contact_phone,      widget: string,   required: false }
+      - { label: "Poznámka",         name: contact_note,       widget: text,     required: false }
+      - { label: "Verze ceníku",     name: pricelist_version,  widget: string   }
+      - { label: "Verze nabídky",    name: offer_version,      widget: number,  value_type: int }
+      - label: "Stav"
+        name: status
+        widget: select
+        default: "new"
+        options:
+          - { label: "🆕 Nová",        value: "new"         }
+          - { label: "🔄 Probíhá",     value: "in-progress" }
+          - { label: "✅ Dokončeno",   value: "done"        }
+          - { label: "❌ Odmítnuto",   value: "rejected"    }
+      - label: "Otevřít v konfigurátoru"
+        name: configurator_link
+        widget: markdown
+        hint: "Klikněte na odkaz v náhledu vpravo pro otevření konfigurátoru s touto nabídkou."
+
+  # ── Konfigurátor – ceník ────────────────────────────────────────────────────
+  - name: "konfigurator"
+    label: "Konfigurátor vestaveb"
+    files:
+
+      - name: "konfigurator_prices"
+        label: "Ceník modulů"
+        description: "Ceny jednotlivých komponent konfiguratoru (v Kč bez DPH)."
+        file: "_data/konfigurator_prices.json"
+        fields:
+          - label: "Verze ceníku"
+            name: version
+            widget: string
+            default: "06/26"
+            hint: "Např. 06/26 (měsíc/rok). Zobrazí se v PDF nabídce."
+          - { label: "— DUO: Přední stěna (plná)",          name: duo_stena_plna_predni,    widget: string, default: "16200" }
+          - { label: "— DUO: Strop – standardní",            name: duo_strop_nepochozi,      widget: string, default: "21000" }
+          - { label: "— DUO: Skelet – pochůzí 90 kg/m²",    name: duo_skelet_pochozi_90,    widget: string, default: "23330" }
+          - { label: "— DUO: Mezipatro 250 kg/m²",          name: duo_skelet_mezipatro_250, widget: string, default: "60650" }
+          - { label: "— DUO: Podlaha PVC 2,0 mm",           name: duo_podlaha_pvc,          widget: string, default: "9920"  }
+          - { label: "— DUO: Podlaha vinyl 5,5 mm",         name: duo_podlaha_vinyl,        widget: string, default: "14000" }
+          - { label: "— DUO: Zavěšený podhled",             name: duo_podhled,              widget: string, default: "13420" }
+          - { label: "— DUO: Podesta (2. NP)",              name: duo_podesta,              widget: string, default: "60650" }
+          - { label: "— DUO: Příplatek celosklo (přední)",   name: duo_priplatek_sklo_celo,  widget: string, default: "19930" }
+          - { label: "— DUO: LED osvětlení",                name: duo_osvetleni,            widget: string, default: "10590" }
+          - { label: "— DUO: Zásuvky vč. rozvaděče",        name: duo_rozvadec,             widget: string, default: "13830" }
+          - { label: "— DUO: Klimatizace",                  name: duo_klima,                widget: string, default: "30240" }
+          - { label: "— TRIO: Přední stěna (plná)",         name: trio_stena_plna_predni,    widget: string, default: "24300" }
+          - { label: "— TRIO: Strop – standardní",           name: trio_strop_nepochozi,      widget: string, default: "31500" }
+          - { label: "— TRIO: Skelet – pochůzí 90 kg/m²",   name: trio_skelet_pochozi_90,    widget: string, default: "35000" }
+          - { label: "— TRIO: Mezipatro 250 kg/m²",         name: trio_skelet_mezipatro_250, widget: string, default: "90980" }
+          - { label: "— TRIO: Podlaha PVC 2,0 mm",          name: trio_podlaha_pvc,          widget: string, default: "14880" }
+          - { label: "— TRIO: Podlaha vinyl 5,5 mm",        name: trio_podlaha_vinyl,        widget: string, default: "21000" }
+          - { label: "— TRIO: Zavěšený podhled",            name: trio_podhled,              widget: string, default: "20130" }
+          - { label: "— TRIO: Podesta (2. NP)",             name: trio_podesta,              widget: string, default: "90980" }
+          - { label: "— TRIO: Příplatek celosklo (přední)",  name: trio_priplatek_sklo_celo,  widget: string, default: "29890" }
+          - { label: "— TRIO: LED osvětlení",               name: trio_osvetleni,            widget: string, default: "15880" }
+          - { label: "— TRIO: Zásuvky vč. rozvaděče",       name: trio_rozvadec,             widget: string, default: "20740" }
+          - { label: "— TRIO: Klimatizace",                 name: trio_klima,                widget: string, default: "33650" }
+          - { label: "— Společné: Boční stěna (plná)",      name: sp_stena_plna_bocni,          widget: string, default: "19440" }
+          - { label: "— Společné: Příplatek 1 okno",        name: sp_priplatek_sklo_1,          widget: string, default: "5620"  }
+          - { label: "— Společné: Příplatek 2 okna",        name: sp_priplatek_sklo_2,          widget: string, default: "11240" }
+          - { label: "— Společné: Příplatek 3 okna",        name: sp_priplatek_sklo_3,          widget: string, default: "15560" }
+          - { label: "— Společné: Příplatek celosklo (boční)", name: sp_priplatek_sklo_celo_bocni, widget: string, default: "23920" }
+          - { label: "— Společné: Spojovací rám",           name: sp_spojovaci_ram,             widget: string, default: "8430"  }
+          - { label: "— Společné: Dveře",                   name: sp_dvere,                     widget: string, default: "15990" }
+          - { label: "— Společné: Ventilátor",              name: sp_ventilator,                widget: string, default: "3030"  }
+          - { label: "— Společné: Schodiště",               name: sp_schodiste,                 widget: string, default: "42770" }
+
+  # ── O nás ───────────────────────────────────────────────────────────────────
+  - name: "o_nas"
+    label: "O nás"
+    files:
+
+      - name: "o_nas"
+        label: "Obsah stránky O nás"
+        file: "_data/o_nas.json"
+        fields:
+          - label: "Meta title"
+            name: meta_title
+            widget: string
+          - label: "Meta description"
+            name: meta_description
+            widget: text
+          - label: "Hero – fotografie"
+            name: hero_image
+            widget: image
+          - label: "Hero – nadpis řádek 1"
+            name: hero_heading_1
+            widget: string
+          - label: "Hero – nadpis řádek 2"
+            name: hero_heading_2
+            widget: string
+          - label: "Hero – nadpis kurzíva"
+            name: hero_heading_em
+            widget: string
+          - label: "Hero – perex"
+            name: hero_sub
+            widget: text
+          - label: "Intro – eyebrow"
+            name: intro_eyebrow
+            widget: string
+          - label: "Intro – citát (bez uvozovek)"
+            name: intro_quote
+            widget: text
+          - label: "Intro – autor citátu"
+            name: intro_attr
+            widget: string
+          - label: "Intro – odstavce"
+            name: intro_paragraphs
+            widget: list
+            field: { label: "Odstavec", name: paragraph, widget: text }
+          - label: "Timeline – eyebrow"
+            name: timeline_eyebrow
+            widget: string
+          - label: "Timeline – nadpis"
+            name: timeline_heading
+            widget: string
+          - label: "Timeline – nadpis kurzíva"
+            name: timeline_heading_em
+            widget: string
+          - label: "Timeline – položky"
+            name: timeline
+            widget: list
+            summary: "{{fields.year}} – {{fields.title}}"
+            fields:
+              - { label: "Rok",          name: year,   widget: string  }
+              - { label: "Zvýraznit",    name: accent, widget: boolean, default: false }
+              - { label: "Nadpis",       name: title,  widget: string  }
+              - { label: "Popis",        name: text,   widget: text    }
+          - label: "Hala – eyebrow"
+            name: hall_eyebrow
+            widget: string
+          - label: "Hala – nadpis"
+            name: hall_heading
+            widget: string
+          - label: "Hala – nadpis kurzíva"
+            name: hall_heading_em
+            widget: string
+          - label: "Hala – nadpis 2"
+            name: hall_heading_2
+            widget: string
+          - label: "Hala – popis"
+            name: hall_desc
+            widget: text
+          - label: "Hala – tlačítko"
+            name: hall_cta
+            widget: string
+          - label: "Hala – fotografie"
+            name: hall_photos
+            widget: list
+            summary: "{{fields.alt}}"
+            fields:
+              - { label: "Soubor",   name: src,      widget: image  }
+              - { label: "Alt text", name: alt,      widget: string }
+              - { label: "Pozice (CSS object-position)", name: position, widget: string, required: false, hint: "Např. center 60%" }
+          - label: "Mise – nadpis"
+            name: mission_heading
+            widget: string
+          - label: "Mise – nadpis kurzíva"
+            name: mission_heading_em
+            widget: string
+          - label: "Mise – text"
+            name: mission_text
+            widget: text
+          - label: "Mise – pilíře"
+            name: mission_pillars
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Nadpis", name: title, widget: string }
+              - { label: "Popis",  name: desc,  widget: text   }
+          - label: "CTA – eyebrow"
+            name: cta_eyebrow
+            widget: string
+          - label: "CTA – nadpis"
+            name: cta_heading
+            widget: string
+          - label: "CTA – nadpis kurzíva"
+            name: cta_heading_em
+            widget: string
+          - label: "CTA – nadpis 2"
+            name: cta_heading_2
+            widget: string
+          - label: "CTA – primární tlačítko"
+            name: cta_primary
+            widget: string
+          - label: "CTA – sekundární tlačítko"
+            name: cta_secondary
+            widget: string

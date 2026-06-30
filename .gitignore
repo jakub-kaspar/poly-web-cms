@@ -1,0 +1,24 @@
+# Build output
+_site/
+.cache/
+.netlify/
+
+# Dependencies
+node_modules/
+
+# Non-deployed local working files
+_01 non git related/
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Editor / local tooling
+.claude/settings.local.json
+.vscode/
+.idea/
+
+# Env / secrets
+.env
+.env.*
+!.env.example

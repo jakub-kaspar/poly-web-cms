@@ -1,0 +1,127 @@
+---
+layout: layouts/base.njk
+permalink: vrata-dvere.html
+navActive: vrata
+meta_title: "{{ vrata_dvere.meta_title }}"
+meta_description: "{{ vrata_dvere.meta_description }}"
+---
+
+  <!-- HERO -->
+  <section class="sp-hero">
+    <img src="/{{ vrata_dvere.hero_image }}" alt="" class="sp-hero__img" />
+    <div class="sp-hero__overlay"></div>
+    <img src="/hormann_logo.png" alt="HÖRMANN – Dveřní a vratové systémy" class="sp-hero__logo" />
+    <div class="sp-hero__inner">
+      <nav class="sp-hero__breadcrumb" aria-label="Drobečková navigace">
+        <a href="/index.html">Polymont</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Vrata a dveře</span>
+      </nav>
+      <h1 class="sp-hero__title">{{ vrata_dvere.hero_heading }}<br>a&nbsp;<em>{{ vrata_dvere.hero_heading_em }}</em></h1>
+      <p class="sp-hero__sub">{{ vrata_dvere.hero_sub }}</p>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <p class="portfolio__eyebrow">{{ vrata_dvere.portfolio_eyebrow }}</p>
+    <h2 class="portfolio__heading">{{ vrata_dvere.portfolio_heading }}</h2>
+    <div class="portfolio__categories">
+      {% for cat in vrata_dvere.portfolio_categories %}
+      <div class="portfolio__cat{% if cat.reverse %} portfolio__cat--reverse{% endif %}">
+        <div class="portfolio__cat-main">
+          <div class="portfolio__cat-img">
+            <img src="/{{ cat.image }}" alt="{{ cat.image_alt }}" loading="lazy" />
+          </div>
+          <div class="portfolio__cat-body">
+            <span class="portfolio__cat-num">{{ cat.num }}</span>
+            <h3 class="portfolio__cat-title">{{ cat.title }}</h3>
+            <p class="portfolio__cat-desc">{{ cat.desc }}</p>
+          </div>
+        </div>
+        <div class="portfolio__cat-tiles">
+          {% for tile in cat.tiles %}
+          <a href="{{ tile.url }}" target="_blank" rel="noopener" class="portfolio__tile">
+            <div class="portfolio__tile-img"><img src="/{{ tile.image }}" alt="{{ tile.name }} HÖRMANN" loading="lazy" /></div>
+            <div class="portfolio__tile-body">
+              <span class="portfolio__tile-name">{{ tile.name }}</span>
+              <svg class="portfolio__tile-arrow" viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="hv-proof hv-proof--stats-only">
+    <div class="hv-proof__stats">
+      {% for stat in vrata_dvere.proof_stats %}
+      <div class="hv-proof__stat">
+        <span class="hv-proof__stat-num">{{ stat.num }}{% if stat.suffix %}<em>{{ stat.suffix }}</em>{% endif %}</span>
+        <span class="hv-proof__stat-label">{{ stat.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- SERVIS -->
+  <section class="service" id="servis">
+    <div class="service__left">
+      <p class="service__eyebrow">{{ vrata_dvere.service_eyebrow }}</p>
+      <h2 class="service__heading">
+        {{ vrata_dvere.service_heading_1 }}<br>
+        {{ vrata_dvere.service_heading_2 }}<br>
+        <em>{{ vrata_dvere.service_heading_em }}</em><br>
+        {{ vrata_dvere.service_heading_3 }}
+      </h2>
+    </div>
+    <div class="service__body">
+      <p class="service__lead">{{ vrata_dvere.service_lead }}</p>
+      <ul class="service__list">
+        {% for item in vrata_dvere.service_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CERTIFIKACE -->
+  <section class="certs">
+    <p class="certs__eyebrow">{{ vrata_dvere.certs_eyebrow }}</p>
+    <h2 class="certs__heading">{{ vrata_dvere.certs_heading }}</h2>
+    <div class="certs__grid">
+      {% for cert in vrata_dvere.certs %}
+      <a href="/{{ cert.pdf }}" target="_blank" rel="noopener" class="certs__card">
+        <div class="certs__thumb-wrap">
+          <img src="/{{ cert.thumb }}" alt="{{ cert.label }}" loading="lazy" />
+        </div>
+        <span class="certs__label">{{ cert.label }}</span>
+        <span class="certs__link">Zobrazit PDF <svg viewBox="0 0 16 16" fill="none" width="12" height="12"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band" id="kontakt">
+    <div class="cta-band__text">
+      <p class="cta-band__eyebrow">{{ vrata_dvere.cta_eyebrow }}</p>
+      <h2 class="cta-band__heading">
+        {{ vrata_dvere.cta_heading }} <em>{{ vrata_dvere.cta_heading_em }}</em><br>
+        {{ vrata_dvere.cta_heading_2 }}
+      </h2>
+    </div>
+    <div class="cta-band__actions">
+      <a href="/kontakt.html" class="cta-btn cta-btn--primary">
+        {{ vrata_dvere.cta_primary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="/kontakt.html" class="cta-btn cta-btn--secondary">
+        {{ vrata_dvere.cta_secondary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>

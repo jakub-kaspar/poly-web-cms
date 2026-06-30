@@ -1,0 +1,119 @@
+---
+layout: layouts/base.njk
+permalink: o-nas.html
+navActive: o-nas
+meta_title: "{{ o_nas.meta_title }}"
+meta_description: "{{ o_nas.meta_description }}"
+---
+
+  <!-- HERO -->
+  <section class="sp-hero">
+    <img src="/{{ o_nas.hero_image }}" alt="" class="sp-hero__img" style="object-position: 50% 50%;" />
+    <div class="sp-hero__overlay"></div>
+    <div class="sp-hero__inner">
+      <nav class="sp-hero__breadcrumb" aria-label="Drobečková navigace">
+        <a href="/index.html">Polymont</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">O nás</span>
+      </nav>
+      <h1 class="sp-hero__title">{{ o_nas.hero_heading_1 }}<br>{{ o_nas.hero_heading_2 }}<br><em>{{ o_nas.hero_heading_em }}</em></h1>
+      <p class="sp-hero__sub">{{ o_nas.hero_sub }}</p>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="ab-intro">
+    <div class="ab-intro__inner">
+      <div class="ab-intro__left">
+        <p class="ab-intro__eyebrow">{{ o_nas.intro_eyebrow }}</p>
+        <blockquote class="ab-intro__pull">„{{ o_nas.intro_quote }}"</blockquote>
+        <p class="ab-intro__attr">{{ o_nas.intro_attr }}</p>
+      </div>
+      <div class="ab-intro__right">
+        {% for para in o_nas.intro_paragraphs %}
+        <p>{{ para }}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="ab-timeline">
+    <p class="ab-timeline__eyebrow">{{ o_nas.timeline_eyebrow }}</p>
+    <h2 class="ab-timeline__heading">{{ o_nas.timeline_heading }}<br><em>{{ o_nas.timeline_heading_em }}</em></h2>
+    <div class="ab-timeline__track">
+      {% for item in o_nas.timeline %}
+      <div class="ab-timeline__item{% if loop.last %} ab-timeline__item--last{% endif %}">
+        <div class="ab-timeline__year{% if item.accent %} ab-timeline__year--accent{% endif %}">{{ item.year }}</div>
+        <div class="ab-timeline__dot{% if item.accent %} ab-timeline__dot--accent{% endif %}"></div>
+        <div class="ab-timeline__content">
+          <h3 class="ab-timeline__title">{{ item.title }}</h3>
+          <p class="ab-timeline__text">{{ item.text }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- HALL HIGHLIGHT -->
+  <section class="ab-hall">
+    <div class="ab-hall__head">
+      <div class="ab-hall__head-text">
+        <p class="ab-hall__eyebrow">{{ o_nas.hall_eyebrow }}</p>
+        <h2 class="ab-hall__heading">{{ o_nas.hall_heading }}<br><em>{{ o_nas.hall_heading_em }}</em><br>{{ o_nas.hall_heading_2 }}</h2>
+        <p class="ab-hall__desc">{{ o_nas.hall_desc }}</p>
+        <a href="/kontakt.html" class="cta-btn cta-btn--primary" style="align-self: flex-start;">
+          {{ o_nas.hall_cta }}
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="ab-hall__year">2025</div>
+    </div>
+    <div class="ab-hall__photos">
+      {% for photo in o_nas.hall_photos %}
+      <div class="ab-hall__photo ab-hall__photo--large">
+        <img src="/{{ photo.src }}" alt="{{ photo.alt }}" loading="lazy" style="object-position: {{ photo.position }};" />
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="ab-mission">
+    <div class="ab-mission__inner">
+      <div class="ab-mission__icon" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none" width="56" height="56"><circle cx="28" cy="28" r="27" stroke="var(--red)" stroke-width="1.5" opacity="0.4"/><path d="M20 28c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/><circle cx="28" cy="28" r="3" fill="var(--red)"/><path d="M28 14v4M28 38v4M14 28h4M38 28h4" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>
+      </div>
+      <h2 class="ab-mission__heading">{{ o_nas.mission_heading }}<br><em>{{ o_nas.mission_heading_em }}</em></h2>
+      <p class="ab-mission__text">{{ o_nas.mission_text }}</p>
+      <div class="ab-mission__pillars">
+        {% for pillar in o_nas.mission_pillars %}
+        <div class="ab-mission__pillar">
+          <span class="ab-mission__pillar-title">{{ pillar.title }}</span>
+          <span class="ab-mission__pillar-desc">{{ pillar.desc }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band" id="kontakt">
+    <div class="cta-band__text">
+      <p class="cta-band__eyebrow">{{ o_nas.cta_eyebrow }}</p>
+      <h2 class="cta-band__heading">
+        {{ o_nas.cta_heading }} <em>{{ o_nas.cta_heading_em }}</em><br>
+        {{ o_nas.cta_heading_2 }}
+      </h2>
+    </div>
+    <div class="cta-band__actions">
+      <a href="/kontakt.html" class="cta-btn cta-btn--primary">
+        {{ o_nas.cta_primary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="/kontakt.html" class="cta-btn cta-btn--secondary">
+        {{ o_nas.cta_secondary }}
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>

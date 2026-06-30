@@ -1,0 +1,3881 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>3D Konfigurátor Sestav | Polymont</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              blue: {
+                50:  '#fef2f2',
+                100: '#fee2e1',
+                200: '#fecaca',
+                300: '#fca5a1',
+                400: '#f07470',
+                500: '#e62a20',
+                600: '#e62a20',
+                700: '#c0211a',
+                800: '#9b1a14',
+                900: '#1a1a18',
+              },
+              fuchsia: {
+                50:  '#f5f5f4',
+                100: '#e8e7e5',
+                200: '#d1cecc',
+                300: '#a8a39f',
+                400: '#7a7470',
+                500: '#1a1a18',
+                600: '#1a1a18',
+                700: '#141413',
+                800: '#0e0e0d',
+                900: '#0a0a09',
+              },
+            },
+            fontFamily: {
+              sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Přidána knihovna jsPDF pro generování PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+      :root {
+        --red:   #e62a20;
+        --dark:  #1a1a18;
+        --light: #f7f6f3;
+        --white: #ffffff;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: "DM Sans", system-ui, sans-serif;
+      }
+
+      #canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background: linear-gradient(135deg, #eeecea 0%, #f7f6f3 100%);
+        touch-action: none;
+      }
+
+      #ui-panel {
+        position: absolute;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(12px);
+        box-shadow: -4px 0 32px rgba(26, 26, 24, 0.10);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      @media (min-width: 768px) {
+        #ui-panel {
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 440px;
+          border-left: 1px solid rgba(26, 26, 24, 0.08);
+        }
+      }
+
+      @media (max-width: 767px) {
+        #ui-panel {
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 65vh;
+          border-top-left-radius: 12px;
+          border-top-right-radius: 12px;
+        }
+      }
+
+      #ui-panel {
+        transition: transform 0.3s ease-in-out;
+      }
+      @media (min-width: 768px) {
+        #ui-panel.collapsed {
+          transform: translateX(100%);
+        }
+        #collapse-btn {
+          right: 440px;
+          transition: right 0.3s ease-in-out;
+        }
+        #collapse-btn.collapsed {
+          right: 0;
+        }
+      }
+      @media (max-width: 767px) {
+        #ui-panel.collapsed {
+          transform: translateY(calc(100% - 40px));
+        }
+      }
+
+      .view-container {
+        display: flex;
+        width: 200%;
+        transition: transform 0.3s ease-in-out;
+        flex-grow: 1;
+        min-height: 0;
+      }
+      .view-page {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        height: 100%;
+      }
+      .panel-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+      @media (max-width: 767px) {
+        .panel-content {
+          padding: 1rem;
+        }
+      }
+
+      .action-bar {
+        padding: 1.25rem 1.5rem;
+        background: var(--white);
+        border-top: 1px solid rgba(26, 26, 24, 0.08);
+        box-shadow: 0 -4px 12px rgba(26, 26, 24, 0.05);
+        z-index: 20;
+        flex-shrink: 0;
+      }
+
+      /* Primary CTA button — matches site's red CTA */
+      .action-bar button[onclick="openModal()"] {
+        background: var(--red) !important;
+        border-radius: 100px !important;
+        letter-spacing: 0.01em;
+        font-weight: 700;
+        box-shadow: 0 4px 16px rgba(230, 42, 32, 0.25) !important;
+      }
+      .action-bar button[onclick="openModal()"]:hover {
+        background: #c0211a !important;
+      }
+
+      .module-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: var(--white);
+        border: 1.5px solid rgba(26, 26, 24, 0.12);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        margin-bottom: 0.5rem;
+      }
+      .module-item:hover {
+        border-color: rgba(26, 26, 24, 0.28);
+      }
+      .module-item.selected {
+        border-color: var(--dark);
+        box-shadow: 0 0 0 3px rgba(26, 26, 24, 0.12);
+      }
+
+      /* Scrollbar */
+      .panel-content::-webkit-scrollbar { width: 4px; }
+      .panel-content::-webkit-scrollbar-thumb {
+        background-color: rgba(26, 26, 24, 0.18);
+        border-radius: 4px;
+      }
+
+      /* Modal */
+      #modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 10, 9, 0.55);
+        z-index: 50;
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+      }
+      #modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.2s ease;
+      }
+
+      /* Panel section headers */
+      .bg-gray-50.border-b {
+        background: var(--light) !important;
+      }
+
+      /* Swatch buttons */
+      .swatch-btn {
+        border: 1.5px solid rgba(26, 26, 24, 0.12);
+        background: var(--white);
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .swatch-btn:hover  { border-color: rgba(26, 26, 24, 0.3); }
+      .swatch-btn.active { border-color: var(--dark); background: #f0efed; }
+
+      /* DUO / TRIO add buttons — panel */
+      .bg-blue-50   { background-color: #ffffff !important; }
+      .bg-fuchsia-50 { background-color: #ffffff !important; }
+      .border-blue-200   { border-color: rgba(26,26,24,0.25) !important; }
+      .border-fuchsia-200 { border-color: rgba(26,26,24,0.25) !important; }
+      .hover\:border-blue-400:hover   { border-color: rgba(26,26,24,0.6) !important; }
+      .hover\:border-fuchsia-400:hover { border-color: rgba(26,26,24,0.6) !important; }
+
+      /* DUO / TRIO add buttons — canvas floating menu */
+      #btn-add-duo-canvas,
+      #btn-add-trio-canvas {
+        background-color: #ffffff !important;
+        color: #1a1a18 !important;
+        border: 1.5px solid rgba(26,26,24,0.4) !important;
+        box-shadow: 0 2px 6px rgba(26,26,24,0.1) !important;
+      }
+      #btn-add-duo-canvas:hover,
+      #btn-add-trio-canvas:hover {
+        background-color: #f5f5f4 !important;
+        border-color: #1a1a18 !important;
+      }
+
+      /* Remap remaining Tailwind blue → dark brand tones */
+      .bg-blue-100  { background-color: #e8e7e5 !important; }
+      .bg-blue-600  { background-color: #1a1a18 !important; }
+      .bg-blue-700  { background-color: #141413 !important; }
+      .bg-blue-900  { background-color: #0a0a09 !important; }
+      .border-blue-100 { border-color: #e8e7e5 !important; }
+      .border-blue-200 { border-color: #d1cecc !important; }
+      .border-blue-400 { border-color: #7a7470 !important; }
+      .border-blue-500 { border-color: #1a1a18 !important; }
+      .border-blue-600 { border-color: #1a1a18 !important; }
+      .text-blue-500  { color: #1a1a18 !important; }
+      .text-blue-600  { color: #1a1a18 !important; }
+      .text-blue-700  { color: #1a1a18 !important; }
+      .text-blue-800  { color: #1a1a18 !important; }
+      .text-blue-900  { color: #1a1a18 !important; }
+      .ring-blue-500  { --tw-ring-color: rgba(26,26,24,0.5) !important; }
+      .shadow-blue-500\/30 { --tw-shadow-color: rgba(26,26,24,.15) !important; }
+      .hover\:bg-blue-50:hover   { background-color: #f0efed !important; }
+      .hover\:bg-blue-700:hover  { background-color: #141413 !important; }
+      .hover\:text-blue-600:hover { color: #1a1a18 !important; }
+      .hover\:border-blue-400:hover { border-color: #7a7470 !important; }
+      .focus\:border-blue-500:focus { border-color: #1a1a18 !important; }
+      .group-hover\:text-blue-500 { color: #1a1a18 !important; }
+
+      /* Info / warning labels → dark */
+      .text-red-500   { color: #1a1a18 !important; }
+      .text-amber-600 { color: #1a1a18 !important; }
+      .text-orange-800 { color: #1a1a18 !important; }
+      .bg-orange-100  { background-color: #e8e7e5 !important; }
+      .text-green-700 { color: #1a1a18 !important; }
+      .bg-green-50    { background-color: #f5f5f4 !important; }
+      .border-green-200 { border-color: #d1cecc !important; }
+
+      /* TRIO: remap fuchsia → dark brand colour */
+      .bg-fuchsia-100  { background-color: #e8e7e5 !important; }
+      .text-fuchsia-900 { color: #1a1a18 !important; }
+      .text-fuchsia-800 { color: #1a1a18 !important; }
+
+      /* Shift logo + camera controls when panel collapses */
+      #logo-link,
+      #camera-controls {
+        transition: right 0.3s ease-in-out;
+      }
+      @media (min-width: 768px) {
+        body:has(#ui-panel.collapsed) #logo-link {
+          right: 16px !important;
+        }
+        body:has(#ui-panel.collapsed) #camera-controls {
+          right: 16px !important;
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Tlačítka Zpět / Vpřed -->
+    <div
+      class="absolute bottom-4 left-4 z-10 flex gap-2 pointer-events-auto hidden md:flex"
+    >
+      <button
+        id="btn-undo"
+        onclick="undo()"
+        class="bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-sm font-bold text-gray-700 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        disabled
+      >
+        Zpět
+      </button>
+      <button
+        id="btn-redo"
+        onclick="redo()"
+        class="bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-sm font-bold text-gray-700 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        disabled
+      >
+        Vpřed
+      </button>
+    </div>
+
+    <!-- Tlačítko pro sbalení/rozbalení panelu (Desktop) -->
+    <button
+      id="collapse-btn"
+      onclick="togglePanel()"
+      class="absolute top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-8 h-16 bg-white/95 backdrop-blur shadow-[-5px_0_10px_rgba(0,0,0,0.05)] border border-gray-200 border-r-0 rounded-l-xl text-gray-500 hover:text-blue-600 transition-colors cursor-pointer"
+      title="Skrýt/Zobrazit panel"
+    >
+      <span id="collapse-icon" class="text-sm font-bold">▶</span>
+    </button>
+
+    <!-- Plovoucí UI pro přidání modulu přes Canvas -->
+    <div
+      id="canvas-add-menu"
+      class="absolute z-20 flex gap-2 pointer-events-auto"
+      style="display: none; transition: opacity 0.1s"
+    >
+      <button
+        id="btn-add-duo-canvas"
+        onclick="addModuleFromCanvas('DUO')"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full shadow-md text-[10px] flex items-center gap-1 transition hover:scale-110"
+      >
+        <span>+</span> DUO
+      </button>
+      <button
+        id="btn-add-trio-canvas"
+        onclick="addModuleFromCanvas('TRIO')"
+        class="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-1 px-2 rounded-full shadow-md text-[10px] flex items-center gap-1 transition hover:scale-110"
+      >
+        <span>+</span> TRIO
+      </button>
+    </div>
+
+    <!-- Informace o rozměrech -->
+    <div
+      id="info-dimensions"
+      class="absolute top-4 left-4 z-10 pointer-events-none"
+    >
+      <div
+        class="bg-white/80 backdrop-blur p-2.5 rounded-lg shadow-sm border border-gray-200 text-[10px] md:text-xs text-gray-600 max-w-[220px] md:max-w-[280px] leading-tight relative pr-6 pointer-events-auto"
+      >
+        <button
+          onclick="
+            document.getElementById('info-dimensions').style.display = 'none'
+          "
+          class="absolute top-1.5 right-1.5 text-gray-400 hover:text-gray-800 p-0.5 rounded-md hover:bg-gray-200 transition cursor-pointer"
+          title="Skrýt upozornění"
+        >
+          <svg
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <span class="font-bold text-blue-700 flex items-center gap-1 mb-1">
+          <svg
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          Vnější kóty sestavy
+        </span>
+        Uvedené rozměry jsou vnější rozměry modulů.
+      </div>
+    </div>
+
+    <!-- Ovládání kamery (Pravý roh Canvasu) -->
+    <div
+      class="absolute top-4 right-4 md:top-auto md:bottom-4 md:right-[456px] z-10 flex flex-col gap-2 pointer-events-auto"
+      id="camera-controls"
+    >
+      <button
+        onclick="toggleTopDown()"
+        id="btn-topdown"
+        class="bg-white/90 backdrop-blur w-10 h-10 rounded-full shadow-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition"
+        title="2D Půdorys (Pohled shora)"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4h16v16H4V4z M4 12h16 M12 4v16"
+          ></path>
+        </svg>
+      </button>
+      <button
+        onclick="resetCamera()"
+        class="bg-white/90 backdrop-blur w-10 h-10 rounded-full shadow-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition"
+        title="Výchozí pohled"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          ></path>
+        </svg>
+      </button>
+      <div
+        class="bg-white/90 backdrop-blur rounded-full shadow-sm flex flex-col overflow-hidden"
+      >
+        <button
+          onclick="zoomCamera(0.8)"
+          class="w-10 h-10 text-gray-600 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center border-b border-gray-100 transition"
+          title="Přiblížit"
+        >
+          <span class="text-xl font-bold leading-none">+</span>
+        </button>
+        <button
+          onclick="zoomCamera(1.2)"
+          class="w-10 h-10 text-gray-600 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition"
+          title="Oddálit"
+        >
+          <span class="text-2xl font-bold leading-none mb-1">-</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Logo -->
+    <a id="logo-link" href="/index.html" class="absolute z-20 pointer-events-auto" style="top:16px;right:456px;" aria-label="Polymont – domů">
+      <img src="/polymont_logo_nav_new.png" alt="Polymont" style="height:28px;width:auto;" />
+    </a>
+
+    <!-- 3D Plátno -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Panel -->
+    <div id="ui-panel">
+      <!-- Mobilní tahátko (klikací) -->
+      <div
+        class="md:hidden w-full h-10 flex items-center justify-center cursor-pointer shrink-0 bg-white"
+        onclick="togglePanel()"
+      >
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+      </div>
+
+      <div class="view-container" id="view-container">
+        <!-- ====== PAGE 1: HLAVNÍ PŘEHLED ====== -->
+        <div class="view-page" id="page-main">
+          <div
+            class="bg-gray-50 border-b px-4 py-3 flex items-center justify-between shrink-0"
+          >
+            <h3 class="font-bold text-gray-800">Přehled sestavy</h3>
+          </div>
+
+          <div class="panel-content">
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <button
+                onclick="addModule('DUO')"
+                class="bg-blue-50 border border-blue-200 hover:border-blue-400 rounded-full p-3 font-bold text-blue-900 transition flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span class="text-xl">+</span> DUO
+                <span class="font-normal text-xs">(3,0m)</span>
+              </button>
+              <button
+                onclick="addModule('TRIO')"
+                class="bg-fuchsia-50 border border-fuchsia-200 hover:border-fuchsia-400 rounded-full p-3 font-bold text-fuchsia-900 transition flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span class="text-xl">+</span> TRIO
+                <span class="font-normal text-xs">(4,5m)</span>
+              </button>
+            </div>
+
+            <h3
+              class="text-xs uppercase tracking-wider text-gray-500 font-bold mb-3 flex justify-between"
+            >
+              <span>Seznam modulů v prostoru</span>
+              <span
+                class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded"
+                id="lbl-module-count"
+                >0</span
+              >
+            </h3>
+
+            <div id="module-list">
+              <!-- JS Generuje položky -->
+            </div>
+
+            <!-- Mobilní Undo/Redo pod seznamem -->
+            <div class="flex gap-2 mt-4 md:hidden">
+              <button
+                id="btn-undo-mob"
+                onclick="undo()"
+                class="flex-1 bg-gray-100 px-4 py-2 rounded-lg shadow-sm font-bold text-gray-700 disabled:opacity-50"
+                disabled
+              >
+                ↩ Zpět
+              </button>
+              <button
+                id="btn-redo-mob"
+                onclick="redo()"
+                class="flex-1 bg-gray-100 px-4 py-2 rounded-lg shadow-sm font-bold text-gray-700 disabled:opacity-50"
+                disabled
+              >
+                Vpřed ↪
+              </button>
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center gap-1.5 group relative cursor-help">
+                <span class="text-gray-500 font-medium text-sm"
+                  >Cena bez DPH (orientační)</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+
+                <!-- Tooltip (Bublina) -->
+                <div
+                  class="absolute bottom-full left-0 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-50 leading-tight"
+                >
+                  Cena je uvedena s montáží a bez dopravy.
+                  <!-- Malý trojúhelník ukazující dolů -->
+                  <div
+                    class="absolute -bottom-1 left-5 w-2 h-2 bg-gray-800 transform rotate-45"
+                  ></div>
+                </div>
+              </div>
+              <span id="total-price" class="text-2xl font-bold text-gray-900"
+                >0 Kč</span
+              >
+            </div>
+            <button
+              id="main-cta-btn"
+              onclick="openModal()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-full transition shadow-lg shadow-blue-500/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+            >
+              Vyžádat individuální nabídku
+            </button>
+
+          </div>
+        </div>
+
+        <!-- ====== PAGE 2: DETAIL MODULU (ÚPRAVY) ====== -->
+        <div class="view-page bg-white" id="page-edit">
+          <div
+            class="bg-gray-50 border-b px-4 py-3 flex items-center justify-between shrink-0"
+          >
+            <button
+              onclick="closeEditView()"
+              class="text-blue-600 font-bold flex items-center gap-1 hover:bg-blue-50 px-3 py-2 rounded-lg transition"
+            >
+              <span>&larr;</span> Zpět
+            </button>
+            <h3 class="font-bold text-gray-800" id="edit-title">
+              Úprava modulu
+            </h3>
+            <div class="w-10"></div>
+          </div>
+
+          <div class="panel-content" id="edit-content">
+            <!-- JS generuje nastavení konkrétního modulu -->
+          </div>
+
+          <div class="p-4 border-t bg-gray-50 shrink-0">
+            <button
+              id="btn-delete-mod"
+              onclick="removeSelectedModule()"
+              class="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 font-bold py-3 rounded-lg transition"
+            >
+              Smazat tento modul
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="modal-overlay">
+      <div
+        class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden shadow-2xl"
+      >
+        <div class="bg-blue-900 px-6 py-4 flex justify-between items-center">
+          <h3 class="text-white font-bold" id="modal-title">Získat nabídku</h3>
+          <button
+            onclick="closeModal()"
+            class="text-white hover:text-gray-200 transition text-2xl leading-none"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="p-6">
+          <!-- Customer offer form -->
+          <div id="offer-form-section">
+            <p class="text-sm text-gray-600 mb-6">
+              Vyplňte prosím kontaktní údaje. Vygenerujeme PDF s aktuálním
+              prostorovým nákresem a rozpočtem a obratem se Vám ozveme.
+            </p>
+            <form onsubmit="submitOffer(event)">
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-gray-500 uppercase mb-1"
+                    >Jméno *</label
+                  >
+                  <input
+                    id="form-firstname" type="text" required
+                    class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-gray-500 uppercase mb-1"
+                    >Příjmení *</label
+                  >
+                  <input
+                    id="form-lastname" type="text" required
+                    class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <div class="mb-4">
+                <label
+                  class="block text-[10px] font-bold text-gray-500 uppercase mb-1"
+                  >E-mail *</label
+                >
+                <input
+                  id="form-email" type="email" required
+                  class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  class="block text-[10px] font-bold text-gray-500 uppercase mb-1"
+                  >Tel. číslo (volitelné)</label
+                >
+                <input
+                  id="form-phone" type="tel"
+                  class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div class="mb-6">
+                <label
+                  class="block text-[10px] font-bold text-gray-500 uppercase mb-1"
+                  >Poznámka k poptávce</label
+                >
+                <textarea
+                  id="form-note" rows="3"
+                  class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  placeholder="Zde můžete připsat specifické požadavky..."
+                ></textarea>
+              </div>
+              <span id="pricelist-version-badge" class="block text-right text-[10px] text-gray-400 font-mono mb-3"></span>
+              <div class="flex gap-3">
+                <button
+                  type="button"
+                  onclick="generatePDF()"
+                  class="w-1/2 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 rounded-full transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    ></path>
+                  </svg>
+                  Stáhnout PDF
+                </button>
+                <button
+                  type="submit"
+                  class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-full transition shadow-lg shadow-blue-500/30"
+                >
+                  Odeslat poptávku
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Admin: recap of changes since last saved version -->
+          <div id="admin-recap-section" class="hidden">
+            <div class="flex items-center justify-between mb-4 text-sm">
+              <span class="font-mono text-gray-500">v.<span id="recap-version-from"></span> &rarr; v.<span id="recap-version-to" class="font-bold text-gray-800"></span></span>
+              <span id="pricelist-version-badge-admin" class="text-[10px] text-gray-400 font-mono"></span>
+            </div>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Změny v této verzi</p>
+            <ul id="recap-changes-list" class="mb-6 text-sm text-gray-700 space-y-1.5 max-h-60 overflow-y-auto pr-1"></ul>
+            <div class="flex gap-3">
+              <button
+                type="button"
+                onclick="generatePDF()"
+                class="w-1/2 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 rounded-full transition shadow-sm flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Stáhnout PDF
+              </button>
+              <button id="btn-save-version" type="button" onclick="saveNewVersion()"
+                class="w-1/2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-full transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                Uložit novou verzi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIKA A 3D ENGINE -->
+    <script>
+      const uid = () => Math.random().toString(36).substr(2, 9);
+
+      // --- 1. Ceník a Stav ---
+      let prices = {
+        DUO: {
+          stena_plna_predni: 16200,
+          strop_nepochozi: 21000,
+          skelet_pochozi_90: 23330,
+          skelet_mezipatro_250: 60650,
+          podlaha_pvc: 9920,
+          podlaha_vinyl: 14000,
+          podhled: 13420,
+          podesta: 60650,
+          priplatek_sklo_celo: 19930,
+          osvetleni: 10590,
+          rozvadec: 13830,
+          klima: 30240,
+        },
+        TRIO: {
+          stena_plna_predni: 24300,
+          strop_nepochozi: 31500,
+          skelet_pochozi_90: 35000,
+          skelet_mezipatro_250: 90980,
+          podlaha_pvc: 14880,
+          podlaha_vinyl: 21000,
+          podhled: 20130,
+          podesta: 90980,
+          priplatek_sklo_celo: 29890,
+          osvetleni: 15880,
+          rozvadec: 20740,
+          klima: 33650,
+        },
+        spolecne: {
+          stena_plna_bocni: 19440,
+          priplatek_sklo_1: 5620,
+          priplatek_sklo_2: 11240,
+          priplatek_sklo_3: 15560,
+          priplatek_sklo_celo_bocni: 23920,
+          spojovaci_ram: 8430,
+          dvere: 15990,
+          ventilator: 3030,
+          schodiste: 42770,
+        },
+      };
+
+      // placement v datech modulu: '4' (volný), '3B' (chybí zadní), '3L' (chybí levá/boční), '3R' (chybí pravá), '2' (chybí obě)
+      let state = {
+        modules: [
+          {
+            id: uid(),
+            type: "DUO",
+            ix: 0,
+            iy: 0,
+            iz: 0,
+            windows: {
+              front: "solid",
+              back: "solid",
+              left: "solid",
+              right: "solid",
+            },
+            doors: 1,
+            partition: false,
+            placement: "4",
+            roof: "nepochozi",
+            floor: "osb",
+            light: true,
+            power: true,
+            fan: false,
+            ac: false,
+            stairs: false,
+            elevated: false,
+            ceiling: false,
+          },
+        ],
+        selectedId: null,
+      };
+
+      // Undo / Redo Historie
+      let appHistory = [];
+      let historyIndex = -1;
+      let isUndoRedoActive = false;
+
+      const formatter = new Intl.NumberFormat("cs-CZ", {
+        style: "currency",
+        currency: "CZK",
+        maximumFractionDigits: 0,
+      });
+
+      // Proměnné pro Drag and Drop a Hover
+      let currentOffsetX = 0;
+      let currentOffsetZ = 0;
+      let draggedModuleId = null;
+      let hoveredModuleId = null;
+      let isActuallyDragging = false;
+      let isDraggingCamera = false;
+      let pointerDownPos = { x: 0, y: 0 };
+      const dragFloor = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      let dragTarget = null;
+      let dragTargetGrid = null;
+      let currentHoveredWall = null;
+      let hoveredUIWallDir = null;
+
+      // --- 2. HISTORIE (Undo/Redo) ---
+      function saveState() {
+        if (isUndoRedoActive) return;
+        const stateStr = JSON.stringify(state);
+        if (appHistory.length > 0 && appHistory[historyIndex] === stateStr)
+          return;
+
+        appHistory = appHistory.slice(0, historyIndex + 1);
+        appHistory.push(stateStr);
+        historyIndex++;
+        updateUndoRedoUI();
+        if (isAdminMode) updateAdminChangeState();
+      }
+
+      function updateUndoRedoUI() {
+        const canUndo = historyIndex > 0;
+        const canRedo = historyIndex < appHistory.length - 1;
+
+        document.getElementById("btn-undo").disabled = !canUndo;
+        document.getElementById("btn-redo").disabled = !canRedo;
+        document.getElementById("btn-undo-mob").disabled = !canUndo;
+        document.getElementById("btn-redo-mob").disabled = !canRedo;
+      }
+
+      function undo() {
+        if (historyIndex > 0) {
+          isUndoRedoActive = true;
+          historyIndex--;
+          state = JSON.parse(appHistory[historyIndex]);
+          state.selectedId = null;
+          closeEditView();
+          recalculate();
+          updateUndoRedoUI();
+          isUndoRedoActive = false;
+        }
+      }
+
+      function redo() {
+        if (historyIndex < appHistory.length - 1) {
+          isUndoRedoActive = true;
+          historyIndex++;
+          state = JSON.parse(appHistory[historyIndex]);
+          state.selectedId = null;
+          closeEditView();
+          recalculate();
+          updateUndoRedoUI();
+          isUndoRedoActive = false;
+        }
+      }
+
+      // --- 2a. DYNAMICKÝ OFFSET KAMERY ---
+      function updateCameraOffset() {
+        if (!camera) return;
+        const container = document.getElementById("canvas-container");
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        const panel = document.getElementById("ui-panel");
+        const isCollapsed = panel && panel.classList.contains("collapsed");
+
+        if (isCollapsed) {
+          if (camera.clearViewOffset) camera.clearViewOffset();
+        } else {
+          if (window.innerWidth >= 768) {
+            camera.setViewOffset(w, h, w / 6, 0, w, h);
+          } else {
+            camera.setViewOffset(w, h, 0, h / 4, w, h);
+          }
+        }
+        camera.updateProjectionMatrix();
+      }
+
+      function togglePanel() {
+        const panel = document.getElementById("ui-panel");
+        const btn = document.getElementById("collapse-btn");
+        const icon = document.getElementById("collapse-icon");
+
+        panel.classList.toggle("collapsed");
+        if (btn) btn.classList.toggle("collapsed");
+        if (icon) {
+          icon.innerText = panel.classList.contains("collapsed") ? "◀" : "▶";
+        }
+        updateCameraOffset();
+      }
+
+      // --- 3. UI LOGIKA ---
+      function renderModuleList() {
+        document.getElementById("lbl-module-count").innerText =
+          `${state.modules.length} ks`;
+        const list = document.getElementById("module-list");
+
+        let html = "";
+
+        // discount UI hidden
+
+        html += state.modules
+          .map((m, index) => {
+            let partText = m.partition ? "S příčkami" : "Open-space";
+            let partColor = m.partition ? "text-gray-500" : "text-blue-500";
+            let stairsBadge = m.stairs
+              ? `<span class="text-[10px] bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded ml-1 font-bold" title="Obsahuje schodiště pro přístup do patra">🪜 Schodiště</span>`
+              : "";
+            let priceText = m.price ? formatter.format(m.price) : "...";
+
+            return `
+                <div class="module-item group ${m.id === state.selectedId ? "selected" : ""}" onclick="selectModule('${m.id}')">
+                    <div class="flex items-center justify-between w-full">
+                        <div>
+                            <div class="flex items-center mb-0.5 flex-wrap gap-y-1">
+                                <span class="font-bold text-gray-800">Modul ${index + 1}</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full ml-2 font-bold ${m.type === "DUO" ? "bg-blue-100 text-blue-800" : "bg-fuchsia-100 text-fuchsia-800"}">${m.type}</span>
+                                ${stairsBadge}
+                            </div>
+                            <div class="text-[10px] ${partColor} font-semibold uppercase mt-0.5">${partText}</div>
+                        </div>
+                        <div class="text-right shrink-0 ml-2">
+                            <div class="font-bold text-sm text-gray-800">${priceText}</div>
+                            <div class="text-blue-600 font-bold text-[10px] uppercase tracking-wider mt-1 group-hover:underline">Upravit &rarr;</div>
+                        </div>
+                    </div>
+                </div>
+                `;
+          })
+          .join("");
+
+        list.innerHTML = html;
+      }
+
+      function addModule(type) {
+        if (state.modules.length >= 100) {
+          alert("Pro on-line návrh je limit 100 modulů.");
+          return;
+        }
+
+        let last = state.modules[state.modules.length - 1];
+        let newIx = last ? last.ix + 1 : 0;
+        let newIy = last ? last.iy : 0;
+        let newIz = last ? last.iz : 0;
+
+        while (
+          state.modules.some(
+            (m) => m.ix === newIx && m.iy === newIy && m.iz === newIz,
+          )
+        ) {
+          newIx++;
+        }
+
+        let newMod = {
+          id: uid(),
+          type: type,
+          ix: newIx,
+          iy: newIy,
+          iz: newIz,
+          windows: {
+            front: "solid",
+            back: "solid",
+            left: "solid",
+            right: "solid",
+          },
+          doors: 0,
+          partition: false,
+          placement: "4",
+          roof: "nepochozi",
+          floor: "osb",
+          light: true,
+          power: true,
+          fan: false,
+          ac: false,
+          stairs: false,
+          elevated: newIy > 0,
+          ceiling: false,
+        };
+        state.modules.push(newMod);
+        recalculate();
+        selectModule(newMod.id);
+        saveState();
+      }
+
+      function addModuleFromCanvas(type) {
+        if (!currentHoveredWall) return;
+        if (state.modules.length >= 100) {
+          alert("Pro on-line návrh je limit 100 modulů.");
+          return;
+        }
+
+        let newMod = {
+          id: uid(),
+          type: type,
+          ix: currentHoveredWall.newIx,
+          iy: currentHoveredWall.newIy,
+          iz: currentHoveredWall.newIz,
+          windows: {
+            front: "solid",
+            back: "solid",
+            left: "solid",
+            right: "solid",
+          },
+          doors: 0,
+          partition: false,
+          placement: "4",
+          roof: "nepochozi",
+          floor: "osb",
+          light: true,
+          power: true,
+          fan: false,
+          ac: false,
+          stairs: false,
+          elevated: currentHoveredWall.newIy > 0,
+          ceiling: false,
+        };
+
+        state.modules.push(newMod);
+        currentHoveredWall = null;
+        document.getElementById("canvas-add-menu").style.display = "none";
+
+        recalculate();
+        selectModule(newMod.id);
+        saveState();
+      }
+
+      function removeSelectedModule() {
+        if (state.modules.length <= 1) {
+          alert("Sestava musí mít alespoň jeden modul.");
+          return;
+        }
+        if (confirm("Opravdu chcete smazat tento modul?")) {
+          state.modules = state.modules.filter(
+            (m) => m.id !== state.selectedId,
+          );
+          closeEditView();
+          recalculate();
+          saveState();
+        }
+      }
+
+      // --- 4. DETAIL MODULU (Edit View) ---
+      function selectModule(id) {
+        state.selectedId = id;
+        document.getElementById("view-container").style.transform =
+          "translateX(-50%)";
+        renderEditUI();
+        highlight3DModule(id);
+        renderModuleList();
+      }
+
+      function closeEditView() {
+        state.selectedId = null;
+        document.getElementById("view-container").style.transform =
+          "translateX(0)";
+        highlight3DModule(null);
+        renderModuleList();
+      }
+
+      function renderEditUI() {
+        let index = state.modules.findIndex((m) => m.id === state.selectedId);
+        if (index === -1) return;
+        let mod = state.modules[index];
+        let hasTopModule = state.modules.some(
+          (m) => m.ix === mod.ix && m.iy === mod.iy + 1 && m.iz === mod.iz,
+        );
+        let isStackedOnAnother = state.modules.some(
+          (m) => m.ix === mod.ix && m.iy === mod.iy - 1 && m.iz === mod.iz,
+        );
+        let blockElevation = hasTopModule || isStackedOnAnother;
+        let isElevated = mod.iy > 0;
+
+        ["front", "back", "left", "right"].forEach((w) => {
+          if (mod.windows[w] === 0) mod.windows[w] = "solid";
+          else if (mod.windows[w] === 1) mod.windows[w] = "double";
+          else if (mod.windows[w] === 2) mod.windows[w] = "triple";
+        });
+
+        let nFront = state.modules.find(
+          (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz + 1,
+        );
+        let nBack = state.modules.find(
+          (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz - 1,
+        );
+        let nRight = state.modules.find(
+          (m) => m.ix === mod.ix + 1 && m.iy === mod.iy && m.iz === mod.iz,
+        );
+        let nLeft = state.modules.find(
+          (m) => m.ix === mod.ix - 1 && m.iy === mod.iy && m.iz === mod.iz,
+        );
+
+        let isAgainstHallBack =
+          !nBack &&
+          (mod.placement === "3B" ||
+            mod.placement === "2" ||
+            mod.placement === "2R");
+        let isAgainstHallLeft =
+          !nLeft && (mod.placement === "3L" || mod.placement === "2");
+        let isAgainstHallRight =
+          !nRight && (mod.placement === "3R" || mod.placement === "2R");
+
+        let isExtFront = !nFront;
+        let isExtBack = !nBack && !isAgainstHallBack;
+        let isExtRight = !nRight && !isAgainstHallRight;
+        let isExtLeft = !nLeft && !isAgainstHallLeft;
+
+        let isInternalRight = !!nRight && (mod.partition || nRight.partition);
+        let isInternalFront = !!nFront && (mod.partition || nFront.partition);
+        let isInternalLeft = !!nLeft && (mod.partition || nLeft.partition);
+        let isInternalBack = !!nBack && (mod.partition || nBack.partition);
+
+        let hasUpperFloor = state.modules.some((m) => m.iy > 0);
+
+        let badgeClass =
+          mod.type === "DUO"
+            ? "bg-blue-100 text-blue-800"
+            : "bg-fuchsia-100 text-fuchsia-800";
+        document.getElementById("edit-title").innerHTML =
+          `Modul ${index + 1} <span class="text-xs px-2 py-0.5 rounded-full ml-2 font-bold ${badgeClass}">${mod.type}</span>`;
+
+        let html = `
+                <div class="bg-blue-50 text-blue-800 text-[10px] p-2 rounded-lg mb-4 shadow-sm border border-blue-100 flex items-center gap-2">
+                    <span class="text-lg">👆</span>
+                    <span>Pro přesun modulu jej chytněte a táhněte v 3D scéně.</span>
+                </div>
+
+                <!-- 1. ROZMĚR A PŘÍČKY -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Rozměr</label>
+                        <div class="flex bg-gray-200 rounded-lg p-1">
+                            <button onclick="changeModType('DUO')" class="flex-1 py-2 text-xs font-bold rounded transition ${mod.type === "DUO" ? "bg-white shadow text-blue-800" : "text-gray-500"}">DUO (3,0m)</button>
+                            <button onclick="changeModType('TRIO')" class="flex-1 py-2 text-xs font-bold rounded transition ${mod.type === "TRIO" ? "bg-white shadow text-fuchsia-800" : "text-gray-500"}">TRIO (4,5m)</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Vnitřní příčky</label>
+                        <div class="flex bg-gray-200 rounded-lg p-1">
+                            <button onclick="changeModPartition(false)" class="flex-1 py-2 text-xs font-bold rounded transition ${!mod.partition ? "bg-white shadow text-blue-800" : "text-gray-500"}">Open</button>
+                            <button onclick="changeModPartition(true)" class="flex-1 py-2 text-xs font-bold rounded transition ${mod.partition ? "bg-white shadow text-blue-800" : "text-gray-500"}">Plná zeď</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Výškové umístění (Podlaží)</label>
+                    <div class="flex bg-gray-200 rounded-lg p-1">
+                        <button onclick="changeModElevation(false)" class="flex-1 py-2 text-xs font-bold rounded transition ${!isElevated ? "bg-white shadow text-blue-800" : "text-gray-500"}" ${blockElevation ? "disabled" : ""}>Přízemí</button>
+                        <button onclick="changeModElevation(true)" class="flex-1 py-2 text-xs font-bold rounded transition ${isElevated ? "bg-white shadow text-blue-800" : "text-gray-500"}" ${blockElevation ? "disabled" : ""}>Na podestě (2.NP)</button>
+                    </div>
+                    ${blockElevation ? '<span class="text-[10px] text-gray-400 block mt-2 leading-tight">Nelze zvednout/spustit: Modul je provázán s jiným patrem.</span>' : ""}
+                    ${isElevated && !isStackedOnAnother ? '<span class="text-[10px] text-blue-600 font-bold block mt-2 leading-tight">Pod modulem vznikne volný průchozí / skladovací prostor.</span>' : ""}
+                </div>
+
+                <div class="mb-6 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2" title="Pokud modul přiléhá ke zdi existující haly, jeho stěna (včetně rámu) na dané straně zmizí a cena se sníží.">Umístění modulu vůči hale</label>
+                    
+                    <div class="flex bg-gray-100 rounded-lg p-1 ${mod.placement !== "4" ? "mb-3" : ""}">
+                        <button onclick="changeModPlacement('4')" class="flex-1 py-1.5 text-[10px] font-bold rounded transition ${mod.placement === "4" ? "bg-white shadow text-gray-800" : "text-gray-500 hover:text-gray-700"}">Střed haly</button>
+                        <button onclick="${mod.placement === "4" ? "changeModPlacement('3B')" : ""}" class="flex-1 py-1.5 text-[10px] font-bold rounded transition ${mod.placement !== "4" ? "bg-white shadow text-blue-800" : "text-gray-500 hover:text-gray-700"}">Stěnu tvoří stěna haly</button>
+                    </div>
+
+                    ${
+                      mod.placement !== "4"
+                        ? `
+                    <div class="pt-2 border-t border-gray-100" style="animation: fadeIn 0.2s ease;">
+                        <span class="block text-[9px] font-bold text-gray-400 uppercase mb-2">Vyberte přiléhající stěny k hale:</span>
+                        <div class="grid grid-cols-5 gap-1.5">
+                            <div class="swatch-btn ${mod.placement === "3B" ? "active" : ""} rounded-lg p-1.5 cursor-pointer text-center flex flex-col items-center justify-center" onclick="changeModPlacement('3B')" title="Zadní strana opřená o halu">
+                                <svg class="w-5 h-5 mb-1 ${mod.placement === "3B" ? "text-blue-600" : "text-gray-400"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14h14V5"/></svg>
+                                <span class="block text-[8px] font-bold leading-tight mt-0.5">Zadní</span>
+                            </div>
+                            <div class="swatch-btn ${mod.placement === "3L" ? "active" : ""} rounded-lg p-1.5 cursor-pointer text-center flex flex-col items-center justify-center" onclick="changeModPlacement('3L')" title="Levá strana opřená o halu">
+                                <svg class="w-5 h-5 mb-1 ${mod.placement === "3L" ? "text-blue-600" : "text-gray-400"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v14H5"/></svg>
+                                <span class="block text-[8px] font-bold leading-tight mt-0.5">Levá</span>
+                            </div>
+                            <div class="swatch-btn ${mod.placement === "3R" ? "active" : ""} rounded-lg p-1.5 cursor-pointer text-center flex flex-col items-center justify-center" onclick="changeModPlacement('3R')" title="Pravá strana opřená o halu">
+                                <svg class="w-5 h-5 mb-1 ${mod.placement === "3R" ? "text-blue-600" : "text-gray-400"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 19H5V5h14"/></svg>
+                                <span class="block text-[8px] font-bold leading-tight mt-0.5">Pravá</span>
+                            </div>
+                            <div class="swatch-btn ${mod.placement === "2" ? "active" : ""} rounded-lg p-1.5 cursor-pointer text-center flex flex-col items-center justify-center" onclick="changeModPlacement('2')" title="Do levého rohu haly (zmizí zadní a levá stěna)">
+                                <svg class="w-5 h-5 mb-1 ${mod.placement === "2" ? "text-blue-600" : "text-gray-400"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5v14H5"/></svg>
+                                <span class="block text-[8px] font-bold leading-tight mt-0.5">Roh (L)</span>
+                            </div>
+                            <div class="swatch-btn ${mod.placement === "2R" ? "active" : ""} rounded-lg p-1.5 cursor-pointer text-center flex flex-col items-center justify-center" onclick="changeModPlacement('2R')" title="Do pravého rohu haly (zmizí zadní a pravá stěna)">
+                                <svg class="w-5 h-5 mb-1 ${mod.placement === "2R" ? "text-blue-600" : "text-gray-400"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14h14"/></svg>
+                                <span class="block text-[8px] font-bold leading-tight mt-0.5">Roh (P)</span>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                        : ""
+                    }
+                </div>
+
+                <!-- 2. OKNA A DVEŘE (Kombinace na vnější stěny) -->
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-3 mt-6 border-b pb-2">Okna a dveře (Vnější stěny)</label>
+                <div class="space-y-3 mb-6">
+            `;
+
+        const renderWindowSelector = (key, label, isAvail, widthMeters) => {
+          if (!isAvail)
+            return `<div onmouseenter="setUIHoverWall('${key}')" onmouseleave="setUIHoverWall(null)" class="flex justify-between p-3 bg-gray-200 opacity-70 rounded-lg border border-gray-300 text-gray-600 transition hover:border-blue-300"><span class="text-sm font-semibold">❌ ${label} (Stěna je skrytá)</span></div>`;
+
+          let val = mod.windows[key] || "solid";
+
+          let isDoor = val.includes("door");
+          let isWin = ["single", "double", "triple", "full"].includes(val);
+          let isSolid = val === "solid";
+
+          const mkIcon = (inner) =>
+            `<div class="w-full h-7 bg-gray-100 border border-gray-300 rounded-sm flex items-end justify-center gap-[1px] p-[2px] pb-0 overflow-hidden">${inner}</div>`;
+          const mkWin = (w) =>
+            `<div class="${w} h-3 bg-blue-200 border border-blue-400 mb-2"></div>`;
+          const mkFull = (w) =>
+            `<div class="${w} h-6 bg-blue-200 border border-blue-400 opacity-80 mb-0.5"></div>`;
+          const mkDoor = (w) =>
+            `<div class="${w} h-5 flex flex-col border border-gray-500 rounded-t-sm overflow-hidden"><div class="h-3 bg-blue-200 border-b border-gray-500 opacity-80"></div><div class="h-2 bg-gray-400"></div></div>`;
+          const mkSol = (w) =>
+            `<div class="${w} h-6 bg-gray-200 border border-gray-300 mb-0.5"></div>`;
+
+          let iSingle = mkIcon(
+            mkSol("w-1/4") + mkWin("w-1/2") + mkSol("w-1/4"),
+          );
+          let iDouble = mkIcon(
+            mkSol("w-1/6") + mkWin("w-1/3") + mkWin("w-1/3") + mkSol("w-1/6"),
+          );
+          let iTriple = mkIcon(
+            mkSol("w-[10%]") +
+              mkWin("w-[26%]") +
+              mkWin("w-[26%]") +
+              mkWin("w-[26%]") +
+              mkSol("w-[10%]"),
+          );
+          let iFull = mkIcon(
+            mkFull("w-1/3") + mkFull("w-1/3") + mkFull("w-1/3"),
+          );
+
+          let iDoorL = mkIcon(mkDoor("w-1/3") + mkSol("w-2/3"));
+          let iDoorR = mkIcon(mkSol("w-2/3") + mkDoor("w-1/3"));
+          let iDoorLw1 = mkIcon(
+            mkSol("w-[10%]") +
+              mkDoor("w-[30%]") +
+              mkSol("w-[15%]") +
+              mkWin("w-[35%]") +
+              mkSol("w-[10%]"),
+          );
+          let iDoorRw1 = mkIcon(
+            mkSol("w-[10%]") +
+              mkWin("w-[35%]") +
+              mkSol("w-[15%]") +
+              mkDoor("w-[30%]") +
+              mkSol("w-[10%]"),
+          );
+          let iDoorLw2 = mkIcon(
+            mkSol("w-[8%]") +
+              mkDoor("w-[20%]") +
+              mkSol("w-[8%]") +
+              mkWin("w-[28%]") +
+              mkWin("w-[28%]") +
+              mkSol("w-[8%]"),
+          );
+          let iDoorRw2 = mkIcon(
+            mkSol("w-[8%]") +
+              mkWin("w-[28%]") +
+              mkWin("w-[28%]") +
+              mkSol("w-[8%]") +
+              mkDoor("w-[20%]") +
+              mkSol("w-[8%]"),
+          );
+
+          const btnClass = (type) =>
+            `border rounded py-1.5 px-1 flex flex-col items-center justify-between gap-1 transition ${val === type ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "hover:bg-gray-50 border-gray-200"}`;
+
+          let isWide = widthMeters > 2.5;
+
+          let wHtml = `
+                <div class="bg-white p-3 rounded-lg border shadow-sm transition-all duration-200 hover:ring-2 hover:ring-blue-400 hover:border-blue-400"
+                     onmouseenter="setUIHoverWall('${key}')" 
+                     onmouseleave="setUIHoverWall(null)">
+                    <span class="text-sm font-bold text-gray-800 mb-2 flex justify-between items-center">
+                        <span>${label}</span> 
+                        <span class="text-xs text-gray-400 font-normal">${widthMeters} m</span>
+                    </span>
+
+                    <div class="flex bg-gray-100 rounded-lg p-1 ${!isSolid ? "mb-3" : ""}">
+                        <button ${!isSolid ? `onclick="editModWindow('${key}', 'solid')"` : ""} class="flex-1 py-1.5 text-[10px] font-bold rounded transition ${isSolid ? "bg-white shadow text-gray-800" : "text-gray-500 hover:text-gray-700"}">Plná zeď</button>
+                        <button ${!isWin ? `onclick="editModWindow('${key}', 'double')"` : ""} class="flex-1 py-1.5 text-[10px] font-bold rounded transition ${isWin ? "bg-white shadow text-blue-800" : "text-gray-500 hover:text-blue-600"}">Okna / Sklo</button>
+                        <button ${!isDoor ? `onclick="editModWindow('${key}', 'door_l')"` : ""} class="flex-1 py-1.5 text-[10px] font-bold rounded transition ${isDoor ? "bg-white shadow text-gray-800" : "text-gray-500 hover:text-gray-700"}">Vstupy a Dveře</button>
+                    </div>
+                `;
+
+          if (isWin) {
+            wHtml += `
+                    <div class="grid ${isWide ? "grid-cols-4" : "grid-cols-3"} gap-1.5" style="animation: fadeIn 0.2s ease;">
+                        <button onclick="editModWindow('${key}', 'single')" class="${btnClass("single")}">${iSingle}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1">1x Okno</span></button>
+                        <button onclick="editModWindow('${key}', 'double')" class="${btnClass("double")}">${iDouble}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1">2x Okno</span></button>
+                        ${isWide ? `<button onclick="editModWindow('${key}', 'triple')" class="${btnClass("triple")}">${iTriple}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1">3x Okno</span></button>` : ""}
+                        <button onclick="editModWindow('${key}', 'full')" class="${btnClass("full")}">${iFull}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1">Celosklo</span></button>
+                    </div>`;
+          } else if (isDoor) {
+            wHtml += `
+                    <div class="grid grid-cols-2 gap-2" style="animation: fadeIn 0.2s ease;">
+                        <div class="grid ${isWide ? "grid-cols-3" : "grid-cols-2"} gap-1">
+                            <button onclick="editModWindow('${key}', 'door_l')" class="${btnClass("door_l")}">${iDoorL}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">Dveře (L)</span></button>
+                            <button onclick="editModWindow('${key}', 'door_l_w1')" class="${btnClass("door_l_w1")}">${iDoorLw1}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">+ 1 Okno</span></button>
+                            ${isWide ? `<button onclick="editModWindow('${key}', 'door_l_w2')" class="${btnClass("door_l_w2")}">${iDoorLw2}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">+ 2 Okna</span></button>` : ""}
+                        </div>
+                        <div class="grid ${isWide ? "grid-cols-3" : "grid-cols-2"} gap-1">
+                            <button onclick="editModWindow('${key}', 'door_r')" class="${btnClass("door_r")}">${iDoorR}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">Dveře (P)</span></button>
+                            <button onclick="editModWindow('${key}', 'door_r_w1')" class="${btnClass("door_r_w1")}">${iDoorRw1}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">+ 1 Okno</span></button>
+                            ${isWide ? `<button onclick="editModWindow('${key}', 'door_r_w2')" class="${btnClass("door_r_w2")}">${iDoorRw2}<span class="text-[8px] font-semibold text-gray-600 leading-none mt-1 text-center">+ 2 Okna</span></button>` : ""}
+                        </div>
+                    </div>`;
+          }
+
+          wHtml += `</div>`;
+          return wHtml;
+        };
+
+        let frontBackWidth = mod.type === "DUO" ? 3.0 : 4.5;
+
+        // Doplnění písmen do popisků (A, B, C, D) a seřazení do logického kruhu
+        let labelFront = isInternalFront
+          ? "Přední stěna (Vnitřní příčka) (A)"
+          : "Přední stěna (A)";
+        let labelRight = isInternalRight
+          ? "Pravá stěna (Vnitřní příčka) (B)"
+          : "Pravá boční stěna (B)";
+        let labelBack = isInternalBack
+          ? "Zadní stěna (Vnitřní příčka) (C)"
+          : "Zadní stěna (C)";
+        let labelLeft = isInternalLeft
+          ? "Levá stěna (Vnitřní příčka) (D)"
+          : "Levá boční stěna (D)";
+
+        html += renderWindowSelector(
+          "front",
+          labelFront,
+          isExtFront || isInternalFront,
+          frontBackWidth,
+        );
+        html += renderWindowSelector(
+          "right",
+          labelRight,
+          isExtRight || isInternalRight,
+          3.6,
+        );
+        html += renderWindowSelector(
+          "back",
+          labelBack,
+          isExtBack || isInternalBack,
+          frontBackWidth,
+        );
+        html += renderWindowSelector(
+          "left",
+          labelLeft,
+          isExtLeft || isInternalLeft,
+          3.6,
+        );
+
+        html += `
+                </div>
+                
+                <!-- 3. STŘECHA A PODLAHA -->
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-3 mt-6 border-b pb-2">Střecha a Podlaha</label>
+                <div class="mb-6 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Konstrukce stropu</label>
+                    <select onchange="changeModRoof(this.value)" class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500 mb-3" ${hasTopModule ? "disabled" : ""}>
+                        ${
+                          hasTopModule
+                            ? `<option value="mezipatro_250" selected>Nosné mezipatro pro 2.NP (250 kg/m²)</option>`
+                            : `<option value="nepochozi" ${mod.roof === "nepochozi" ? "selected" : ""}>Standardní (bez výztuže)</option>
+                             <option value="pochozi_90" ${mod.roof === "pochozi_90" ? "selected" : ""}>Pochozí strop pro údržbu (90 kg/m²)</option>
+                             <option value="mezipatro_250" ${mod.roof === "mezipatro_250" ? "selected" : ""}>Nosné mezipatro pro 2.NP (250 kg/m²)</option>`
+                        }
+                    </select>
+                    ${!hasTopModule && mod.roof === "nepochozi" ? `<div class="text-[10px] text-gray-500 mb-3 px-1 leading-tight italic">Součástí každého modulu je nepochozí stropní záklop.</div>` : ""}
+                    ${hasTopModule ? '<span class="text-[10px] text-red-500 font-bold block mb-3 -mt-2">Vynuceno: Modul nese další patro.</span>' : ""}
+
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition ${mod.ceiling ? "mb-1" : "mb-3"}">
+                        <span class="font-semibold text-xs text-gray-800">Zavěšený kazetový podhled</span>
+                        <input type="checkbox" ${mod.ceiling ? "checked" : ""} onchange="toggleModEquip('ceiling', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                    ${mod.ceiling ? '<div class="text-[10px] text-amber-600 font-bold mb-3 px-1 leading-tight flex items-start gap-1"><span>⚠️</span><span>vložením podhledu se snižuje výška místnosti</span></div>' : ""}
+
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 pt-3 border-t border-gray-100">Podlahová krytina</label>
+                    <select onchange="changeModFloor(this.value)" class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                        <option value="osb" ${mod.floor === "osb" ? "selected" : ""}>${mod.iy > 0 ? "Základní podlahová deska (bez příplatku)" : "Bez úprav"}</option>
+                        <option value="pvc" ${mod.floor === "pvc" ? "selected" : ""}>Standardní PVC 2,0 mm</option>
+                        <option value="vinyl" ${mod.floor === "vinyl" ? "selected" : ""}>Vinylové desky 5,5 mm</option>
+                    </select>
+                </div>
+                
+                <!-- 5. TECHNICKÉ VYBAVENÍ -->
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-3 mt-6 border-b pb-2">Technické vybavení</label>
+                <div class="space-y-3 mb-6">
+                    ${
+                      hasUpperFloor
+                        ? `
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition">
+                        <span class="font-semibold text-xs text-gray-800">Ocelové schodiště (přístup do patra)</span>
+                        <input type="checkbox" ${mod.stairs ? "checked" : ""} onchange="toggleModEquip('stairs', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                    `
+                        : ""
+                    }
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition">
+                        <div>
+                            <span class="font-semibold text-xs text-gray-800 block">LED Osvětlení</span>
+                            <span class="text-[9px] text-gray-500 block leading-tight mt-0.5">Standard: ${mod.type === "DUO" ? "4 ks" : "6 ks"}</span>
+                        </div>
+                        <input type="checkbox" ${mod.light ? "checked" : ""} onchange="toggleModEquip('light', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition">
+                        <div>
+                            <span class="font-semibold text-xs text-gray-800 block">Zásuvkový okruh vč. rozvaděče</span>
+                            <span class="text-[9px] text-gray-500 block leading-tight mt-0.5">Standard: ${mod.type === "DUO" ? "4 ks" : "6 ks"}</span>
+                        </div>
+                        <input type="checkbox" ${mod.power ? "checked" : ""} onchange="toggleModEquip('power', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition">
+                        <span class="font-semibold text-xs text-gray-800">Ventilátor (Odtah)</span>
+                        <input type="checkbox" ${mod.fan ? "checked" : ""} onchange="toggleModEquip('fan', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                    <label class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-200 shadow-sm transition">
+                        <div>
+                            <span class="font-semibold text-xs text-gray-800 block">Klimatizace (Split)</span>
+                            <span class="text-[9px] text-gray-500 block leading-tight mt-0.5">Výkon: ${mod.type === "DUO" ? "2,5 kW" : "3,5 kW"}</span>
+                        </div>
+                        <input type="checkbox" ${mod.ac ? "checked" : ""} onchange="toggleModEquip('ac', this.checked)" class="w-4 h-4 text-blue-600 rounded">
+                    </label>
+                </div>
+            `;
+        document.getElementById("edit-content").innerHTML = html;
+      }
+
+      function setUIHoverWall(dir) {
+        hoveredUIWallDir = dir;
+        highlight3DModule(state.selectedId);
+      }
+
+      function editModWindow(key, val) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) {
+          m.windows[key] = val;
+
+          if (key === "front") {
+            let n = state.modules.find(
+              (x) => x.ix === m.ix && x.iy === m.iy && x.iz === m.iz + 1,
+            );
+            if (n) n.windows.back = val;
+          } else if (key === "back") {
+            let n = state.modules.find(
+              (x) => x.ix === m.ix && x.iy === m.iy && x.iz === m.iz - 1,
+            );
+            if (n) n.windows.front = val;
+          } else if (key === "right") {
+            let n = state.modules.find(
+              (x) => x.ix === m.ix + 1 && x.iy === m.iy && x.iz === m.iz,
+            );
+            if (n) n.windows.left = val;
+          } else if (key === "left") {
+            let n = state.modules.find(
+              (x) => x.ix === m.ix - 1 && x.iy === m.iy && x.iz === m.iz,
+            );
+            if (n) n.windows.right = val;
+          }
+        }
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModElevation(elevate) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (!m) return;
+
+        let targetIy = elevate ? 1 : 0;
+        if (m.iy === targetIy) return;
+
+        let blockElevation = state.modules.some(
+          (x) =>
+            x.ix === m.ix &&
+            (x.iy === m.iy - 1 || x.iy === m.iy + 1) &&
+            x.iz === m.iz,
+        );
+        if (blockElevation) return;
+
+        let collision = state.modules.some(
+          (x) =>
+            x.id !== m.id &&
+            x.ix === m.ix &&
+            x.iy === targetIy &&
+            x.iz === m.iz,
+        );
+        if (collision) {
+          alert(
+            elevate
+              ? "Pozice ve 2. podlaží je již obsazena."
+              : "Přízemí je již obsazeno jiným modulem.",
+          );
+          return;
+        }
+
+        m.iy = targetIy;
+        m.elevated = elevate;
+
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModPlacement(val) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) m.placement = val;
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModType(type) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) m.type = type;
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModPartition(isWall) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) m.partition = isWall;
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModRoof(val) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) m.roof = val;
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function changeModFloor(val) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) m.floor = val;
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function toggleModEquip(prop, isChecked) {
+        let m = state.modules.find((x) => x.id === state.selectedId);
+        if (m) {
+          if (prop === "stairs" && isChecked) {
+            state.modules.forEach((mod) => {
+              if (mod.id !== m.id) mod.stairs = false;
+            });
+          }
+          m[prop] = isChecked;
+        }
+        recalculate();
+        renderEditUI();
+        saveState();
+      }
+
+      function recalculate() {
+        state.modules.forEach((m) => {
+          let nFront = state.modules.find(
+            (x) => x.ix === m.ix && x.iy === m.iy && x.iz === m.iz + 1,
+          );
+          if (nFront && m.windows.front !== nFront.windows.back) {
+            if (m.windows.front !== "solid")
+              nFront.windows.back = m.windows.front;
+            else m.windows.front = nFront.windows.back;
+          }
+          let nRight = state.modules.find(
+            (x) => x.ix === m.ix + 1 && x.iy === m.iy && x.iz === m.iz,
+          );
+          if (nRight && m.windows.right !== nRight.windows.left) {
+            if (m.windows.right !== "solid")
+              nRight.windows.left = m.windows.right;
+            else m.windows.right = nRight.windows.left;
+          }
+        });
+
+        state.modules.forEach((mod) => {
+          let nTop = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy + 1 && m.iz === mod.iz,
+          );
+          if (nTop) {
+            mod.roof = "mezipatro_250";
+          }
+        });
+
+        let hasUpperFloor = state.modules.some((m) => m.iy > 0);
+        if (hasUpperFloor) {
+          let hasStairs = state.modules.some((m) => m.stairs);
+          if (!hasStairs) {
+            let firstGround = state.modules.find((m) => m.iy === 0);
+            if (firstGround) firstGround.stairs = true;
+            else if (state.modules.length > 0) state.modules[0].stairs = true;
+          }
+        } else {
+          state.modules.forEach((m) => (m.stairs = false));
+        }
+
+        let foundStairs = false;
+        state.modules.forEach((m) => {
+          if (m.stairs) {
+            if (foundStairs) m.stairs = false;
+            else foundStairs = true;
+          }
+        });
+
+        calcPrice();
+        renderModuleList();
+        buildScene();
+      }
+
+      function calcPrice() {
+        let total = 0;
+        let sp = prices.spolecne;
+        let prevTotal = 0;
+
+        const getWinCost = (val, basePrice, celoskloSurcharge) => {
+          let cost = basePrice;
+          let doorCost = val.includes("door") ? sp.dvere : 0;
+
+          if (val === "single") cost += sp.priplatek_sklo_1;
+          else if (val === "double") cost += sp.priplatek_sklo_2;
+          else if (val === "triple") cost += sp.priplatek_sklo_3;
+          else if (val === "full") cost += celoskloSurcharge;
+          else if (val.includes("_w1")) cost += sp.priplatek_sklo_1 + doorCost;
+          else if (val.includes("_w2")) cost += sp.priplatek_sklo_2 + doorCost;
+          else cost += doorCost;
+
+          return cost;
+        };
+
+        state.modules.forEach((mod, index) => {
+          prevTotal = total;
+          let pr = prices[mod.type];
+
+          let nFront = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz + 1,
+          );
+          let nBack = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz - 1,
+          );
+          let nRight = state.modules.find(
+            (m) => m.ix === mod.ix + 1 && m.iy === mod.iy && m.iz === mod.iz,
+          );
+          let nLeft = state.modules.find(
+            (m) => m.ix === mod.ix - 1 && m.iy === mod.iy && m.iz === mod.iz,
+          );
+          let nBottom = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy - 1 && m.iz === mod.iz,
+          );
+
+          let isAgainstHallBack =
+            !nBack &&
+            (mod.placement === "3B" ||
+              mod.placement === "2" ||
+              mod.placement === "2R");
+          let isAgainstHallLeft =
+            !nLeft && (mod.placement === "3L" || mod.placement === "2");
+          let isAgainstHallRight =
+            !nRight && (mod.placement === "3R" || mod.placement === "2R");
+
+          let isExtFront = !nFront;
+          let isExtBack = !nBack && !isAgainstHallBack;
+          let isExtRight = !nRight && !isAgainstHallRight;
+          let isExtLeft = !nLeft && !isAgainstHallLeft;
+
+          if (mod.roof === "nepochozi") {
+            total += pr.strop_nepochozi;
+          } else if (mod.roof === "pochozi_90") {
+            total += pr.strop_nepochozi + pr.skelet_pochozi_90;
+          } else if (mod.roof === "mezipatro_250") {
+            total += pr.skelet_mezipatro_250;
+          }
+
+          if (mod.ceiling) total += pr.podhled;
+
+          if (mod.iy > 0 && nBottom === undefined) total += pr.podesta;
+
+          if (mod.floor === "pvc") total += pr.podlaha_pvc;
+          if (mod.floor === "vinyl") total += pr.podlaha_vinyl;
+
+          if (isExtFront)
+            total += getWinCost(
+              mod.windows.front,
+              pr.stena_plna_predni,
+              pr.priplatek_sklo_celo,
+            );
+          if (isExtBack)
+            total += getWinCost(
+              mod.windows.back,
+              pr.stena_plna_predni,
+              pr.priplatek_sklo_celo,
+            );
+          if (isExtRight)
+            total += getWinCost(
+              mod.windows.right,
+              sp.stena_plna_bocni,
+              sp.priplatek_sklo_celo_bocni,
+            );
+          if (isExtLeft)
+            total += getWinCost(
+              mod.windows.left,
+              sp.stena_plna_bocni,
+              sp.priplatek_sklo_celo_bocni,
+            );
+
+          if (nRight) {
+            if (mod.partition || nRight.partition) {
+              total += getWinCost(
+                mod.windows.right,
+                sp.stena_plna_bocni,
+                sp.priplatek_sklo_celo_bocni,
+              );
+            } else {
+              total += sp.spojovaci_ram;
+            }
+          }
+          if (nFront) {
+            if (mod.partition || nFront.partition) {
+              total += getWinCost(
+                mod.windows.front,
+                pr.stena_plna_predni,
+                pr.priplatek_sklo_celo,
+              );
+            } else {
+              total += sp.spojovaci_ram;
+            }
+          }
+
+          if (mod.light) total += pr.osvetleni;
+          if (mod.power) total += pr.rozvadec;
+          if (mod.fan) total += sp.ventilator;
+          if (mod.ac) total += pr.klima;
+          if (mod.stairs) total += sp.schodiste;
+
+          mod.price = total - prevTotal;
+        });
+
+        let moduleCount = state.modules.length;
+        let discountPercent = 0;
+        if (moduleCount >= 2) {
+          discountPercent = Math.min(10, moduleCount);
+        }
+        let discountAmount = total * (discountPercent / 100);
+        let finalTotal = total - discountAmount;
+
+        state.discountPercent = discountPercent;
+        state.discountAmount = discountAmount;
+
+        const totalPriceEl = document.getElementById("total-price");
+        if (totalPriceEl) {
+          totalPriceEl.innerText = formatter.format(finalTotal);
+        }
+      }
+
+      // --- 6. THREE.JS (Grid, Snapping, Hover a Pravidla) ---
+      let scene, camera, renderer, controls, raycaster, mouse;
+      let mainGroup;
+      let dimensionsGroup;
+      const materials = {};
+      let wallRefs = [];
+      let ghostMesh;
+
+      function createGridTexture() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#f8fafc";
+        ctx.fillRect(0, 0, 256, 256);
+
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 6;
+        ctx.strokeRect(0, 0, 256, 256);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.anisotropy = 4;
+        return tex;
+      }
+
+      function init3D() {
+        const container = document.getElementById("canvas-container");
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(
+          40,
+          container.clientWidth / container.clientHeight,
+          0.1,
+          200,
+        );
+        camera.position.set(0, 10, 20);
+
+        updateCameraOffset();
+
+        renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: true,
+          preserveDrawingBuffer: true,
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1;
+        controls.minDistance = 5;
+        controls.maxDistance = 50;
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        const gridHelper = new THREE.GridHelper(50, 50, 0x888888, 0xcccccc);
+        gridHelper.position.y = -0.05;
+        scene.add(gridHelper);
+
+        // Materiály - ošetření transparentnosti v hloubkovém (depth) bufferu
+        materials.solid = new THREE.MeshStandardMaterial({
+          color: 0xeaebe8,
+          roughness: 0.8,
+        });
+        materials.frame = new THREE.MeshStandardMaterial({
+          color: 0x3b3d40,
+          roughness: 0.5,
+          polygonOffset: true,
+          polygonOffsetFactor: -2,
+          polygonOffsetUnits: -2,
+        });
+        materials.glass = new THREE.MeshStandardMaterial({
+          color: 0x88ccff,
+          transparent: true,
+          opacity: 0.3,
+          roughness: 0.1,
+          depthWrite: false,
+        });
+        materials.floor = new THREE.MeshStandardMaterial({
+          color: 0xcccccc,
+          roughness: 0.9,
+        });
+        materials.hallWall = new THREE.MeshStandardMaterial({
+          color: 0x4b5563,
+          roughness: 1.0,
+        });
+
+        const gridTex = createGridTexture();
+        materials.intCeiling = new THREE.MeshStandardMaterial({
+          map: gridTex,
+          roughness: 0.9,
+          color: 0xffffff,
+        });
+
+        materials.floorOSB = new THREE.MeshStandardMaterial({
+          color: 0x808080,
+          roughness: 0.9,
+        });
+        materials.floorPVC = new THREE.MeshStandardMaterial({
+          color: 0xdeb887,
+          roughness: 0.6,
+        });
+        materials.floorVinyl = new THREE.MeshStandardMaterial({
+          color: 0x6b4226,
+          roughness: 0.4,
+        });
+
+        materials.selectedSolid = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.5,
+          emissive: 0x2563eb,
+          emissiveIntensity: 0.2,
+        });
+        materials.selectedFrame = new THREE.MeshStandardMaterial({
+          color: 0x3b3d40,
+          roughness: 0.5,
+          emissive: 0x2563eb,
+          emissiveIntensity: 0.4,
+          polygonOffset: true,
+          polygonOffsetFactor: -2,
+          polygonOffsetUnits: -2,
+        });
+        materials.selectedGlass = new THREE.MeshStandardMaterial({
+          color: 0x88ccff,
+          transparent: true,
+          opacity: 0.5,
+          emissive: 0x2563eb,
+          emissiveIntensity: 0.3,
+          depthWrite: false,
+        });
+
+        materials.hoveredSolid = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.5,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.1,
+        });
+        materials.hoveredFrame = new THREE.MeshStandardMaterial({
+          color: 0x3b3d40,
+          roughness: 0.5,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.2,
+          polygonOffset: true,
+          polygonOffsetFactor: -2,
+          polygonOffsetUnits: -2,
+        });
+        materials.hoveredGlass = new THREE.MeshStandardMaterial({
+          color: 0x88ccff,
+          transparent: true,
+          opacity: 0.4,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.2,
+          depthWrite: false,
+        });
+
+        materials.uiTargetSolid = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.5,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.5,
+        });
+        materials.uiTargetFrame = new THREE.MeshStandardMaterial({
+          color: 0x3b3d40,
+          roughness: 0.5,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.6,
+          polygonOffset: true,
+          polygonOffsetFactor: -2,
+          polygonOffsetUnits: -2,
+        });
+        materials.uiTargetGlass = new THREE.MeshStandardMaterial({
+          color: 0x88ccff,
+          transparent: true,
+          opacity: 0.6,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.5,
+          depthWrite: false,
+        });
+
+        // Faded materiály neblokují vykreslování aktivních prvků (depthWrite: false)
+        materials.fadedSolid = new THREE.MeshStandardMaterial({
+          color: 0xeaebe8,
+          roughness: 0.8,
+          transparent: true,
+          opacity: 0.3,
+          depthWrite: false,
+        });
+        materials.fadedFrame = new THREE.MeshStandardMaterial({
+          color: 0x3b3d40,
+          roughness: 0.5,
+          transparent: true,
+          opacity: 0.3,
+          depthWrite: false,
+        });
+        materials.fadedGlass = new THREE.MeshStandardMaterial({
+          color: 0x88ccff,
+          transparent: true,
+          opacity: 0.1,
+          depthWrite: false,
+        });
+
+        materials.ghost = new THREE.MeshBasicMaterial({
+          color: 0x3b82f6,
+          transparent: true,
+          opacity: 0.3,
+          wireframe: true,
+        });
+
+        // Neviditelný collider materiál pro raycasting stropu při Dollhouse pohledu
+        materials.invisibleCollider = new THREE.MeshBasicMaterial({
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+        });
+
+        ghostMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(3.0, 2.6, 3.6),
+          materials.ghost,
+        );
+        ghostMesh.name = "ghost";
+        ghostMesh.visible = false;
+        scene.add(ghostMesh);
+
+        mainGroup = new THREE.Group();
+        scene.add(mainGroup);
+
+        dimensionsGroup = new THREE.Group();
+        scene.add(dimensionsGroup);
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+
+        container.addEventListener("pointermove", onPointerMove);
+        container.addEventListener("pointerdown", onPointerDown);
+        container.addEventListener("pointerup", onPointerUp);
+        window.addEventListener("resize", onWindowResize);
+
+        saveState();
+        recalculate();
+        animate3D();
+      }
+
+      function onWindowResize() {
+        const container = document.getElementById("canvas-container");
+        camera.aspect = container.clientWidth / container.clientHeight;
+        updateCameraOffset();
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+
+      function getGridPhysicalPositions() {
+        let sortedX = [...new Set(state.modules.map((m) => m.ix))].sort(
+          (a, b) => a - b,
+        );
+        let pos = {};
+        let currentX = 0;
+
+        for (let i = 0; i < sortedX.length; i++) {
+          let ix = sortedX[i];
+          let type = state.modules.find((m) => m.ix === ix).type;
+          let w = type === "DUO" ? 3.0 : 4.5;
+          pos[ix] = currentX + w / 2;
+          currentX += w;
+        }
+        return { pos, totalWidth: currentX };
+      }
+
+      function getScreenPos(mod, dir) {
+        let grid = getGridPhysicalPositions();
+        let w = mod.type === "DUO" ? 3.0 : 4.5;
+        let d = 3.6;
+
+        let cx = grid.pos[mod.ix] - currentOffsetX;
+        let cy = mod.iy * 2.6 + 1.3;
+        let cz = mod.iz * d - currentOffsetZ;
+
+        let offset = new THREE.Vector3(0, 0, 0);
+        if (dir === "left") offset.set(-w / 2, 0, 0);
+        if (dir === "right") offset.set(w / 2, 0, 0);
+        if (dir === "front") offset.set(0, 0, d / 2);
+        if (dir === "back") offset.set(0, 0, -d / 2);
+        if (dir === "roof") offset.set(0, 1.3, 0); // Pozice pro menu přímo nad střechou
+
+        let pos3D = new THREE.Vector3(cx, cy, cz).add(offset);
+        pos3D.project(camera);
+
+        const container = document.getElementById("canvas-container");
+        let x = (pos3D.x * 0.5 + 0.5) * container.clientWidth;
+        let y = (pos3D.y * -0.5 + 0.5) * container.clientHeight;
+
+        return { x, y };
+      }
+
+      function onPointerMove(event) {
+        const container = document.getElementById("canvas-container");
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y =
+          -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+        if (isDraggingCamera) return;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        if (isActuallyDragging && draggedModuleId) {
+          let m = state.modules.find((x) => x.id === draggedModuleId);
+          let w = m.type === "DUO" ? 3.0 : 4.5;
+          let d = 3.6;
+
+          let intersects = raycaster.intersectObjects(mainGroup.children, true);
+          let targetMod = null;
+
+          for (let i = 0; i < intersects.length; i++) {
+            let obj = intersects[i].object;
+            if (obj.name === "hallWall" || obj.name === "ghost") continue;
+
+            let group = obj.parent;
+            while (group && !group.userData.moduleId) group = group.parent;
+
+            if (group && group.userData.moduleId !== draggedModuleId) {
+              targetMod = state.modules.find(
+                (x) => x.id === group.userData.moduleId,
+              );
+              break;
+            }
+          }
+
+          let targetIx, targetIy, targetIz, targetX;
+          let grid = getGridPhysicalPositions();
+
+          if (targetMod) {
+            targetIx = targetMod.ix;
+            targetIz = targetMod.iz;
+            targetIy = targetMod.iy + 1;
+            targetX =
+              grid.pos[targetIx] !== undefined
+                ? grid.pos[targetIx] - currentOffsetX
+                : 0;
+          } else {
+            raycaster.ray.intersectPlane(dragFloor, dragTarget);
+            if (dragTarget) {
+              targetIz = Math.round((dragTarget.z + currentOffsetZ) / d);
+              targetIy = 0;
+
+              let bestIx = m.ix;
+              let minD = Infinity;
+              let offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4];
+
+              offsets.forEach((off) => {
+                let testIx = m.ix + off;
+                let px =
+                  grid.pos[testIx] !== undefined
+                    ? grid.pos[testIx] - currentOffsetX
+                    : dragTarget.x;
+                let dist = Math.abs(px - dragTarget.x);
+                if (dist < minD) {
+                  minD = dist;
+                  bestIx = testIx;
+                }
+              });
+
+              targetIx = bestIx;
+              targetX =
+                grid.pos[bestIx] !== undefined
+                  ? grid.pos[bestIx] - currentOffsetX
+                  : dragTarget.x;
+            } else {
+              targetIx = m.ix;
+              targetIy = m.iy;
+              targetIz = m.iz;
+              targetX =
+                grid.pos[targetIx] !== undefined
+                  ? grid.pos[targetIx] - currentOffsetX
+                  : 0;
+            }
+          }
+
+          while (
+            state.modules.some(
+              (x) =>
+                x.id !== m.id &&
+                x.ix === targetIx &&
+                x.iy === targetIy &&
+                x.iz === targetIz,
+            )
+          ) {
+            targetIy += 1;
+          }
+
+          if (targetIy > 1) {
+            targetIy = 1;
+            while (
+              state.modules.some(
+                (x) =>
+                  x.id !== m.id &&
+                  x.ix === targetIx &&
+                  x.iy === targetIy &&
+                  x.iz === targetIz,
+              )
+            ) {
+              targetIz += 1;
+            }
+          }
+
+          ghostMesh.geometry.dispose();
+          ghostMesh.geometry = new THREE.BoxGeometry(w, 2.6, d);
+          ghostMesh.position.set(
+            targetX,
+            targetIy * 2.6 + 1.3,
+            targetIz * d - currentOffsetZ,
+          );
+          ghostMesh.visible = true;
+
+          dragTargetGrid = {
+            ix: targetIx,
+            iy: targetIy,
+            iz: targetIz,
+            elevated: targetIy > 0,
+          };
+          return;
+        }
+
+        const intersects = raycaster.intersectObjects(mainGroup.children, true);
+        let foundModId = null;
+        let foundWall = null;
+
+        for (let i = 0; i < intersects.length; i++) {
+          let obj = intersects[i].object;
+          if (obj.name === "hallWall" || obj.name === "ghost") continue;
+
+          let group = obj.parent;
+          while (group && !group.userData.moduleId) group = group.parent;
+          if (group) {
+            foundModId = group.userData.moduleId;
+
+            let faceGroup = obj;
+            while (faceGroup && !faceGroup.userData.faceDir)
+              faceGroup = faceGroup.parent;
+            if (
+              faceGroup &&
+              ["front", "back", "left", "right", "roof"].includes(
+                faceGroup.userData.faceDir,
+              )
+            ) {
+              foundWall = {
+                mod: state.modules.find((m) => m.id === foundModId),
+                dir: faceGroup.userData.faceDir,
+              };
+            }
+            break;
+          }
+        }
+
+        if (foundModId !== hoveredModuleId) {
+          hoveredModuleId = foundModId;
+          highlight3DModule(state.selectedId);
+        }
+
+        if (foundWall) {
+          let m = foundWall.mod;
+          let nx = m.ix,
+            nz = m.iz,
+            ny = m.iy;
+          if (foundWall.dir === "front") nz += 1;
+          if (foundWall.dir === "back") nz -= 1;
+          if (foundWall.dir === "left") nx -= 1;
+          if (foundWall.dir === "right") nx += 1;
+          if (foundWall.dir === "roof") ny += 1;
+
+          let empty = !state.modules.some(
+            (x) => x.ix === nx && x.iy === ny && x.iz === nz,
+          );
+          if (empty && ny <= 1) {
+            currentHoveredWall = {
+              mod: m,
+              dir: foundWall.dir,
+              newIx: nx,
+              newIy: ny,
+              newIz: nz,
+            };
+          } else {
+            currentHoveredWall = null;
+          }
+        } else {
+          currentHoveredWall = null;
+        }
+
+        let menu = document.getElementById("canvas-add-menu");
+        let btnDuo = document.getElementById("btn-add-duo-canvas");
+        let btnTrio = document.getElementById("btn-add-trio-canvas");
+
+        if (currentHoveredWall) {
+          let dir = currentHoveredWall.dir;
+          let type = currentHoveredWall.mod.type;
+
+          if (dir === "front" || dir === "back") {
+            if (type === "DUO") {
+              btnDuo.style.display = "flex";
+              btnTrio.style.display = "none";
+            } else {
+              btnDuo.style.display = "none";
+              btnTrio.style.display = "flex";
+            }
+          } else if (dir === "roof") {
+            if (type === "DUO") {
+              btnDuo.style.display = "flex";
+              btnTrio.style.display = "none";
+            } else {
+              btnDuo.style.display = "none";
+              btnTrio.style.display = "flex";
+            }
+          } else {
+            btnDuo.style.display = "flex";
+            btnTrio.style.display = "flex";
+          }
+
+          menu.style.display = "flex";
+          menu.style.opacity = "1";
+        } else {
+          menu.style.opacity = "0";
+          setTimeout(() => {
+            if (menu.style.opacity === "0") menu.style.display = "none";
+          }, 100);
+        }
+      }
+
+      function onPointerDown(event) {
+        pointerDownPos = { x: event.clientX, y: event.clientY };
+        isDraggingCamera = false;
+
+        if (hoveredModuleId && state.selectedId === hoveredModuleId) {
+          draggedModuleId = hoveredModuleId;
+          controls.enabled = false;
+          dragTarget = new THREE.Vector3();
+          dragTargetGrid = null;
+        }
+      }
+
+      function onPointerUp(event) {
+        let dx = Math.abs(event.clientX - pointerDownPos.x);
+        let dy = Math.abs(event.clientY - pointerDownPos.y);
+
+        if (isActuallyDragging) {
+          if (draggedModuleId && dragTargetGrid) {
+            let m = state.modules.find((x) => x.id === draggedModuleId);
+            if (m) {
+              m.ix = dragTargetGrid.ix;
+              m.iy = dragTargetGrid.iy;
+              m.iz = dragTargetGrid.iz;
+              m.elevated = dragTargetGrid.elevated;
+              recalculate();
+            }
+          }
+          saveState();
+        } else if (dx < 5 && dy < 5) {
+          if (hoveredModuleId) {
+            selectModule(hoveredModuleId);
+          } else if (event.target.tagName === "CANVAS") {
+            closeEditView();
+          }
+        }
+
+        isActuallyDragging = false;
+        draggedModuleId = null;
+        dragTargetGrid = null;
+        controls.enabled = true;
+        ghostMesh.visible = false;
+        isDraggingCamera = false;
+      }
+
+      let origPointerMove = onPointerMove;
+      onPointerMove = function (event) {
+        if (draggedModuleId) {
+          let dx = Math.abs(event.clientX - pointerDownPos.x);
+          let dy = Math.abs(event.clientY - pointerDownPos.y);
+          if (dx > 5 || dy > 5) {
+            isActuallyDragging = true;
+          }
+        } else {
+          if (event.buttons > 0) isDraggingCamera = true;
+        }
+        origPointerMove(event);
+      };
+
+      function createNumberSprite(number) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext("2d");
+
+        ctx.beginPath();
+        ctx.arc(32, 32, 24, 0, 2 * Math.PI);
+        ctx.fillStyle = "#1a1a18";
+        ctx.fill();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+
+        ctx.font = 'bold 24px "DM Sans", system-ui, sans-serif';
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(number, 32, 34);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+
+        const mat = new THREE.SpriteMaterial({
+          map: tex,
+          transparent: true,
+          depthTest: false,
+          opacity: 0.95,
+        });
+        const sprite = new THREE.Sprite(mat);
+        sprite.renderOrder = 999;
+        sprite.scale.set(0.5, 0.5, 1);
+
+        return sprite;
+      }
+
+      function createWallLabelSprite(text) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext("2d");
+
+        ctx.beginPath();
+        ctx.arc(32, 32, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#1a1a18";
+        ctx.stroke();
+
+        ctx.font = 'bold 22px "DM Sans", system-ui, sans-serif';
+        ctx.fillStyle = "#1a1a18";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 32, 34);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+
+        const mat = new THREE.SpriteMaterial({
+          map: tex,
+          transparent: true,
+          depthTest: true,
+          depthWrite: false,
+        });
+        const sprite = new THREE.Sprite(mat);
+        sprite.renderOrder = 998;
+        sprite.scale.set(0.4, 0.4, 1);
+
+        return sprite;
+      }
+
+      function buildScene() {
+        while (mainGroup.children.length > 0) {
+          mainGroup.remove(mainGroup.children[0]);
+        }
+        wallRefs = [];
+
+        if (state.modules.length === 0) return;
+
+        let grid = getGridPhysicalPositions();
+
+        let anchorIx = state.modules.some((m) => m.ix === 0)
+          ? 0
+          : Math.min(...state.modules.map((m) => m.ix));
+        let anchorModX = state.modules.find((m) => m.ix === anchorIx);
+        let anchorW = anchorModX
+          ? anchorModX.type === "DUO"
+            ? 3.0
+            : 4.5
+          : 3.0;
+        currentOffsetX =
+          (grid.pos[anchorIx] !== undefined ? grid.pos[anchorIx] : 0) -
+          anchorW / 2;
+
+        let anchorIz = state.modules.some((m) => m.iz === 0)
+          ? 0
+          : Math.min(...state.modules.map((m) => m.iz));
+        currentOffsetZ = anchorIz * 3.6 - 3.6 / 2;
+
+        const h = 2.5;
+        const d = 3.6;
+
+        state.modules.forEach((mod, index) => {
+          let w = mod.type === "DUO" ? 3.0 : 4.5;
+
+          let group = new THREE.Group();
+          let pX = grid.pos[mod.ix] - currentOffsetX;
+          let pY = mod.iy * 2.6;
+          let pZ = mod.iz * d - currentOffsetZ;
+
+          group.position.set(pX, pY, pZ);
+          group.userData.moduleId = mod.id;
+
+          let refs = buildWallGroup(w, h, d);
+          group.add(refs.group);
+
+          const numSprite = createNumberSprite(index + 1);
+          numSprite.position.set(0, h / 2, 0);
+          group.add(numSprite);
+
+          refs.id = mod.id;
+          wallRefs.push(refs);
+          mainGroup.add(group);
+        });
+
+        applyVisibilityAndWindows();
+        highlight3DModule(state.selectedId);
+        updateDimensions();
+      }
+
+      function updateDimensions() {
+        while (dimensionsGroup.children.length > 0) {
+          let child = dimensionsGroup.children[0];
+          dimensionsGroup.remove(child);
+          if (child.material && child.material.map)
+            child.material.map.dispose();
+          if (child.material) child.material.dispose();
+          if (child.geometry) child.geometry.dispose();
+        }
+
+        if (state.modules.length === 0) return;
+
+        let grid = getGridPhysicalPositions();
+        let minX = -currentOffsetX;
+        let maxX = grid.totalWidth - currentOffsetX;
+
+        let izs = state.modules.map((m) => m.iz);
+        let minZ = Math.min(...izs) * 3.6 - currentOffsetZ - 1.8;
+        let maxZ = Math.max(...izs) * 3.6 - currentOffsetZ + 1.8;
+
+        let maxH = 0;
+        let displayMaxH = 0;
+        let isElevated = false;
+        state.modules.forEach((m) => {
+          let top = (m.iy + 1) * 2.6;
+          if (top > maxH) maxH = top;
+
+          let dTop = (m.iy + 1) * 2.5;
+          if (dTop > displayMaxH) displayMaxH = dTop;
+
+          if (m.iy > 0) isElevated = true;
+        });
+
+        const yOffset = 0.05;
+        const dist = 1.0;
+
+        const lineMat = new THREE.LineBasicMaterial({
+          color: 0x9ca3af,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        const drawDim = (p1, p2, text, textPos) => {
+          const pts = [new THREE.Vector3(...p1), new THREE.Vector3(...p2)];
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          dimensionsGroup.add(new THREE.Line(geo, lineMat));
+
+          const tickLen = 0.15;
+          if (p1[1] === p2[1] && p1[2] === p2[2]) {
+            const t1 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p1[0], yOffset, p1[2] - tickLen),
+              new THREE.Vector3(p1[0], yOffset, p1[2] + tickLen),
+            ]);
+            const t2 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p2[0], yOffset, p2[2] - tickLen),
+              new THREE.Vector3(p2[0], yOffset, p2[2] + tickLen),
+            ]);
+            dimensionsGroup.add(
+              new THREE.Line(t1, lineMat),
+              new THREE.Line(t2, lineMat),
+            );
+          } else if (p1[0] === p2[0] && p1[1] === p2[1]) {
+            const t1 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p1[0] - tickLen, yOffset, p1[2]),
+              new THREE.Vector3(p1[0] + tickLen, yOffset, p1[2]),
+            ]);
+            const t2 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p2[0] - tickLen, yOffset, p2[2]),
+              new THREE.Vector3(p2[0] + tickLen, yOffset, p2[2]),
+            ]);
+            dimensionsGroup.add(
+              new THREE.Line(t1, lineMat),
+              new THREE.Line(t2, lineMat),
+            );
+          } else if (p1[0] === p2[0] && p1[2] === p2[2]) {
+            const t1 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p1[0] - tickLen, p1[1], p1[2]),
+              new THREE.Vector3(p1[0] + tickLen, p1[1], p1[2]),
+            ]);
+            const t2 = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p2[0] - tickLen, p2[1], p2[2]),
+              new THREE.Vector3(p2[0] + tickLen, p2[1], p2[2]),
+            ]);
+            dimensionsGroup.add(
+              new THREE.Line(t1, lineMat),
+              new THREE.Line(t2, lineMat),
+            );
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = 512;
+          canvas.height = 128;
+          const ctx = canvas.getContext("2d");
+          ctx.font = '36px "Segoe UI", system-ui, sans-serif';
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+          ctx.strokeText(text, 256, 64);
+
+          ctx.fillStyle = "#4b5563";
+          ctx.fillText(text, 256, 64);
+
+          const tex = new THREE.CanvasTexture(canvas);
+          tex.minFilter = THREE.LinearFilter;
+          const mat = new THREE.SpriteMaterial({
+            map: tex,
+            transparent: true,
+            opacity: 0.9,
+          });
+          const sprite = new THREE.Sprite(mat);
+          sprite.position.set(...textPos);
+          sprite.scale.set(3.5, 0.875, 1);
+          dimensionsGroup.add(sprite);
+        };
+
+        let zFront = maxZ + dist;
+        drawDim(
+          [minX, yOffset, zFront],
+          [maxX, yOffset, zFront],
+          `${grid.totalWidth.toFixed(1).replace(".", ",")} m`,
+          [(minX + maxX) / 2, yOffset, zFront + 0.35],
+        );
+
+        let xRight = maxX + dist;
+        drawDim(
+          [xRight, yOffset, minZ],
+          [xRight, yOffset, maxZ],
+          `${(maxZ - minZ).toFixed(1).replace(".", ",")} m`,
+          [xRight + 0.45, yOffset, (minZ + maxZ) / 2],
+        );
+
+        let xLeft = minX - dist;
+        let heightText = isElevated
+          ? "5,3 m"
+          : `${displayMaxH.toFixed(1).replace(".", ",")} m`;
+        drawDim([xLeft, 0, zFront], [xLeft, maxH, zFront], heightText, [
+          xLeft - 0.6,
+          maxH / 2,
+          zFront,
+        ]);
+      }
+
+      function buildWallGroup(w, h, d) {
+        const group = new THREE.Group();
+
+        const pMat = materials.frame;
+        const py = h / 2;
+        const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, h, 0.1), pMat);
+        p1.position.set(-w / 2 + 0.05, py, d / 2 - 0.05);
+        p1.name = "frame";
+        const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, h, 0.1), pMat);
+        p2.position.set(w / 2 - 0.05, py, d / 2 - 0.05);
+        p2.name = "frame";
+        const p3 = new THREE.Mesh(new THREE.BoxGeometry(0.1, h, 0.1), pMat);
+        p3.position.set(-w / 2 + 0.05, py, -d / 2 + 0.05);
+        p3.name = "frame";
+        const p4 = new THREE.Mesh(new THREE.BoxGeometry(0.1, h, 0.1), pMat);
+        p4.position.set(w / 2 - 0.05, py, -d / 2 + 0.05);
+        p4.name = "frame";
+        group.add(p1, p2, p3, p4);
+
+        const by = h - 0.05;
+        const b1 = new THREE.Mesh(new THREE.BoxGeometry(w, 0.1, 0.1), pMat);
+        b1.position.set(0, by, d / 2 - 0.05);
+        b1.name = "frame";
+        const b2 = new THREE.Mesh(new THREE.BoxGeometry(w, 0.1, 0.1), pMat);
+        b2.position.set(0, by, -d / 2 + 0.05);
+        b2.name = "frame";
+        const b3 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, d), pMat);
+        b3.position.set(-w / 2 + 0.05, by, 0);
+        b3.name = "frame";
+        const b4 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, d), pMat);
+        b4.position.set(w / 2 - 0.05, by, 0);
+        b4.name = "frame";
+        group.add(b1, b2, b3, b4);
+
+        const createFace = (faceW, name, letter) => {
+          const faceGroup = new THREE.Group();
+          faceGroup.userData.faceDir = name;
+
+          const buildCombo = (type) => {
+            const grp = new THREE.Group();
+            grp.name = type;
+            grp.visible = type === "solid";
+
+            if (type === "solid") {
+              const s = new THREE.Mesh(
+                new THREE.BoxGeometry(faceW - 0.2, 2.4, 0.06),
+                materials.solid,
+              );
+              s.position.y = 1.2;
+              grp.add(s);
+              return grp;
+            }
+
+            const W = faceW - 0.2;
+            const startX = -W / 2;
+
+            let segments = [];
+            if (type === "door") {
+              let solW = (W - 1.1) / 2;
+              segments = [
+                { type: "solid", w: solW },
+                { type: "door", w: 0.9 },
+                { type: "solid", w: solW },
+              ];
+            } else if (type === "single") {
+              let solW = (W - 1.2) / 2;
+              segments = [
+                { type: "solid", w: solW },
+                { type: "win", w: 1.0 },
+                { type: "solid", w: solW },
+              ];
+            } else if (type === "double") {
+              let reqWinTotal = 2.18;
+              let reqWinW = (reqWinTotal - 0.1) / 2;
+              if (W < 2.38) {
+                let w = (W - 0.1) / 2;
+                segments = [
+                  { type: "win", w: w },
+                  { type: "win", w: w },
+                ];
+              } else {
+                let solW = (W - 2.38) / 2;
+                segments = [
+                  { type: "solid", w: solW },
+                  { type: "win", w: reqWinW },
+                  { type: "win", w: reqWinW },
+                  { type: "solid", w: solW },
+                ];
+              }
+            } else if (type === "triple") {
+              let reqWinTotal = 3.23;
+              let reqWinW = (reqWinTotal - 0.2) / 3;
+              if (W < 3.43) {
+                let w = (W - 0.2) / 3;
+                segments = [
+                  { type: "win", w: w },
+                  { type: "win", w: w },
+                  { type: "win", w: w },
+                ];
+              } else {
+                let solW = (W - 3.43) / 2;
+                segments = [
+                  { type: "solid", w: solW },
+                  { type: "win", w: reqWinW },
+                  { type: "win", w: reqWinW },
+                  { type: "win", w: reqWinW },
+                  { type: "solid", w: solW },
+                ];
+              }
+            } else if (type === "full") {
+              let count = faceW > 3 ? 4 : 3;
+              let sw = (W - (count - 1) * 0.1) / count;
+              for (let i = 0; i < count; i++)
+                segments.push({ type: "full", w: sw });
+            } else if (type === "door_l")
+              segments = [
+                { type: "door", w: 0.9 },
+                { type: "solid", w: W - 1.0 },
+              ];
+            else if (type === "door_r")
+              segments = [
+                { type: "solid", w: W - 1.0 },
+                { type: "door", w: 0.9 },
+              ];
+            else if (type === "door_l_w1") {
+              if (W >= 2.8) {
+                let winW = 1.14;
+                let rem = W - 0.235 - 0.9 - winW - 0.4;
+                segments = [
+                  { type: "solid", w: 0.235 },
+                  { type: "door", w: 0.9 },
+                  { type: "solid", w: rem / 2 },
+                  { type: "win", w: winW },
+                  { type: "solid", w: rem / 2 },
+                ];
+              } else {
+                segments = [
+                  { type: "door", w: 0.9 },
+                  { type: "win", w: W - 1.0 },
+                ];
+              }
+            } else if (type === "door_r_w1") {
+              if (W >= 2.8) {
+                let winW = 1.14;
+                let rem = W - 0.235 - 0.9 - winW - 0.4;
+                segments = [
+                  { type: "solid", w: rem / 2 },
+                  { type: "win", w: winW },
+                  { type: "solid", w: rem / 2 },
+                  { type: "door", w: 0.9 },
+                  { type: "solid", w: 0.235 },
+                ];
+              } else {
+                segments = [
+                  { type: "win", w: W - 1.0 },
+                  { type: "door", w: 0.9 },
+                ];
+              }
+            } else if (type === "door_l_w2") {
+              if (W >= 3.9) {
+                let winW = 1.04;
+                let rem = W - 0.235 - 0.9 - winW * 2 - 0.5;
+                segments = [
+                  { type: "solid", w: 0.235 },
+                  { type: "door", w: 0.9 },
+                  { type: "solid", w: rem / 2 },
+                  { type: "win", w: winW },
+                  { type: "win", w: winW },
+                  { type: "solid", w: rem / 2 },
+                ];
+              } else {
+                let rem = W - 1.1;
+                segments = [
+                  { type: "door", w: 0.9 },
+                  { type: "win", w: rem / 2 },
+                  { type: "win", w: rem / 2 },
+                ];
+              }
+            } else if (type === "door_r_w2") {
+              if (W >= 3.9) {
+                let winW = 1.04;
+                let rem = W - 0.235 - 0.9 - winW * 2 - 0.5;
+                segments = [
+                  { type: "solid", w: rem / 2 },
+                  { type: "win", w: winW },
+                  { type: "win", w: winW },
+                  { type: "solid", w: rem / 2 },
+                  { type: "door", w: 0.9 },
+                  { type: "solid", w: 0.235 },
+                ];
+              } else {
+                let rem = W - 1.1;
+                segments = [
+                  { type: "win", w: rem / 2 },
+                  { type: "win", w: rem / 2 },
+                  { type: "door", w: 0.9 },
+                ];
+              }
+            }
+
+            let currentX = startX;
+            segments.forEach((seg, i) => {
+              let cx = currentX + seg.w / 2;
+
+              if (seg.type === "door") {
+                const topH = 2.4 - 1.97;
+                if (topH > 0) {
+                  const topS = new THREE.Mesh(
+                    new THREE.BoxGeometry(seg.w, topH, 0.06),
+                    materials.solid,
+                  );
+                  topS.position.set(cx, 1.97 + topH / 2, 0);
+                  grp.add(topS);
+                }
+
+                const doorGroup = new THREE.Group();
+
+                const doorBot = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.8, 0.65, 0.08),
+                  materials.frame,
+                );
+                doorBot.position.set(cx, 0.65 / 2, 0);
+                doorBot.name = "frame";
+
+                const doorTop = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.8, 0.1, 0.08),
+                  materials.frame,
+                );
+                doorTop.position.set(cx, 1.97 - 0.05, 0);
+                doorTop.name = "frame";
+
+                const doorL = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.1, 1.22, 0.08),
+                  materials.frame,
+                );
+                doorL.position.set(cx - 0.35, 0.65 + 1.22 / 2, 0);
+                doorL.name = "frame";
+
+                const doorR = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.1, 1.22, 0.08),
+                  materials.frame,
+                );
+                doorR.position.set(cx + 0.35, 0.65 + 1.22 / 2, 0);
+                doorR.name = "frame";
+
+                const doorGlass = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.6, 1.22, 0.04),
+                  materials.glass,
+                );
+                doorGlass.position.set(cx, 0.65 + 1.22 / 2, 0);
+
+                doorGroup.add(doorBot, doorTop, doorL, doorR, doorGlass);
+                grp.add(doorGroup);
+              } else if (seg.type === "win") {
+                const glass = new THREE.Mesh(
+                  new THREE.BoxGeometry(seg.w, 1.0, 0.08),
+                  materials.glass,
+                );
+                glass.position.set(cx, 1.5, 0);
+                grp.add(glass);
+
+                const botS = new THREE.Mesh(
+                  new THREE.BoxGeometry(seg.w, 1.0, 0.06),
+                  materials.solid,
+                );
+                botS.position.set(cx, 0.5, 0);
+                grp.add(botS);
+
+                const topS = new THREE.Mesh(
+                  new THREE.BoxGeometry(seg.w, 0.4, 0.06),
+                  materials.solid,
+                );
+                topS.position.set(cx, 2.2, 0);
+                grp.add(topS);
+              } else if (seg.type === "full") {
+                const glass = new THREE.Mesh(
+                  new THREE.BoxGeometry(seg.w, 2.4, 0.08),
+                  materials.glass,
+                );
+                glass.position.set(cx, 1.2, 0);
+                grp.add(glass);
+              } else if (seg.type === "solid") {
+                const s = new THREE.Mesh(
+                  new THREE.BoxGeometry(seg.w, 2.4, 0.06),
+                  materials.solid,
+                );
+                s.position.set(cx, 1.2, 0);
+                grp.add(s);
+              }
+
+              if (i < segments.length - 1) {
+                const pillar = new THREE.Mesh(
+                  new THREE.BoxGeometry(0.1, 2.4, 0.06),
+                  materials.solid,
+                );
+                pillar.position.set(currentX + seg.w + 0.05, 1.2, 0);
+                grp.add(pillar);
+              }
+              currentX += seg.w + 0.1;
+            });
+
+            return grp;
+          };
+
+          const types = [
+            "solid",
+            "single",
+            "double",
+            "triple",
+            "full",
+            "door",
+            "door_l",
+            "door_r",
+            "door_l_w1",
+            "door_r_w1",
+          ];
+          if (faceW >= 3) types.push("door_l_w2", "door_r_w2");
+
+          types.forEach((t) => faceGroup.add(buildCombo(t)));
+
+          if (letter) {
+            const labelSprite = createWallLabelSprite(letter);
+            let outZ = name === "front" || name === "right" ? 0.15 : -0.15;
+            labelSprite.position.set(0, 2.1, outZ);
+            labelSprite.name = "wallLabel";
+            faceGroup.add(labelSprite);
+          }
+
+          return faceGroup;
+        };
+
+        const front = createFace(w, "front", "A");
+        front.position.set(0, 0, d / 2 - 0.05);
+        group.add(front);
+        const right = createFace(d, "right", "B");
+        right.position.set(w / 2 - 0.05, 0, 0);
+        right.rotation.y = Math.PI / 2;
+        group.add(right);
+        const back = createFace(w, "back", "C");
+        back.position.set(0, 0, -d / 2 + 0.05);
+        group.add(back);
+        const left = createFace(d, "left", "D");
+        left.position.set(-w / 2 + 0.05, 0, 0);
+        left.rotation.y = Math.PI / 2;
+        group.add(left);
+
+        const roofGroup = new THREE.Group();
+        roofGroup.userData.faceDir = "roof";
+        const roof = new THREE.Mesh(
+          new THREE.BoxGeometry(w, 0.1, d),
+          materials.solid,
+        );
+        roof.position.set(0, h, 0);
+        roof.name = "solid";
+        roofGroup.add(roof);
+        group.add(roofGroup);
+
+        const roofColliderGroup = new THREE.Group();
+        roofColliderGroup.userData.faceDir = "roof";
+        const roofCollider = new THREE.Mesh(
+          new THREE.BoxGeometry(w - 0.1, 0.02, d - 0.1),
+          materials.invisibleCollider,
+        );
+        roofCollider.position.set(0, h, 0);
+        roofCollider.name = "roofCollider";
+        roofColliderGroup.add(roofCollider);
+        group.add(roofColliderGroup);
+
+        const ceilW = w - 0.02;
+        const ceilD = d - 0.02;
+        const ceilH = 0.2;
+        const ceilGeo = new THREE.BoxGeometry(ceilW, ceilH, ceilD);
+
+        const uvs = ceilGeo.attributes.uv;
+        const pos = ceilGeo.attributes.position;
+        const normals = ceilGeo.attributes.white;
+
+        for (let i = 0; i < uvs.count; i++) {
+          const nx = Math.abs(normals?.getX(i) || 0);
+          const ny = Math.abs(normals?.getY(i) || 1);
+          const nz = Math.abs(normals?.getZ(i) || 0);
+
+          const px = pos.getX(i);
+          const py = pos.getY(i);
+          const pz = pos.getZ(i);
+
+          if (ny > 0.5) uvs.setXY(i, px / 0.6, pz / 0.6);
+          else if (nx > 0.5) uvs.setXY(i, pz / 0.6, (py + ceilH / 2) / 0.6);
+          else if (nz > 0.5) uvs.setXY(i, px / 0.6, (py + ceilH / 2) / 0.6);
+        }
+
+        const intCeiling = new THREE.Mesh(ceilGeo, materials.intCeiling);
+        intCeiling.position.set(0, 2.3, 0);
+        intCeiling.name = "intCeiling";
+        intCeiling.visible = false;
+        group.add(intCeiling);
+
+        const floorGroup = new THREE.Group();
+        floorGroup.userData.faceDir = "floor";
+        const floorMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(w - 0.1, 0.05, d - 0.1),
+          materials.floorOSB,
+        );
+        floorMesh.position.set(0, 0.025, 0);
+        floorMesh.name = "floor";
+        floorGroup.add(floorMesh);
+        group.add(floorGroup);
+
+        const stiltsGroup = new THREE.Group();
+        stiltsGroup.name = "stilts";
+        const stiltH = h + 0.1;
+        const s1 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, stiltH, 0.15),
+          materials.frame,
+        );
+        s1.position.set(-w / 2 + 0.075, -stiltH / 2, d / 2 - 0.075);
+        const s2 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, stiltH, 0.15),
+          materials.frame,
+        );
+        s2.position.set(w / 2 - 0.075, -stiltH / 2, d / 2 - 0.075);
+        const s3 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, stiltH, 0.15),
+          materials.frame,
+        );
+        s3.position.set(-w / 2 + 0.075, -stiltH / 2, -d / 2 + 0.075);
+        const s4 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, stiltH, 0.15),
+          materials.frame,
+        );
+        s4.position.set(w / 2 - 0.075, -stiltH / 2, -d / 2 + 0.075);
+
+        const bf1 = new THREE.Mesh(
+          new THREE.BoxGeometry(w, 0.15, 0.15),
+          materials.frame,
+        );
+        bf1.position.set(0, -0.075, d / 2 - 0.075);
+        const bf2 = new THREE.Mesh(
+          new THREE.BoxGeometry(w, 0.15, 0.15),
+          materials.frame,
+        );
+        bf2.position.set(0, -0.075, -d / 2 + 0.075);
+        const bf3 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, 0.15, d),
+          materials.frame,
+        );
+        bf3.position.set(-w / 2 + 0.075, -0.075, 0);
+        const bf4 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.15, 0.15, d),
+          materials.frame,
+        );
+        bf4.position.set(w / 2 - 0.075, -0.075, 0);
+
+        stiltsGroup.add(s1, s2, s3, s4, bf1, bf2, bf3, bf4);
+        stiltsGroup.visible = false;
+        group.add(stiltsGroup);
+
+        const hallBack = new THREE.Mesh(
+          new THREE.BoxGeometry(w, h + 0.8, 0.1),
+          materials.hallWall,
+        );
+        hallBack.position.set(0, (h + 0.8) / 2, -d / 2 - 0.05);
+        hallBack.name = "hallWall";
+        hallBack.visible = false;
+        group.add(hallBack);
+
+        const hallLeft = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, h + 0.8, d),
+          materials.hallWall,
+        );
+        hallLeft.position.set(-w / 2 - 0.05, (h + 0.8) / 2, 0);
+        hallLeft.name = "hallWall";
+        hallLeft.visible = false;
+        group.add(hallLeft);
+
+        const hallRight = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, h + 0.8, d),
+          materials.hallWall,
+        );
+        hallRight.position.set(w / 2 + 0.05, (h + 0.8) / 2, 0);
+        hallRight.name = "hallWall";
+        hallRight.visible = false;
+        group.add(hallRight);
+
+        return {
+          group,
+          front,
+          back,
+          left,
+          right,
+          roof: roofGroup,
+          floor: floorGroup,
+          intCeiling,
+          stilts: stiltsGroup,
+          pillars: { p1, p2, p3, p4 },
+          beams: { b1, b2, b3, b4 },
+          hallBack,
+          hallLeft,
+          hallRight,
+        };
+      }
+
+      function applyVisibilityAndWindows() {
+        state.modules.forEach((mod, index) => {
+          let refs = wallRefs[index];
+
+          let nFront = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz + 1,
+          );
+          let nBack = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy && m.iz === mod.iz - 1,
+          );
+          let nRight = state.modules.find(
+            (m) => m.ix === mod.ix + 1 && m.iy === mod.iy && m.iz === mod.iz,
+          );
+          let nLeft = state.modules.find(
+            (m) => m.ix === mod.ix - 1 && m.iy === mod.iy && m.iz === mod.iz,
+          );
+          let nTop = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy + 1 && m.iz === mod.iz,
+          );
+          let nBottom = state.modules.find(
+            (m) => m.ix === mod.ix && m.iy === mod.iy - 1 && m.iz === mod.iz,
+          );
+
+          let isAgainstHallBack =
+            !nBack &&
+            (mod.placement === "3B" ||
+              mod.placement === "2" ||
+              mod.placement === "2R");
+          let isAgainstHallLeft =
+            !nLeft && (mod.placement === "3L" || mod.placement === "2");
+          let isAgainstHallRight =
+            !nRight && (mod.placement === "3R" || mod.placement === "2R");
+
+          let isExtFront = !nFront;
+          let isExtBack = !nBack && !isAgainstHallBack;
+          let isExtRight = !nRight && !isAgainstHallRight;
+          let isExtLeft = !nLeft && !isAgainstHallLeft;
+
+          let isInternalRight = nRight && (mod.partition || nRight.partition);
+          let isInternalFront = nFront && (mod.partition || nFront.partition);
+          let isInternalLeft = nLeft && (mod.partition || nLeft.partition);
+          let isInternalBack = nBack && (mod.partition || nBack.partition);
+
+          refs.front.visible = !!(isExtFront || isInternalFront);
+          refs.back.visible = !!(isExtBack || isInternalBack);
+          refs.right.visible = !!(isExtRight || isInternalRight);
+          refs.left.visible = !!(isExtLeft || isInternalLeft);
+          refs.roof.visible = !!nTop;
+          refs.stilts.visible = mod.iy > 0 && !nBottom;
+          refs.intCeiling.visible = mod.ceiling;
+
+          refs.hallBack.visible = isAgainstHallBack;
+          refs.hallLeft.visible = isAgainstHallLeft;
+          refs.hallRight.visible = isAgainstHallRight;
+
+          refs.beams.b2.visible = !isAgainstHallBack;
+          refs.beams.b3.visible = !isAgainstHallLeft;
+          refs.beams.b4.visible = !isAgainstHallRight;
+          refs.pillars.p1.visible = !isAgainstHallLeft;
+          refs.pillars.p2.visible = !isAgainstHallRight;
+          refs.pillars.p3.visible = !(isAgainstHallBack || isAgainstHallLeft);
+          refs.pillars.p4.visible = !(isAgainstHallBack || isAgainstHallRight);
+
+          ["front", "back", "left", "right"].forEach((wName) =>
+            setWallType(refs[wName], "solid"),
+          );
+
+          if (isExtFront || isInternalFront)
+            setWallType(refs.front, mod.windows.front);
+          if (isExtBack || isInternalBack)
+            setWallType(refs.back, mod.windows.back);
+          if (isExtLeft || isInternalLeft)
+            setWallType(refs.left, mod.windows.left);
+          if (isExtRight || isInternalRight)
+            setWallType(refs.right, mod.windows.right);
+
+          let floorMesh = refs.floor.getObjectByName("floor");
+          let currentFloor = mod.floor;
+          if (currentFloor === "osb") floorMesh.material = materials.floorOSB;
+          if (currentFloor === "pvc") floorMesh.material = materials.floorPVC;
+          if (currentFloor === "vinyl")
+            floorMesh.material = materials.floorVinyl;
+          floorMesh.userData.origMat = floorMesh.material;
+        });
+      }
+
+      function setWallType(wallGroup, type) {
+        if (!wallGroup) return;
+        wallGroup.children.forEach((child) => {
+          if (child.isGroup && child.name) {
+            child.visible = child.name === type;
+          }
+        });
+      }
+
+      function highlight3DModule(id) {
+        if (!mainGroup) return;
+        mainGroup.children.forEach((group) => {
+          let isSelected = group.userData.moduleId === id;
+          let isHovered = group.userData.moduleId === hoveredModuleId;
+
+          group.traverse((child) => {
+            if (child.name === "wallLabel") {
+              child.visible = isSelected;
+              return;
+            }
+            if (child.name === "roofCollider") {
+              return;
+            }
+
+            if (
+              child.isMesh &&
+              child.name !== "ghost" &&
+              child.name !== "hallWall"
+            ) {
+              if (!child.userData.origMat)
+                child.userData.origMat = child.material;
+
+              if (child.name === "floor" || child.name === "intCeiling") {
+                if (id && !isSelected && !isHovered) {
+                  child.material = materials.fadedSolid;
+                } else {
+                  child.material = child.userData.origMat;
+                }
+                return;
+              }
+
+              let faceDir = null;
+              let p = child.parent;
+              while (p && !p.userData.faceDir) p = p.parent;
+              if (p) faceDir = p.userData.faceDir;
+
+              let isUIHoveredWall =
+                isSelected && hoveredUIWallDir && faceDir === hoveredUIWallDir;
+
+              if (isUIHoveredWall) {
+                if (child.userData.origMat === materials.glass)
+                  child.material = materials.uiTargetGlass;
+                else if (
+                  child.userData.origMat === materials.frame ||
+                  child.name === "frame"
+                )
+                  child.material = materials.uiTargetFrame;
+                else child.material = materials.uiTargetSolid;
+              } else if (isSelected) {
+                if (child.userData.origMat === materials.glass)
+                  child.material = materials.selectedGlass;
+                else if (
+                  child.userData.origMat === materials.frame ||
+                  child.name === "frame"
+                )
+                  child.material = materials.selectedFrame;
+                else child.material = materials.selectedSolid;
+              } else if (isHovered) {
+                if (child.userData.origMat === materials.glass)
+                  child.material = materials.hoveredGlass;
+                else if (
+                  child.userData.origMat === materials.frame ||
+                  child.name === "frame"
+                )
+                  child.material = materials.hoveredFrame;
+                else child.material = materials.hoveredSolid;
+              } else if (id && !isSelected && !isHovered) {
+                if (child.userData.origMat === materials.glass)
+                  child.material = materials.fadedGlass;
+                else if (
+                  child.userData.origMat === materials.frame ||
+                  child.name === "frame"
+                )
+                  child.material = materials.fadedFrame;
+                else child.material = materials.fadedSolid;
+              } else {
+                child.material = child.userData.origMat;
+              }
+            }
+          });
+        });
+      }
+
+      function openModal() {
+        if (isAdminMode) renderRecap();
+        document.getElementById("modal-overlay").classList.add("active");
+      }
+      function closeModal() {
+        document.getElementById("modal-overlay").classList.remove("active");
+      }
+
+      async function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+        const PW = 210, PH = 297, ML = 14, MR = 14, CW = PW - ML - MR;
+
+        const removeAccents = (str) =>
+          str
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/Kč/g, "Kc");
+
+        // ── Load logo ────────────────────────────────────────────────────────
+        let logoDataUrl = null;
+        try {
+          const resp = await fetch("/polymont_logo_nav_new.png");
+          const blob = await resp.blob();
+          logoDataUrl = await new Promise((res) => {
+            const reader = new FileReader();
+            reader.onload = () => res(reader.result);
+            reader.readAsDataURL(blob);
+          });
+        } catch (e) {}
+
+        // ── Header bar ───────────────────────────────────────────────────────
+        doc.setFillColor(26, 26, 24);
+        doc.rect(0, 0, PW, 20, "F");
+        if (logoDataUrl) {
+          doc.addImage(logoDataUrl, "PNG", ML, 4, 38, 12);
+        } else {
+          doc.setFontSize(13); doc.setFont("helvetica", "bold");
+          doc.setTextColor(255, 255, 255);
+          doc.text("POLYMONT", ML, 13);
+        }
+        const date = new Date().toLocaleDateString("cs-CZ");
+        doc.setFontSize(8); doc.setFont("helvetica", "normal");
+        doc.setTextColor(140, 137, 132);
+        doc.text(`${date}  |  v.${offerVersion}`, PW - MR, 13, { align: "right" });
+
+        // ── Title ────────────────────────────────────────────────────────────
+        doc.setFontSize(18); doc.setFont("helvetica", "bold");
+        doc.setTextColor(26, 26, 24);
+        doc.text(removeAccents("Orientacni nabidka vestavby"), ML, 33);
+        doc.setFontSize(9.5); doc.setFont("helvetica", "normal");
+        doc.setTextColor(120, 116, 112);
+        doc.text(removeAccents("Halove vestavby a modularni systemy | Polymont s.r.o."), ML, 40);
+        if (pricelistVersion) {
+          doc.setFontSize(8); doc.setFont("helvetica", "normal");
+          doc.setTextColor(160, 158, 154);
+          doc.text(removeAccents(`Ceník verze ${pricelistVersion}`), PW - MR, 40, { align: "right" });
+        }
+        doc.setFillColor(230, 42, 32);
+        doc.rect(ML, 44, 28, 0.8, "F");
+
+        // ── 3D render ────────────────────────────────────────────────────────
+        const originalBg = scene.background;
+        scene.background = new THREE.Color(0xf7f6f3);
+        renderer.render(scene, camera);
+        const canvasDataUrl = renderer.domElement.toDataURL("image/jpeg", 0.92);
+        scene.background = originalBg;
+        renderer.render(scene, camera);
+
+        const imgW = CW;
+        const imgH = Math.min(
+          (renderer.domElement.height / renderer.domElement.width) * imgW, 90
+        );
+        doc.addImage(canvasDataUrl, "JPEG", ML, 48, imgW, imgH);
+
+        // ── Module table ─────────────────────────────────────────────────────
+        let startY = 48 + imgH + 8;
+
+        const placementMap = {
+          4: "Stred haly", "3B": "Oprene o zadni zed",
+          "3L": "Oprene o levou zed", "3R": "Oprene o pravou zed",
+          2: "Do leveho rohu", "2R": "Do praveho rohu",
+        };
+        const winMap = {
+          solid: "Plna", single: "1x Okno", double: "2x Okno",
+          triple: "3x Okno", full: "Celosklo", door: "Dvere",
+          door_l: "Dvere (L)", door_r: "Dvere (P)",
+          door_l_w1: "Dvere (L) + 1 Okno", door_r_w1: "Dvere (P) + 1 Okno",
+          door_l_w2: "Dvere (L) + 2 Okna", door_r_w2: "Dvere (P) + 2 Okna",
+        };
+        const roofMap = {
+          nepochozi: "Standardni", pochozi_90: "Pochozi (90 kg/m2)",
+          mezipatro_250: "Mezipatro (250 kg/m2)",
+        };
+        const floorMap = {
+          osb: "Zakladni deska", vinyl: "Vinylove desky 5,5 mm",
+          pvc: "Standardni PVC 2,0 mm",
+        };
+
+        // Section label + rule
+        doc.setFontSize(7.5); doc.setFont("helvetica", "bold");
+        doc.setTextColor(160, 158, 154);
+        doc.text(removeAccents("REKAPITULACE MODULU"), ML, startY);
+        startY += 3;
+        doc.setDrawColor(224, 222, 218);
+        doc.line(ML, startY, PW - MR, startY);
+        startY += 5;
+
+        let total = 0;
+        let rowShade = false;
+
+        state.modules.forEach((mod, index) => {
+          const rowH = 26;
+          if (startY + rowH > PH - 30) { doc.addPage(); startY = 14; }
+
+          if (rowShade) {
+            doc.setFillColor(247, 246, 243);
+            doc.rect(ML, startY - 3, CW, rowH, "F");
+          }
+          rowShade = !rowShade;
+
+          doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+          doc.setTextColor(26, 26, 24);
+          doc.text(removeAccents(`Modul ${index + 1} — ${mod.type}`), ML + 2, startY + 3);
+          doc.text(removeAccents(formatter.format(mod.price)), PW - MR - 2, startY + 3, { align: "right" });
+
+          doc.setFont("helvetica", "normal"); doc.setFontSize(8);
+          doc.setTextColor(120, 116, 112);
+
+          const level = mod.iy > 0 ? "2.NP" : "Prizemi";
+          const place = placementMap[mod.placement] || "";
+          const part = mod.partition ? "Pricky" : "Open-space";
+          doc.text(removeAccents(`${level}  ·  ${place}  ·  ${part}`), ML + 2, startY + 9);
+
+          const w = mod.windows;
+          doc.text(
+            removeAccents(`A: ${winMap[w.front]}  ·  B: ${winMap[w.right]}  ·  C: ${winMap[w.back]}  ·  D: ${winMap[w.left]}`),
+            ML + 2, startY + 14
+          );
+
+          const ceil = mod.ceiling ? "Podhled" : "";
+          const equipArr = [];
+          if (mod.stairs) equipArr.push("Schodiste");
+          if (mod.light) equipArr.push("LED");
+          if (mod.power) equipArr.push("Zasuvky");
+          if (mod.fan) equipArr.push("Ventilator");
+          if (mod.ac) equipArr.push("Klima");
+          const equipStr = equipArr.length ? equipArr.join(", ") : "-";
+          doc.text(
+            removeAccents(`Strop: ${roofMap[mod.roof]}${ceil ? "  ·  " + ceil : ""}  ·  Podlaha: ${floorMap[mod.floor]}  ·  ${equipStr}`),
+            ML + 2, startY + 19
+          );
+
+          startY += rowH;
+          total += mod.price;
+        });
+
+        doc.setDrawColor(224, 222, 218);
+        doc.line(ML, startY, PW - MR, startY);
+        startY += 4;
+
+        // discount PDF row hidden
+
+        // ── Total bar ────────────────────────────────────────────────────────
+        if (startY + 14 > PH - 30) { doc.addPage(); startY = 14; }
+        doc.setFillColor(26, 26, 24);
+        doc.rect(ML, startY, CW, 14, "F");
+        doc.setFontSize(10.5); doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.text(removeAccents("Celkova cena bez DPH"), ML + 4, startY + 9);
+        doc.text(removeAccents(formatter.format(total)), PW - MR - 4, startY + 9, { align: "right" });
+        startY += 20;
+
+        // Footnote
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
+        doc.setTextColor(160, 158, 154);
+        doc.text(
+          removeAccents("* Orientacni kalkulace vcetne montaze, bez dopravy. Finalni cena dle zamereni na miste."),
+          ML, startY
+        );
+
+        // ── Footer ───────────────────────────────────────────────────────────
+        doc.setFillColor(247, 246, 243);
+        doc.rect(0, PH - 14, PW, 14, "F");
+        doc.setFontSize(7.5); doc.setTextColor(140, 137, 132);
+        doc.text(
+          "Polymont s.r.o.  |  Hrnciarska 296, Kutna Hora  |  +420 327 523 268  |  polymont@polymont.cz",
+          PW / 2, PH - 5.5, { align: "center" }
+        );
+
+        doc.save(`Nabidka-Polymont-${new Date().toLocaleDateString("cs-CZ").replace(/\./g,"-")}.${offerVersion}.pdf`);
+      }
+
+      // --- 6a. OVLÁDÁNÍ KAMERY A PLÁTNA ---
+      function zoomCamera(factor) {
+        if (!camera || !controls) return;
+        const dir = new THREE.Vector3().subVectors(
+          camera.position,
+          controls.target,
+        );
+        dir.multiplyScalar(factor);
+        camera.position.copy(controls.target).add(dir);
+        controls.update();
+      }
+
+      function resetCamera() {
+        if (!camera || !controls) return;
+        camera.position.set(0, 10, 20);
+        controls.target.set(0, 0, 0);
+
+        let btnTopDown = document.getElementById("btn-topdown");
+        if (btnTopDown) {
+          isTopDown = false;
+          btnTopDown.classList.remove("text-blue-600", "bg-blue-50");
+          btnTopDown.classList.add("text-gray-600");
+        }
+        updateCameraOffset();
+        controls.update();
+      }
+
+      let isTopDown = false;
+      let preTopDownPos = new THREE.Vector3();
+      function toggleTopDown() {
+        if (!camera || !controls) return;
+        isTopDown = !isTopDown;
+        const btn = document.getElementById("btn-topdown");
+        if (isTopDown) {
+          preTopDownPos.copy(camera.position);
+          camera.position.set(controls.target.x, 30, controls.target.z + 0.1);
+          btn.classList.add("text-blue-600", "bg-blue-50");
+          btn.classList.remove("text-gray-600");
+        } else {
+          camera.position.copy(preTopDownPos);
+          btn.classList.remove("text-blue-600", "bg-blue-50");
+          btn.classList.add("text-gray-600");
+        }
+        controls.update();
+      }
+
+      function animate3D() {
+        requestAnimationFrame(animate3D);
+        controls.update();
+
+        if (currentHoveredWall) {
+          let pos = getScreenPos(
+            currentHoveredWall.mod,
+            currentHoveredWall.dir,
+          );
+          let menu = document.getElementById("canvas-add-menu");
+          menu.style.left = pos.x + "px";
+          menu.style.top = pos.y + "px";
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      let offerVersion = 1;
+      let pricelistVersion = "";
+      let currentOfferId = null; // set when opened with ?offer=
+      let isAdminMode = false;
+      let loadedVersion = 1;
+      let originalStateSnapshot = null;
+
+      const MODULE_FIELD_LABELS = {
+        "windows.front":  "okno vpředu",
+        "windows.back":   "okno vzadu",
+        "windows.left":   "okno vlevo",
+        "windows.right":  "okno vpravo",
+        doors:            "počet dveří",
+        partition:        "příčka",
+        placement:        "umístění",
+        roof:             "střecha",
+        floor:            "podlaha",
+        light:            "osvětlení",
+        power:            "elektrorozvaděč",
+        fan:              "ventilátor",
+        ac:               "klimatizace",
+        stairs:           "schodiště",
+        elevated:         "vyvýšení",
+        ceiling:          "podhled",
+      };
+
+      function moduleLabel(m) {
+        return `${m.type} (${m.ix}, ${m.iy}, ${m.iz})`;
+      }
+
+      function diffState(oldState, newState) {
+        const changes = [];
+        const oldMods = oldState?.modules || [];
+        const newMods = newState?.modules || [];
+        const oldById = new Map(oldMods.map((m) => [m.id, m]));
+        const newById = new Map(newMods.map((m) => [m.id, m]));
+
+        newMods.forEach((m) => {
+          if (!oldById.has(m.id)) changes.push(`Přidán modul ${moduleLabel(m)}`);
+        });
+        oldMods.forEach((m) => {
+          if (!newById.has(m.id)) changes.push(`Odebrán modul ${moduleLabel(m)}`);
+        });
+        newMods.forEach((m) => {
+          const old = oldById.get(m.id);
+          if (!old) return;
+          Object.keys(MODULE_FIELD_LABELS).forEach((key) => {
+            const [a, b] = key.split(".");
+            const oldVal = b ? old[a]?.[b] : old[a];
+            const newVal = b ? m[a]?.[b] : m[a];
+            if (oldVal !== newVal) {
+              changes.push(`${moduleLabel(m)}: ${MODULE_FIELD_LABELS[key]} ${oldVal} → ${newVal}`);
+            }
+          });
+        });
+        return changes;
+      }
+
+      function updateAdminChangeState() {
+        const changes = diffState(originalStateSnapshot, state);
+        const btn = document.getElementById("main-cta-btn");
+        if (btn) btn.disabled = changes.length === 0;
+      }
+
+      function renderRecap() {
+        const changes = diffState(originalStateSnapshot, state);
+        document.getElementById("recap-version-from").textContent = loadedVersion;
+        document.getElementById("recap-version-to").textContent = offerVersion;
+        const list = document.getElementById("recap-changes-list");
+        list.innerHTML = changes.length
+          ? changes.map((c) => `<li class="pl-3 border-l-2 border-blue-200">${c.replace(/[<>&]/g, (ch) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[ch]))}</li>`).join("")
+          : `<li class="text-gray-400">Zatím beze změn</li>`;
+        const saveBtn = document.getElementById("btn-save-version");
+        if (saveBtn) saveBtn.disabled = changes.length === 0;
+      }
+
+      async function submitOffer(event) {
+        event.preventDefault();
+        const btn = event.target.querySelector('[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = "Odesílám…";
+        try {
+          const resp = await fetch("/.netlify/functions/submit-offer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              firstName:        document.getElementById("form-firstname").value,
+              lastName:         document.getElementById("form-lastname").value,
+              email:            document.getElementById("form-email").value,
+              phone:            document.getElementById("form-phone").value,
+              note:             document.getElementById("form-note").value,
+              state:            JSON.parse(JSON.stringify(state)),
+              pricelistVersion,
+              offerVersion,
+            }),
+          });
+          const result = await resp.json();
+          if (result.success) {
+            closeModal();
+            alert("Poptávka byla odeslána. Děkujeme!");
+          } else {
+            throw new Error(result.error || "Neznámá chyba");
+          }
+        } catch (err) {
+          alert("Chyba při odesílání: " + err.message);
+          btn.disabled = false;
+          btn.textContent = "Odeslat poptávku";
+        }
+      }
+
+      async function saveNewVersion() {
+        if (!currentOfferId) return;
+        const btn = document.getElementById("btn-save-version");
+        const changes = diffState(originalStateSnapshot, state);
+        if (!changes.length) return;
+        btn.disabled = true;
+        btn.textContent = "Ukládám…";
+        try {
+          const resp = await fetch("/.netlify/functions/save-version", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: currentOfferId,
+              state: JSON.parse(JSON.stringify(state)),
+              offerVersion,
+              changes,
+            }),
+          });
+          const result = await resp.json();
+          if (!result.success) throw new Error(result.error);
+          btn.textContent = `Uloženo jako v.${offerVersion}`;
+          loadedVersion = offerVersion;
+          offerVersion = loadedVersion + 1;
+          originalStateSnapshot = JSON.parse(JSON.stringify(state));
+          setTimeout(() => {
+            btn.textContent = "Uložit novou verzi";
+            updateAdminChangeState();
+            closeModal();
+          }, 1200);
+        } catch (err) {
+          alert("Chyba při ukládání: " + err.message);
+          btn.disabled = false;
+          btn.textContent = "Uložit novou verzi";
+        }
+      }
+
+      window.onload = async function () {
+        try {
+          const resp = await fetch("/konfigurator_prices.json");
+          if (resp.ok) {
+            const p = await resp.json();
+            const n = (v) => parseInt(v, 10) || 0;
+            pricelistVersion = p.version || "";
+            const badge = document.getElementById("pricelist-version-badge");
+            if (badge && pricelistVersion) badge.textContent = "Ceník " + pricelistVersion;
+            prices = {
+              DUO: {
+                stena_plna_predni:    n(p.duo_stena_plna_predni),
+                strop_nepochozi:      n(p.duo_strop_nepochozi),
+                skelet_pochozi_90:    n(p.duo_skelet_pochozi_90),
+                skelet_mezipatro_250: n(p.duo_skelet_mezipatro_250),
+                podlaha_pvc:          n(p.duo_podlaha_pvc),
+                podlaha_vinyl:        n(p.duo_podlaha_vinyl),
+                podhled:              n(p.duo_podhled),
+                podesta:              n(p.duo_podesta),
+                priplatek_sklo_celo:  n(p.duo_priplatek_sklo_celo),
+                osvetleni:            n(p.duo_osvetleni),
+                rozvadec:             n(p.duo_rozvadec),
+                klima:                n(p.duo_klima),
+              },
+              TRIO: {
+                stena_plna_predni:    n(p.trio_stena_plna_predni),
+                strop_nepochozi:      n(p.trio_strop_nepochozi),
+                skelet_pochozi_90:    n(p.trio_skelet_pochozi_90),
+                skelet_mezipatro_250: n(p.trio_skelet_mezipatro_250),
+                podlaha_pvc:          n(p.trio_podlaha_pvc),
+                podlaha_vinyl:        n(p.trio_podlaha_vinyl),
+                podhled:              n(p.trio_podhled),
+                podesta:              n(p.trio_podesta),
+                priplatek_sklo_celo:  n(p.trio_priplatek_sklo_celo),
+                osvetleni:            n(p.trio_osvetleni),
+                rozvadec:             n(p.trio_rozvadec),
+                klima:                n(p.trio_klima),
+              },
+              spolecne: {
+                stena_plna_bocni:          n(p.sp_stena_plna_bocni),
+                priplatek_sklo_1:          n(p.sp_priplatek_sklo_1),
+                priplatek_sklo_2:          n(p.sp_priplatek_sklo_2),
+                priplatek_sklo_3:          n(p.sp_priplatek_sklo_3),
+                priplatek_sklo_celo_bocni: n(p.sp_priplatek_sklo_celo_bocni),
+                spojovaci_ram:             n(p.sp_spojovaci_ram),
+                dvere:                     n(p.sp_dvere),
+                ventilator:                n(p.sp_ventilator),
+                schodiste:                 n(p.sp_schodiste),
+              },
+            };
+          }
+        } catch (e) {
+          console.warn("Could not load konfigurator_prices.json – using built-in prices.", e);
+        }
+        // Preload offer from ?offer= URL param — this is the admin/CMS entry point
+        const offerId = new URLSearchParams(window.location.search).get("offer");
+        if (offerId) {
+          try {
+            const sr = await fetch(`/offers/${offerId}-state.json`);
+            if (sr.ok) {
+              const data = await sr.json();
+              currentOfferId = offerId;
+              loadedVersion = data.version || 1;
+              offerVersion = loadedVersion + 1;
+              state = data.state;
+              originalStateSnapshot = JSON.parse(JSON.stringify(state));
+              isAdminMode = true;
+
+              document.getElementById("modal-title").textContent = "Uložit novou verzi";
+              document.getElementById("offer-form-section").classList.add("hidden");
+              document.getElementById("admin-recap-section").classList.remove("hidden");
+              const mainBtn = document.getElementById("main-cta-btn");
+              if (mainBtn) { mainBtn.textContent = "Uložit novou verzi"; mainBtn.disabled = true; }
+              const badge = document.getElementById("pricelist-version-badge-admin");
+              if (badge && pricelistVersion) badge.textContent = "Ceník " + pricelistVersion;
+            }
+          } catch (e) {
+            console.warn("Could not load offer state:", e);
+          }
+        }
+        init3D();
+      };
+    </script>
+  </body>
+</html>

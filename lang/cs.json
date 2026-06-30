@@ -1,0 +1,19 @@
+{
+  "lang": "cs",
+  "dir": "ltr",
+
+  "nav.menu": "Menu",
+  "nav.logo_alt": "Polymont",
+
+  "hero.left.title": "Halové vestavby",
+  "hero.left.subtitle": "příčky a prosklené hliníkové konstrukce",
+  "hero.left.img_alt": "Halové vestavby, příčky a prosklené hliníkové konstrukce",
+
+  "hero.right.title": "Vrata a dveře",
+  "hero.right.subtitle": "průmyslová, garážová, domovní",
+  "hero.right.img_alt": "Průmyslová a garážová vrata, domovní a průmyslové dveře",
+
+  "hero.label.consulting": "Rodina",
+  "hero.label.management": "30 let",
+  "hero.label.control": "HÖRMANN"
+}

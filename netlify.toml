@@ -1,0 +1,32 @@
+[build]
+  command   = "npm run build"
+  publish   = "_site"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Admin root → dashboard
+[[redirects]]
+  from = "/admin/"
+  to   = "/admin/dashboard.html"
+  status = 302
+
+# CMS entry point (Netlify Identity callback still works here)
+[[redirects]]
+  from = "/admin/cms/"
+  to   = "/admin/index.html"
+  status = 200
+
+# Decap CMS resolves config.yml relative to the page URL (/admin/cms/)
+[[redirects]]
+  from = "/admin/cms/config.yml"
+  to   = "/admin/config.yml"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

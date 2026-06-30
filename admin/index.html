@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polymont CMS</title>
+  <style>
+    #dashboard-link {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: #1a1a18; color: rgba(255,255,255,.7);
+      font-family: system-ui, sans-serif; font-size: 12px;
+      padding: 6px 16px; display: flex; align-items: center; gap: 12px;
+    }
+    #dashboard-link a { color: #fff; text-decoration: none; font-weight: 600; }
+    #dashboard-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div id="dashboard-link">
+    ← <a href="/admin/dashboard.html">Přehled poptávek</a>
+    <span style="opacity:.4">|</span>
+    Decap CMS
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.style.paddingTop = '28px';
+    });
+  </script>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+</body>
+</html>

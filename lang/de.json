@@ -1,0 +1,19 @@
+{
+  "lang": "de",
+  "dir": "ltr",
+
+  "nav.menu": "Menü",
+  "nav.logo_alt": "Polymont",
+
+  "hero.left.title": "Halleneinbauten",
+  "hero.left.subtitle": "Trennwände und verglaste Aluminiumkonstruktionen",
+  "hero.left.img_alt": "Halleneinbauten, Trennwände und verglaste Aluminiumkonstruktionen",
+
+  "hero.right.title": "Tore und Türen",
+  "hero.right.subtitle": "Industrie-, Garagen- und Haustüren",
+  "hero.right.img_alt": "Industrie- und Garagentore, Haus- und Industrietüren",
+
+  "hero.label.consulting": "BERATUNG",
+  "hero.label.management": "MANAGEMENT",
+  "hero.label.control": "STEUERUNG"
+}

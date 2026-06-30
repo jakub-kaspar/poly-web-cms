@@ -1,0 +1,108 @@
+---
+layout: layouts/base.njk
+permalink: ochrana-osobnich-udaju.html
+navActive: privacy
+noindex: true
+meta_title: "Ochrana osobních údajů – Polymont"
+meta_description: "Zásady ochrany osobních údajů společnosti Polymont s.r.o. Informace o zpracování osobních údajů v souladu s GDPR."
+---
+
+
+<style>
+  .privacy { max-width: 780px; margin: 0 auto; padding: calc(var(--nav-h) + 64px) 24px 96px; }
+  .privacy__eyebrow { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); font-weight: 500; margin-bottom: 16px; }
+  .privacy__title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.1; color: var(--dark); margin-bottom: 12px; }
+  .privacy__updated { font-size: 13px; color: rgba(26,26,24,0.45); margin-bottom: 56px; }
+  .privacy__body h2 { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin: 40px 0 12px; }
+  .privacy__body h2:first-child { margin-top: 0; }
+  .privacy__body p, .privacy__body li { font-size: 0.975rem; line-height: 1.75; color: rgba(26,26,24,0.72); }
+  .privacy__body ul { padding-left: 20px; margin: 8px 0 16px; }
+  .privacy__body ul li { margin-bottom: 6px; }
+  .privacy__body a { color: var(--dark); text-decoration: underline; text-underline-offset: 2px; }
+  .privacy__body a:hover { color: var(--red); }
+  .privacy__divider { border: none; border-top: 1px solid rgba(26,26,24,0.1); margin: 48px 0; }
+</style>
+
+  <main class="privacy">
+    <p class="privacy__eyebrow">Právní informace</p>
+    <h1 class="privacy__title">Ochrana osobních údajů</h1>
+    <p class="privacy__updated">Platnost od 1. ledna 2025</p>
+
+    <div class="privacy__body">
+
+      <h2>1. Správce osobních údajů</h2>
+      <p>Správcem osobních údajů je společnost <strong>{{ settings.company }}</strong>, se sídlem {{ settings.address_street }}, {{ settings.address_zip }} {{ settings.address_city }}, IČO: {{ settings.ico }}, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze (dále jen „správce").</p>
+      <p>Kontaktní údaje správce:<br>
+        E-mail: <a href="mailto:{{ settings.email }}">{{ settings.email }}</a><br>
+        Telefon: <a href="tel:{{ settings.phone_href }}">{{ settings.phone }}</a><br>
+        Adresa: {{ settings.address_street }}, {{ settings.address_zip }} {{ settings.address_city }}</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>2. Jaké osobní údaje zpracováváme</h2>
+      <p>Zpracováváme pouze údaje, které nám sami poskytnete prostřednictvím kontaktního formuláře nebo e-mailem:</p>
+      <ul>
+        <li>Jméno a příjmení</li>
+        <li>Název firmy (je-li uveden)</li>
+        <li>E-mailová adresa</li>
+        <li>Telefonní číslo</li>
+        <li>Obsah vaší zprávy a případné přílohy</li>
+      </ul>
+
+      <hr class="privacy__divider" />
+
+      <h2>3. Účel a právní základ zpracování</h2>
+      <p>Vaše osobní údaje zpracováváme výhradně za účelem:</p>
+      <ul>
+        <li><strong>Vyřízení poptávky nebo dotazu</strong> — právní základ: plnění smlouvy nebo provedení opatření před uzavřením smlouvy (čl. 6 odst. 1 písm. b) GDPR).</li>
+        <li><strong>Zasílání odpovědi a případné obchodní komunikace</strong> — právní základ: oprávněný zájem správce (čl. 6 odst. 1 písm. f) GDPR).</li>
+        <li><strong>Plnění zákonných povinností</strong> — pokud nám to ukládá zákon (čl. 6 odst. 1 písm. c) GDPR).</li>
+      </ul>
+
+      <hr class="privacy__divider" />
+
+      <h2>4. Doba uchování údajů</h2>
+      <p>Osobní údaje uchováváme po dobu nezbytně nutnou k vyřízení vaší poptávky, zpravidla po dobu 3 let od posledního kontaktu. Pokud z vaší poptávky vznikne smluvní vztah, uchováváme údaje po dobu trvání smlouvy a dále po dobu stanovenou příslušnými právními předpisy (zákon o účetnictví — 5 let, zákon o archivnictví — až 10 let).</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>5. Příjemci osobních údajů</h2>
+      <p>Vaše osobní údaje nepředáváme třetím stranám za účelem marketingu ani je neprodáváme. Údaje mohou být zpřístupněny pouze:</p>
+      <ul>
+        <li>Zpracovatelům zajišťujícím provoz e-mailových služeb a webového hostingu (vždy na základě zpracovatelské smlouvy).</li>
+        <li>Orgánům veřejné moci, pokud to vyžaduje zákon.</li>
+      </ul>
+      <p>Osobní údaje nejsou předávány do třetích zemí mimo Evropský hospodářský prostor.</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>6. Vaše práva</h2>
+      <p>V souvislosti se zpracováním osobních údajů máte tato práva:</p>
+      <ul>
+        <li><strong>Právo na přístup</strong> — kdykoli nás můžete požádat o informaci, jaké údaje o vás zpracováváme.</li>
+        <li><strong>Právo na opravu</strong> — zjistíte-li, že vaše údaje jsou nepřesné, máte právo požádat o jejich opravu.</li>
+        <li><strong>Právo na výmaz</strong> — za podmínek stanovených GDPR můžete požádat o smazání vašich osobních údajů.</li>
+        <li><strong>Právo na omezení zpracování</strong> — v určitých případech můžete požádat o omezení zpracování.</li>
+        <li><strong>Právo na přenositelnost</strong> — máte právo získat své údaje ve strukturovaném, strojově čitelném formátu.</li>
+        <li><strong>Právo vznést námitku</strong> — proti zpracování na základě oprávněného zájmu správce.</li>
+        <li><strong>Právo odvolat souhlas</strong> — pokud je zpracování založeno na vašem souhlasu, máte právo jej kdykoli odvolat.</li>
+      </ul>
+      <p>Žádosti uplatňujte e-mailem na adrese <a href="mailto:{{ settings.email }}">{{ settings.email }}</a>. Na vaši žádost odpovíme nejpozději do 30 dnů.</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>7. Právo podat stížnost</h2>
+      <p>Máte právo podat stížnost u dozorového orgánu, kterým je <strong>Úřad pro ochranu osobních údajů</strong> (ÚOOÚ), se sídlem Pplk. Sochora 27, 170 00 Praha 7, web: <a href="https://www.uoou.cz" target="_blank" rel="noopener">www.uoou.cz</a>.</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>8. Soubory cookie</h2>
+      <p>Naše webové stránky v současné době nepoužívají analytické ani marketingové soubory cookie. Využíváme pouze technicky nezbytné funkce pro provoz webu.</p>
+
+      <hr class="privacy__divider" />
+
+      <h2>9. Změny těchto zásad</h2>
+      <p>Tyto zásady ochrany osobních údajů můžeme příležitostně aktualizovat. Aktuální verze je vždy dostupná na této stránce s uvedením data platnosti.</p>
+
+    </div>
+  </main>
