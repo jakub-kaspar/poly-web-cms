@@ -6,7 +6,17 @@
   "contact_phone": "721873431",
   "contact_note": "Test 4",
   "pricelist_version": "06/26",
-  "offer_version": 1,
+  "offer_version": 2,
   "status": "new",
-  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260630-083955-2DDK)"
+  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260630-083955-2DDK)",
+  "history": [
+    {
+      "version": 2,
+      "date": "2026-06-30T10:27:11.111Z",
+      "changes": [
+        "Modul 6 (DUO): přední stěna změněno z „plná stěna“ na „celoprosklená stěna“",
+        "Modul 7 (TRIO): přední stěna změněno z „plná stěna“ na „dvojité okno“"
+      ]
+    }
+  ]
 }
