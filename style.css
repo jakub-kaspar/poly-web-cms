@@ -829,6 +829,12 @@ body {
   color: var(--white);
 }
 
+.refs__chip--active:hover {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--white);
+}
+
 /* Image grid */
 .refs__grid {
   display: grid;
@@ -863,16 +869,6 @@ body {
 
 .refs__img-wrap:hover img {
   transform: scale(1.04);
-}
-
-/* Category label */
-.refs__item-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(26, 26, 24, 0.4);
-  margin-top: 8px;
 }
 
 /* Placeholder when no image */
@@ -2358,8 +2354,72 @@ body {
   line-height: 1.6;
 }
 
-.hv-config__screen-icon {
-  opacity: 0.35;
+.hv-config__anim {
+  position: relative;
+  width: 200px;
+  height: 170px;
+  animation: hv-float 6s ease-in-out infinite;
+}
+
+.hv-config__anim-module {
+  position: relative;
+  z-index: 1;
+}
+
+.hv-config__anim-part {
+  stroke: var(--red);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  fill: rgba(230, 42, 32, 0.08);
+  opacity: 0;
+  transform-origin: center;
+  animation: hv-assemble 5s ease-in-out infinite;
+}
+
+.hv-config__anim-part--floor    { animation-delay: 0s;    fill: rgba(255, 255, 255, 0.06); stroke: rgba(255, 255, 255, 0.35); }
+.hv-config__anim-part--wall-l   { animation-delay: 0.3s; }
+.hv-config__anim-part--wall-r   { animation-delay: 0.6s; }
+.hv-config__anim-part--window   { animation-delay: 0.9s;  fill: rgba(230, 42, 32, 0.35); stroke: var(--red); }
+.hv-config__anim-part--roof     { animation-delay: 1.2s; }
+
+.hv-config__anim-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0;
+  animation: hv-ping 5s ease-in-out infinite;
+}
+
+.hv-config__anim-dot--1 { top: 30%; left: 18%; animation-delay: 1.6s; }
+.hv-config__anim-dot--2 { top: 55%; right: 14%; animation-delay: 2.1s; }
+
+@keyframes hv-assemble {
+  0%           { opacity: 0; transform: translateY(14px); }
+  10%, 55%     { opacity: 1; transform: translateY(0); }
+  70%, 100%    { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes hv-ping {
+  0%, 100%  { opacity: 0; transform: scale(0.6); }
+  15%, 50%  { opacity: 1; transform: scale(1); }
+  65%       { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes hv-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-config__anim,
+  .hv-config__anim-part,
+  .hv-config__anim-dot {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .hv-config__body {
@@ -2603,6 +2663,10 @@ body {
 
 .hv-proof--stats-only {
   padding: 72px 64px;
+}
+
+.hv-proof--tight-top {
+  padding-top: 24px;
 }
 
 .hv-proof__stats {
@@ -3359,6 +3423,114 @@ body {
   min-height: 460px;
   border: none;
   display: block;
+}
+
+/* ─── TEAM CONTACTS ─────────────────────────────────────── */
+
+.ct-team {
+  background: var(--white);
+  padding: 88px 64px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.ct-team__eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 14px;
+}
+
+.ct-team__heading {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 48px;
+}
+
+.ct-team__heading em {
+  color: var(--red);
+  font-style: normal;
+}
+
+.ct-team__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  border-left: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.ct-team__card {
+  background: var(--white);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.ct-team__card--general {
+  background: var(--light);
+}
+
+.ct-team__card--general .ct-team__role {
+  color: var(--red);
+}
+
+.ct-team__role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(26, 26, 24, 0.45);
+}
+
+.ct-team__name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.ct-team__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ct-team__link {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(26, 26, 24, 0.65);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ct-team__link:hover {
+  color: var(--red);
+}
+
+@media (max-width: 1024px) {
+  .ct-team {
+    padding: 64px 40px;
+  }
+  .ct-team__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ct-team {
+    padding: 48px 24px;
+  }
+  .ct-team__grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── CONTACT FORM ──────────────────────────────────────── */

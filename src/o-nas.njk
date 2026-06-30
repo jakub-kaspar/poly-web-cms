@@ -2,8 +2,9 @@
 layout: layouts/base.njk
 permalink: o-nas.html
 navActive: o-nas
-meta_title: "{{ o_nas.meta_title }}"
-meta_description: "{{ o_nas.meta_description }}"
+eleventyComputed:
+  meta_title: "{{ o_nas.meta_title }}"
+  meta_description: "{{ o_nas.meta_description }}"
 ---
 
   <!-- HERO -->

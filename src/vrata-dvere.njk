@@ -2,8 +2,9 @@
 layout: layouts/base.njk
 permalink: vrata-dvere.html
 navActive: vrata
-meta_title: "{{ vrata_dvere.meta_title }}"
-meta_description: "{{ vrata_dvere.meta_description }}"
+eleventyComputed:
+  meta_title: "{{ vrata_dvere.meta_title }}"
+  meta_description: "{{ vrata_dvere.meta_description }}"
 ---
 
   <!-- HERO -->
@@ -55,8 +56,12 @@ meta_description: "{{ vrata_dvere.meta_description }}"
     </div>
   </section>
 
+  {% set refs_title = "Realizace vrat a dveří" %}
+  {% set refs_default_filter = "vrata" %}
+  {% include "components/references.njk" %}
+
   <!-- STATS -->
-  <section class="hv-proof hv-proof--stats-only">
+  <section class="hv-proof hv-proof--stats-only hv-proof--tight-top">
     <div class="hv-proof__stats">
       {% for stat in vrata_dvere.proof_stats %}
       <div class="hv-proof__stat">

@@ -2,8 +2,9 @@
 layout: layouts/base.njk
 permalink: halove-vestavby.html
 navActive: vestavby
-meta_title: "{{ halove_vestavby.meta_title }}"
-meta_description: "{{ halove_vestavby.meta_description }}"
+eleventyComputed:
+  meta_title: "{{ halove_vestavby.meta_title }}"
+  meta_description: "{{ halove_vestavby.meta_description }}"
 ---
 
   <!-- HERO -->
@@ -23,8 +24,7 @@ meta_description: "{{ halove_vestavby.meta_description }}"
       </h1>
       <p class="sp-hero__sub">{{ halove_vestavby.hero_sub }}</p>
       <div class="sp-hero__actions">
-        <a href="/inhaabit_style.html" class="cta-btn cta-btn--primary">
-          <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M10 2l1.5 4.5H16l-3.6 2.6 1.4 4.4L10 11l-3.8 2.5 1.4-4.4L4 6.5h4.5L10 2z" fill="currentColor"/></svg>
+        <a href="/konfigurator.html" target="_blank" rel="noopener" class="cta-btn cta-btn--primary">
           {{ halove_vestavby.hero_cta_primary }}
           <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -66,11 +66,21 @@ meta_description: "{{ halove_vestavby.meta_description }}"
     <div class="hv-config__inner">
       <div class="hv-config__visual">
         <div class="hv-config__screen">
+          <div class="hv-config__anim" aria-hidden="true">
+            <svg class="hv-config__anim-module" viewBox="0 0 200 170" width="200" height="170" fill="none">
+              <polygon class="hv-config__anim-part hv-config__anim-part--floor" points="20,125 100,155 180,125 100,95" />
+              <polygon class="hv-config__anim-part hv-config__anim-part--wall-l" points="20,125 20,65 100,35 100,95" />
+              <polygon class="hv-config__anim-part hv-config__anim-part--wall-r" points="100,95 100,35 180,65 180,125" />
+              <rect class="hv-config__anim-part hv-config__anim-part--window" x="118" y="68" width="34" height="28" rx="1.5" />
+              <polygon class="hv-config__anim-part hv-config__anim-part--roof" points="20,65 100,35 180,65 100,95" />
+            </svg>
+            <span class="hv-config__anim-dot hv-config__anim-dot--1"></span>
+            <span class="hv-config__anim-dot hv-config__anim-dot--2"></span>
+          </div>
           <div class="hv-config__screen-label">
             <span class="hv-config__screen-tag">3D Konfigurátor</span>
-            <p>Interaktivní náhled spustíte kliknutím na tlačítko níže</p>
+            <p>Takto se modul sestavuje v reálném čase — vyzkoušejte to sami</p>
           </div>
-          <svg class="hv-config__screen-icon" viewBox="0 0 80 80" fill="none" width="80" height="80"><rect x="8" y="16" width="64" height="40" rx="4" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/><rect x="16" y="24" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.40)" stroke-width="1.2"/><rect x="44" y="24" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.40)" stroke-width="1.2"/><rect x="16" y="44" width="48" height="4" rx="2" fill="rgba(255,255,255,0.12)"/><line x1="40" y1="56" x2="40" y2="64" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/><rect x="28" y="64" width="24" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/></svg>
         </div>
       </div>
       <div class="hv-config__body">
@@ -111,6 +121,10 @@ meta_description: "{{ halove_vestavby.meta_description }}"
       {% endfor %}
     </div>
   </section>
+
+  {% set refs_title = "Realizace halových vestaveb" %}
+  {% set refs_default_filter = "vestavby" %}
+  {% include "components/references.njk" %}
 
   <!-- TECHNICKÉ PARAMETRY -->
   <section class="hv-tech">
@@ -173,7 +187,7 @@ meta_description: "{{ halove_vestavby.meta_description }}"
       <p class="cta-band__sub">{{ halove_vestavby.cta_sub }}</p>
     </div>
     <div class="cta-band__actions">
-      <a href="/inhaabit_style.html" class="cta-btn cta-btn--primary">
+      <a href="/konfigurator.html" target="_blank" rel="noopener" class="cta-btn cta-btn--primary">
         <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M3 17l4-4m0 0l3-7 4 4-7 3zm4-4l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         {{ halove_vestavby.cta_primary }}
         <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
