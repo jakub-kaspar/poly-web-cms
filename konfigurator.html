@@ -3656,26 +3656,73 @@
       let originalStateSnapshot = null;
 
       const MODULE_FIELD_LABELS = {
-        "windows.front":  "okno vpředu",
-        "windows.back":   "okno vzadu",
-        "windows.left":   "okno vlevo",
-        "windows.right":  "okno vpravo",
-        doors:            "počet dveří",
-        partition:        "příčka",
-        placement:        "umístění",
-        roof:             "střecha",
-        floor:            "podlaha",
+        "windows.front":  "přední stěna",
+        "windows.back":   "zadní stěna",
+        "windows.left":   "levá stěna",
+        "windows.right":  "pravá stěna",
+        doors:            "počet vstupních dveří",
+        partition:        "vnitřní příčka",
+        placement:        "umístění v hale",
+        roof:             "provedení stropu",
+        floor:            "podlahová krytina",
         light:            "osvětlení",
-        power:            "elektrorozvaděč",
+        power:            "elektrický rozváděč",
         fan:              "ventilátor",
         ac:               "klimatizace",
         stairs:           "schodiště",
-        elevated:         "vyvýšení",
+        elevated:         "vyvýšení nad zemí",
         ceiling:          "podhled",
       };
 
-      function moduleLabel(m) {
-        return `${m.type} (${m.ix}, ${m.iy}, ${m.iz})`;
+      const BOOLEAN_FIELDS = new Set(["partition", "light", "power", "fan", "ac", "stairs", "elevated", "ceiling"]);
+
+      const WINDOW_VALUE_LABELS = {
+        solid:       "plná stěna",
+        single:      "jedno okno",
+        double:      "dvojité okno",
+        triple:      "trojité okno",
+        full:        "celoprosklená stěna",
+        door_l:      "dveře vlevo",
+        door_r:      "dveře vpravo",
+        door_l_w1:   "dveře vlevo + okno",
+        door_r_w1:   "dveře vpravo + okno",
+        door_l_w2:   "dveře vlevo + 2 okna",
+        door_r_w2:   "dveře vpravo + 2 okna",
+      };
+
+      const PLACEMENT_VALUE_LABELS = {
+        "4":  "volně uprostřed haly",
+        "3B": "zadní stranou opřený o stěnu haly",
+        "3L": "levou stranou opřený o stěnu haly",
+        "3R": "pravou stranou opřený o stěnu haly",
+        "2":  "v levém rohu haly",
+        "2R": "v pravém rohu haly",
+      };
+
+      const ROOF_VALUE_LABELS = {
+        nepochozi:     "standardní (bez výztuže)",
+        pochozi_90:    "pochozí strop pro údržbu (90 kg/m²)",
+        mezipatro_250: "nosné mezipatro pro 2. NP (250 kg/m²)",
+      };
+
+      const FLOOR_VALUE_LABELS = {
+        osb:   "základní (OSB deska, bez příplatku)",
+        pvc:   "standardní PVC 2,0 mm",
+        vinyl: "vinylové desky 5,5 mm",
+      };
+
+      function formatFieldValue(key, val) {
+        if (BOOLEAN_FIELDS.has(key)) return val ? "ano" : "ne";
+        if (key.startsWith("windows.")) return WINDOW_VALUE_LABELS[val] || val;
+        if (key === "placement") return PLACEMENT_VALUE_LABELS[val] || val;
+        if (key === "roof") return ROOF_VALUE_LABELS[val] || val;
+        if (key === "floor") return FLOOR_VALUE_LABELS[val] || val;
+        return val;
+      }
+
+      function moduleLabel(m, mods) {
+        const idx = mods.findIndex((x) => x.id === m.id);
+        return `Modul ${idx + 1} (${m.type})`;
       }
 
       function diffState(oldState, newState) {
@@ -3686,10 +3733,10 @@
         const newById = new Map(newMods.map((m) => [m.id, m]));
 
         newMods.forEach((m) => {
-          if (!oldById.has(m.id)) changes.push(`Přidán modul ${moduleLabel(m)}`);
+          if (!oldById.has(m.id)) changes.push(`Přidán ${moduleLabel(m, newMods)}`);
         });
         oldMods.forEach((m) => {
-          if (!newById.has(m.id)) changes.push(`Odebrán modul ${moduleLabel(m)}`);
+          if (!newById.has(m.id)) changes.push(`Odebrán ${moduleLabel(m, oldMods)}`);
         });
         newMods.forEach((m) => {
           const old = oldById.get(m.id);
@@ -3699,7 +3746,13 @@
             const oldVal = b ? old[a]?.[b] : old[a];
             const newVal = b ? m[a]?.[b] : m[a];
             if (oldVal !== newVal) {
-              changes.push(`${moduleLabel(m)}: ${MODULE_FIELD_LABELS[key]} ${oldVal} → ${newVal}`);
+              const label = moduleLabel(m, newMods);
+              const fieldLabel = MODULE_FIELD_LABELS[key];
+              if (BOOLEAN_FIELDS.has(key)) {
+                changes.push(`${label}: ${fieldLabel} ${newVal ? "zapnuto" : "vypnuto"}`);
+              } else {
+                changes.push(`${label}: ${fieldLabel} změněno z „${formatFieldValue(key, oldVal)}“ na „${formatFieldValue(key, newVal)}“`);
+              }
             }
           });
         });
