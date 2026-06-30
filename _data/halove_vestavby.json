@@ -1,18 +1,57 @@
 {
-  "meta_title": "Halové vestavby na míru – 3D konfigurátor | Polymont",
+  "hero_cta_secondary": "Prohlédnout realizace",
+  "tech_eyebrow": "Technické parametry",
+  "proof_quote": "Potřebovali jsme rychle vytvořit kancelář pro mistry přímo v hlučné hale. Polymont vše zaměřil, za 3 dny smontoval a výroba se vůbec nemusela zastavit.",
+  "problem_heading": "Potřebujete prostor, ale zděná stavba",
   "meta_description": "Modulové kanceláře a zázemí ve vaší hale za pár dní. Navrhněte si vestavbu DUO nebo TRIO v 3D konfigurátoru a získejte okamžitou orientační cenu zdarma.",
-
-  "hero_image": "hero-1.png",
+  "config_heading_em": "Zkuste si to.",
+  "proof_stats": [
+    {
+      "num": "30",
+      "suffix": "+",
+      "label": "let na trhu"
+    },
+    {
+      "num": "150",
+      "suffix": "+",
+      "label": "realizovaných vestaveb"
+    },
+    {
+      "num": "HÖRMANN",
+      "suffix": "",
+      "label": "Certifikovaný partner"
+    }
+  ],
+  "proof_attribution": "Vedoucí výroby, průmyslový zákazník",
+  "problem_heading_em": "nepřipadá v úvahu?",
+  "cta_secondary": "Poptat řešení na míru",
+  "config_heading": "První 3D konfigurátor vestaveb v ČR.",
+  "usecases_eyebrow": "Oblasti využití",
+  "usecases_heading_em": "nekonečno možností.",
+  "config_checklist": [
+    "Okamžitá orientační cena",
+    "Vizualizace v reálném čase",
+    "Návrh na míru vašim potřebám",
+    "Zcela nezávazně"
+  ],
+  "problem_eyebrow": "Proč halová vestavba?",
+  "config_text": "Nečekejte týdny na cenovou nabídku. Vyberte si modul (DUO pro 2 osoby, TRIO pro 3 osoby), umístění v hale, přidejte prosklení, klimatizaci nebo pochozí strop — a hned víte, na čem jste.",
+  "hero_heading_em": "Za pár dnů. Bez těžké techniky.",
+  "tech_heading_2": "za kterou",
+  "config_eyebrow": "Konfigurátor vestaveb",
+  "tech_heading_em": "si stojíme.",
+  "hero_cta_primary": "Otevřít 3D konfigurátor",
+  "tech_specs": [
+    "Staticky posouzené ocelové konstrukce",
+    "Prachotěsné, akustické nebo požární stěny do EI 30 min.",
+    "Hliníkové výplně s možností tepelně a zvukově izolačních skel",
+    "Dveře a průmyslová vrata HÖRMANN nejvyšší kvality",
+    "Skryté rozvody v dutině příček nebo v povrchových lištách"
+  ],
   "hero_heading_1": "Získejte nové kanceláře",
   "hero_heading_2": "a zázemí ve vaší hale.",
-  "hero_heading_em": "Za pár dnů. Bez těžké techniky.",
-  "hero_sub": "Modulové halové vestavby Polymont. Flexibilní, ekonomické a s okamžitou orientační kalkulací.",
-  "hero_cta_primary": "Otevřít 3D konfigurátor",
-  "hero_cta_secondary": "Prohlédnout realizace",
-
-  "problem_eyebrow": "Proč halová vestavba?",
-  "problem_heading": "Potřebujete prostor, ale zděná stavba",
-  "problem_heading_em": "nepřipadá v úvahu?",
+  "cta_sub": "Kromě typových modulů DUO a TRIO navrhujeme složité vestavby, patrové systémy a rozsáhlá řešení na míru. Odbavíme i ty nejnáročnější architektonické požadavky.",
+  "tech_image": "images/polymont-steal-modul.png",
   "problem_cols": [
     {
       "title": "Rychlost a čistota",
@@ -27,22 +66,14 @@
       "text": "Hluk, prach ani výkyvy teplot nemají šanci. Oddělíme čisté provozy od těžké výroby."
     }
   ],
-
-  "config_eyebrow": "Konfigurátor vestaveb",
-  "config_heading": "První 3D konfigurátor vestaveb v ČR.",
-  "config_heading_em": "Zkuste si to.",
-  "config_text": "Nečekejte týdny na cenovou nabídku. Vyberte si modul (DUO pro 2 osoby, TRIO pro 3 osoby), umístění v hale, přidejte prosklení, klimatizaci nebo pochozí strop — a hned víte, na čem jste.",
-  "config_checklist": [
-    "Okamžitá orientační cena",
-    "Vizualizace v reálném čase",
-    "Návrh na míru vašim potřebám",
-    "Zcela nezávazně"
-  ],
+  "cta_heading": "Máte atypický prostor nebo potřebujete",
+  "cta_primary": "Sestavit modul",
   "config_cta": "Spustit konfigurátor",
-
-  "usecases_eyebrow": "Oblasti využití",
-  "usecases_heading": "Jeden dodavatel –",
-  "usecases_heading_em": "nekonečno možností.",
+  "cta_heading_em": "rozsáhlý projekt na míru?",
+  "hero_image": "hero-1.png",
+  "tech_heading": "Kvalita,",
+  "cta_eyebrow": "Atypický projekt?",
+  "hero_sub": "Modulové halové vestavby Polymont. Flexibilní, ekonomické a s okamžitou orientační kalkulací.",
   "usecases": [
     {
       "image": "references_graded/Mezanin 1.jpg",
@@ -69,8 +100,6 @@
       "desc": "Oddělené servisní či montážní úseky."
     }
   ],
-
-  "tech_image": "images/polymont-steal-modul.png",
   "tech_image_alt": "Detail konstrukce halové vestavby Polymont",
   "tech_eyebrow": "Technické parametry",
   "tech_heading": "Kvalita,",
