@@ -1408,6 +1408,26 @@ body {
     left: 20px;
   }
 
+  /* Hide decorative SVG watermark — causes overlap on small screens */
+  .hero__title-svg {
+    display: none;
+  }
+
+  /* Shrink subtitle badge so it doesn't fill the full panel width */
+  .hero__subtitle {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 9px;
+  }
+
+  /* Tighten hero buttons so text fits on one line at 375px */
+  .hero__btn {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    padding: 10px 14px 10px 16px;
+    gap: 7px;
+  }
+
   .hero__labels {
     padding: 11px 20px;
   }
