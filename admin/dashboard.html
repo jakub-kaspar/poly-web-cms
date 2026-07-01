@@ -183,21 +183,22 @@
     .btn-action svg { width: 14px; height: 14px; }
     .btn-action--red:hover { background: #fff1f0; color: var(--red); border-color: #fecaca; }
 
-    /* Source badge */
-    .source-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 10px; font-weight: 700; letter-spacing: .5px;
-      text-transform: uppercase; padding: 3px 8px; border-radius: 99px;
-      white-space: nowrap;
+    /* Source icon dot at start of row */
+    .src-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 8px;
+      flex-shrink: 0; margin-right: 10px; vertical-align: middle;
+      font-size: 13px;
     }
-    .source-badge--konfigurator {
-      background: #1a1a1808; color: var(--dark);
-      border: 1px solid var(--border);
-    }
-    .source-badge--contact {
-      background: #dbeafe; color: #1e40af;
-      border: 1px solid #bfdbfe;
-    }
+    .src-icon--konfigurator { background: rgba(26,26,24,.06); }
+    .src-icon--contact      { background: #dbeafe; }
+
+    /* Contact details modal */
+    .detail-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { min-width: 110px; font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding-top: 1px; }
+    .detail-value { color: var(--dark); white-space: pre-wrap; word-break: break-word; }
+    .detail-value a { color: var(--dark); }
 
     /* Empty / loading */
     .state-cell {
@@ -334,6 +335,17 @@
   </div>
 </div>
 
+<!-- Contact details modal -->
+<div class="modal-backdrop" id="details-backdrop" onclick="if(event.target===this) closeDetails()">
+  <div class="modal-card" style="max-width:560px">
+    <div class="modal-card__header">
+      <h3 id="details-title">Detail zprávy</h3>
+      <button class="modal-card__close" type="button" onclick="closeDetails()">&times;</button>
+    </div>
+    <div class="modal-card__body" id="details-body"></div>
+  </div>
+</div>
+
 <script>
   let allOffers = [];
   let activeFilter = "all";
@@ -406,23 +418,29 @@
 
     tbody.innerHTML = items.map(o => {
       const { date, time } = formatDate(o.submitted_at);
-      const status     = o.status || "new";
-      const isContact  = o.source === "contact";
+      const status    = o.status || "new";
+      const isContact = o.source === "contact";
 
-      const sourceBadge = isContact
-        ? `<span class="source-badge source-badge--contact">📝 Formulář</span>`
-        : `<span class="source-badge source-badge--konfigurator">🔧 Konfigurátor</span>`;
+      const srcIcon = isContact
+        ? `<span class="src-icon src-icon--contact" title="Kontaktní formulář">📝</span>`
+        : `<span class="src-icon src-icon--konfigurator" title="Konfigurátor">🔧</span>`;
 
       const middleCol = isContact
         ? `<td class="td-version">
-             ${sourceBadge}
-             ${o.contact_subject ? `<span style="display:block;margin-top:4px;font-size:12px;color:var(--muted)">${esc(o.contact_subject)}</span>` : ""}
+             ${o.contact_subject ? `<strong>${esc(o.contact_subject)}</strong>` : "<span style='color:var(--muted)'>–</span>"}
            </td>`
         : `<td class="td-version">
-             ${sourceBadge}
-             <strong style="display:block;margin-top:4px">v.${o.offer_version || 1}</strong>
+             <strong>v.${o.offer_version || 1}</strong>
              <span>ceník ${esc(o.pricelist_version || "–")}</span>
            </td>`;
+
+      const lastBtn = isContact
+        ? `<button class="btn-action" type="button" onclick="showDetails('${o.id}')" title="Zobrazit detail zprávy">
+             <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+           </button>`
+        : `<button class="btn-action" type="button" onclick="showHistory('${o.id}')" title="Historie verzí">
+             <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+           </button>`;
 
       const konfiguratorBtn = isContact ? "" : `
             <a class="btn-action" href="/konfigurator.html?offer=${o.id}" target="_blank" title="Otevřít v konfigurátoru">
@@ -431,11 +449,14 @@
 
       return `
       <tr>
-        <td>
-          <span class="td-name">${esc(o.contact_name || "–")}</span>
-          <a class="td-email" href="mailto:${esc(o.contact_email)}">${esc(o.contact_email || "–")}</a>
-          ${o.contact_phone ? ` · <a class="td-phone" href="tel:${esc(o.contact_phone)}">${esc(o.contact_phone)}</a>` : ""}
-          ${o.contact_note ? `<span class="td-note">${esc(o.contact_note.slice(0,90))}${o.contact_note.length > 90 ? "…" : ""}</span>` : ""}
+        <td style="display:flex;align-items:flex-start;padding-top:15px">
+          ${srcIcon}
+          <div>
+            <span class="td-name">${esc(o.contact_name || "–")}</span>
+            <a class="td-email" href="mailto:${esc(o.contact_email)}">${esc(o.contact_email || "–")}</a>
+            ${o.contact_phone ? ` · <a class="td-phone" href="tel:${esc(o.contact_phone)}">${esc(o.contact_phone)}</a>` : ""}
+            ${o.contact_note ? `<span class="td-note">${esc(o.contact_note.slice(0,80))}${o.contact_note.length > 80 ? "…" : ""}</span>` : ""}
+          </div>
         </td>
         <td class="td-date">
           <strong>${esc(date)}</strong>
@@ -456,9 +477,7 @@
             <a class="btn-action" href="mailto:${esc(o.contact_email)}" title="Odeslat e-mail">
               <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </a>
-            <button class="btn-action" type="button" onclick="showHistory('${o.id}')" title="Historie verzí">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-            </button>
+            ${lastBtn}
           </div>
         </td>
       </tr>`;
@@ -509,6 +528,42 @@
 
   function closeHistory() {
     document.getElementById("history-backdrop").classList.remove("active");
+  }
+
+  function showDetails(id) {
+    const o = allOffers.find(o => o.id === id);
+    if (!o) return;
+
+    document.getElementById("details-title").textContent =
+      "Zpráva od " + (o.contact_name || "–");
+
+    const { date, time } = formatDate(o.submitted_at);
+
+    // Extract attachment filenames from message (appended as "[Přílohy: ...]")
+    const rawNote = o.contact_note || "";
+    const attachMatch = rawNote.match(/\[Přílohy: ([^\]]+)\]$/);
+    const attachList  = attachMatch ? attachMatch[1].split(", ") : [];
+    const cleanNote   = rawNote.replace(/\n?\[Přílohy:[^\]]+\]$/, "").trim();
+
+    const row = (label, value) =>
+      value ? `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${value}</span></div>` : "";
+
+    document.getElementById("details-body").innerHTML = `
+      ${row("Jméno",    esc(o.contact_name))}
+      ${row("Firma",    esc(o.contact_company))}
+      ${row("E-mail",   `<a href="mailto:${esc(o.contact_email)}">${esc(o.contact_email)}</a>`)}
+      ${row("Telefon",  o.contact_phone ? `<a href="tel:${esc(o.contact_phone)}">${esc(o.contact_phone)}</a>` : "")}
+      ${row("Oblast",   esc(o.contact_subject))}
+      ${row("Přijato",  `${esc(date)} ${esc(time)}`)}
+      ${row("Zpráva",   esc(cleanNote))}
+      ${attachList.length ? row("Přílohy", attachList.map(f => `<span style="display:block">${esc(f)}</span>`).join("")) : ""}
+    `;
+
+    document.getElementById("details-backdrop").classList.add("active");
+  }
+
+  function closeDetails() {
+    document.getElementById("details-backdrop").classList.remove("active");
   }
 
   function esc(s) {
