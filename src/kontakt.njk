@@ -151,7 +151,7 @@ eleventyComputed:
         </div>
       </div>
 
-      <form class="ct-form" action="mailto:{{ settings.email }}" method="get" enctype="text/plain">
+      <form class="ct-form" id="ct-form" novalidate>
         <div class="ct-form__row">
           <div class="ct-form__field">
             <label class="ct-form__label" for="ct-name">Jméno a příjmení *</label>
@@ -210,16 +210,23 @@ eleventyComputed:
         </div>
         <div class="ct-form__footer">
           <p class="ct-form__note">* Povinné pole.</p>
-          <button type="submit" class="cta-btn cta-btn--primary">
+          <button type="submit" class="cta-btn cta-btn--primary" id="ct-submit">
             Odeslat zprávu
             <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
+        <p class="ct-form__success" id="ct-success" hidden>
+          ✓ Zpráva byla odeslána. Ozveme se Vám co nejdříve.
+        </p>
+        <p class="ct-form__error" id="ct-error" hidden>
+          Odeslání se nezdařilo. Prosím zkuste to znovu nebo nás kontaktujte na <a href="mailto:{{ settings.email }}">{{ settings.email }}</a>.
+        </p>
       </form>
     </div>
   </section>
 
   <script>
+    /* ── File input UI ── */
     const fileInput   = document.getElementById('ct-files');
     const fileList    = document.getElementById('ct-file-list');
     const uploadLabel = document.getElementById('ct-upload-label');
@@ -253,5 +260,55 @@ eleventyComputed:
       [...e.dataTransfer.files].forEach(f => dt.items.add(f));
       fileInput.files = dt.files;
       renderFiles(fileInput.files);
+    });
+
+    /* ── Form submission → Netlify function ── */
+    document.getElementById('ct-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form    = e.target;
+      const btn     = document.getElementById('ct-submit');
+      const success = document.getElementById('ct-success');
+      const errEl   = document.getElementById('ct-error');
+
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Odesílám…';
+      success.hidden = true;
+      errEl.hidden   = true;
+
+      const fileNames = [...fileInput.files].map(f => f.name);
+      const messageWithFiles = form.querySelector('#ct-message').value
+        + (fileNames.length ? '\n\n[Přílohy: ' + fileNames.join(', ') + ']' : '');
+
+      try {
+        const resp = await fetch('/.netlify/functions/submit-contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name:    form.querySelector('#ct-name').value,
+            company: form.querySelector('#ct-company').value,
+            email:   form.querySelector('#ct-email').value,
+            phone:   form.querySelector('#ct-phone').value,
+            subject: form.querySelector('#ct-subject').value,
+            message: messageWithFiles,
+          }),
+        });
+        const data = await resp.json();
+        if (data.success) {
+          form.reset();
+          renderFiles([]);
+          success.hidden = false;
+          success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        console.error('submit-contact:', err);
+        errEl.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Odeslat zprávu <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
     });
   </script>
