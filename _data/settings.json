@@ -10,9 +10,41 @@
   "maps_url": "https://maps.app.goo.gl/bLZTi5k1dBQU85yo8",
   "hours": "Po–Pá 7:00–16:00",
   "email_response": "Odpovídáme do 24 hodin",
+  "kontakt_meta_title": "Kontakt – Polymont s.r.o. | Kutná Hora",
+  "kontakt_meta_description": "Kontaktujte Polymont s.r.o. v Kutné Hoře. Hrnčířská 296, tel. 327 523 268, e-mail polymont@polymont.cz. Otevírací doba Po–Pá 7:00–16:00.",
   "kontakt_heading": "Pojďme probrat",
   "kontakt_heading_em": "vaše potřeby.",
   "kontakt_sub": "Sídlíme v Kutné Hoře. Pro osobní schůzku ve vzorkovně doporučujeme zavolat předem.",
+
+  "contact_accordion": [
+    {
+      "title": "Garážová a průmyslová vrata",
+      "items": [
+        "Rozměr stavebního otvoru — šířka × výška",
+        "Typ vrat — sekční, rolovací, rychloběžná, posuvná",
+        "Výška překladu (od spodní hrany pod střechu)",
+        "Rozměr vpravo a vlevo od stavebního otvoru",
+        "Hloubka garáže",
+        "Barevný odstín"
+      ],
+      "note": "Případně použijte",
+      "note_link_url": "/images/Polymont-list-pro-zamereni-garazova-vrata.jpg",
+      "note_link_label": "list pro zaměření",
+      "note_download": "Polymont-list-pro-zamereni-garazova-vrata.jpg"
+    },
+    {
+      "title": "Halové vestavby a příčky",
+      "items": [
+        "Rozměry — délka × šířka × výška",
+        "Výběr stěnové konstrukce — panel s tvrzenou pěnou / přestavitelné příčky",
+        "Zastropení — nepochozí, pochozí pro údržbu, skladovací prostor, kancelář 2. NP",
+        "Prostředí v hale + účel místnosti",
+        "Vstupy, okna, vrata",
+        "Požadavky na zásuvkové okruhy, osvětlení, klimatizaci, vzduchotechniku atd.",
+        "Požadavky na interiérové vybavení"
+      ]
+    }
+  ],
 
   "team": [
     {

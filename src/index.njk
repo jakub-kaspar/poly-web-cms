@@ -23,7 +23,7 @@ eleventyComputed:
     <div class="hero__divider"></div>
 
     <div class="hero__text hero__text--topleft">
-      <h2 class="hero__title">Halové<br>vestavby</h2>
+      <h2 class="hero__title">{{ homepage.hero_left_title_1 }}<br>{{ homepage.hero_left_title_2 }}</h2>
       <p class="hero__subtitle" data-i18n="hero.left.subtitle"></p>
       <a href="/halove-vestavby.html" class="hero__btn">
         <span data-i18n="hero.left.btn">Více o vestavbách a konstrukcích</span>
@@ -32,7 +32,7 @@ eleventyComputed:
     </div>
 
     <div class="hero__text hero__text--bottomright">
-      <h2 class="hero__title">Vrata<br>a dveře</h2>
+      <h2 class="hero__title">{{ homepage.hero_right_title_1 }}<br>{{ homepage.hero_right_title_2 }}</h2>
       <img src="/hormann_logo.png" alt="HÖRMANN" class="hero__title-logo" />
       <p class="hero__subtitle" data-i18n="hero.right.subtitle"></p>
       <a href="/vrata-dvere.html" class="hero__btn">
@@ -62,8 +62,8 @@ eleventyComputed:
     <p class="clients__label" data-i18n="clients.label">Vybraní zákazníci</p>
     <div class="clients__track-wrap">
       <div class="clients__track">
-        {% for client in clients %}<span>{{ client }}</span>{% endfor %}
-        {% for client in clients %}<span aria-hidden="true">{{ client }}</span>{% endfor %}
+        {% for client in clients.items %}<span>{{ client }}</span>{% endfor %}
+        {% for client in clients.items %}<span aria-hidden="true">{{ client }}</span>{% endfor %}
       </div>
     </div>
   </section>
