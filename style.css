@@ -3752,6 +3752,25 @@ body {
   max-width: 320px;
 }
 
+.ct-form__success,
+.ct-form__error {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.ct-form__success {
+  background: #dcfce7;
+  color: #14532d;
+}
+.ct-form__error {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+.ct-form__error a { color: inherit; }
+
 /* ─── KONTAKT — RESPONSIVE ──────────────────────────────── */
 
 @media (max-width: 1024px) {

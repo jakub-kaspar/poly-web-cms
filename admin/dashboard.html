@@ -183,6 +183,22 @@
     .btn-action svg { width: 14px; height: 14px; }
     .btn-action--red:hover { background: #fff1f0; color: var(--red); border-color: #fecaca; }
 
+    /* Source badge */
+    .source-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; letter-spacing: .5px;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 99px;
+      white-space: nowrap;
+    }
+    .source-badge--konfigurator {
+      background: #1a1a1808; color: var(--dark);
+      border: 1px solid var(--border);
+    }
+    .source-badge--contact {
+      background: #dbeafe; color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
     /* Empty / loading */
     .state-cell {
       text-align: center; padding: 56px 16px;
@@ -262,7 +278,7 @@
 <!-- Page header -->
 <div class="page-header">
   <div>
-    <p class="page-header__eyebrow">Konfigurátor vestaveb</p>
+    <p class="page-header__eyebrow">Správa poptávek</p>
     <h1 class="page-header__title">Přehled poptávek</h1>
   </div>
 </div>
@@ -274,6 +290,10 @@
   <div class="tab" data-filter="in-progress">Probíhá <span class="badge" id="cnt-in-progress">–</span></div>
   <div class="tab" data-filter="done">Dokončeno <span class="badge" id="cnt-done">–</span></div>
   <div class="tab" data-filter="rejected">Odmítnuto <span class="badge" id="cnt-rejected">–</span></div>
+  <div style="flex:1"></div>
+  <div class="tab" data-source="all" id="src-all" style="border-bottom-color:transparent">Všechny zdroje</div>
+  <div class="tab" data-source="configurator" id="src-configurator">🔧 Konfigurátor <span class="badge" id="cnt-src-konfigurator">–</span></div>
+  <div class="tab" data-source="contact" id="src-contact">📝 Formulář <span class="badge" id="cnt-src-contact">–</span></div>
 </div>
 
 <!-- Toolbar -->
@@ -317,6 +337,7 @@
 <script>
   let allOffers = [];
   let activeFilter = "all";
+  let activeSource  = "all";
 
   async function load() {
     try {
@@ -331,25 +352,35 @@
 
   function updateCounts() {
     const counts = { all: allOffers.length, new: 0, "in-progress": 0, done: 0, rejected: 0 };
+    let srcKonfigurator = 0, srcContact = 0;
     allOffers.forEach(o => {
       const s = o.status || "new";
       if (s in counts) counts[s]++;
+      if (o.source === "contact") srcContact++; else srcKonfigurator++;
     });
     Object.entries(counts).forEach(([k, v]) => {
       const el = document.getElementById(`cnt-${k}`);
       if (el) el.textContent = v;
     });
+    const kEl = document.getElementById("cnt-src-konfigurator");
+    const cEl = document.getElementById("cnt-src-contact");
+    if (kEl) kEl.textContent = srcKonfigurator;
+    if (cEl) cEl.textContent = srcContact;
   }
 
   function filtered() {
     const q = document.getElementById("search").value.toLowerCase();
     return allOffers.filter(o => {
       const matchFilter = activeFilter === "all" || (o.status || "new") === activeFilter;
+      const matchSource = activeSource === "all"
+        || (activeSource === "contact"      &&  o.source === "contact")
+        || (activeSource === "configurator" &&  o.source !== "contact");
       const matchSearch = !q
-        || (o.contact_name  || "").toLowerCase().includes(q)
-        || (o.contact_email || "").toLowerCase().includes(q)
-        || (o.contact_phone || "").toLowerCase().includes(q);
-      return matchFilter && matchSearch;
+        || (o.contact_name    || "").toLowerCase().includes(q)
+        || (o.contact_email   || "").toLowerCase().includes(q)
+        || (o.contact_phone   || "").toLowerCase().includes(q)
+        || (o.contact_subject || "").toLowerCase().includes(q);
+      return matchFilter && matchSource && matchSearch;
     });
   }
 
@@ -375,7 +406,29 @@
 
     tbody.innerHTML = items.map(o => {
       const { date, time } = formatDate(o.submitted_at);
-      const status = o.status || "new";
+      const status     = o.status || "new";
+      const isContact  = o.source === "contact";
+
+      const sourceBadge = isContact
+        ? `<span class="source-badge source-badge--contact">📝 Formulář</span>`
+        : `<span class="source-badge source-badge--konfigurator">🔧 Konfigurátor</span>`;
+
+      const middleCol = isContact
+        ? `<td class="td-version">
+             ${sourceBadge}
+             ${o.contact_subject ? `<span style="display:block;margin-top:4px;font-size:12px;color:var(--muted)">${esc(o.contact_subject)}</span>` : ""}
+           </td>`
+        : `<td class="td-version">
+             ${sourceBadge}
+             <strong style="display:block;margin-top:4px">v.${o.offer_version || 1}</strong>
+             <span>ceník ${esc(o.pricelist_version || "–")}</span>
+           </td>`;
+
+      const konfiguratorBtn = isContact ? "" : `
+            <a class="btn-action" href="/konfigurator.html?offer=${o.id}" target="_blank" title="Otevřít v konfigurátoru">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </a>`;
+
       return `
       <tr>
         <td>
@@ -388,10 +441,7 @@
           <strong>${esc(date)}</strong>
           ${time}
         </td>
-        <td class="td-version">
-          <strong>v.${o.offer_version || 1}</strong>
-          <span>ceník ${esc(o.pricelist_version || "–")}</span>
-        </td>
+        ${middleCol}
         <td>
           <select class="status-select" data-value="${status}" data-id="${o.id}" onchange="changeStatus(this)">
             <option value="new"         ${status==="new"         ?"selected":""}>🆕 Nová</option>
@@ -402,11 +452,9 @@
         </td>
         <td>
           <div class="actions">
-            <a class="btn-action" href="/konfigurator.html?offer=${o.id}" target="_blank" title="Otevřít v konfigurátoru">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </a>
-            <a class="btn-action" href="/admin/cms/#/offers/${o.id}" target="_blank" title="Otevřít záznam v CMS">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            ${konfiguratorBtn}
+            <a class="btn-action" href="mailto:${esc(o.contact_email)}" title="Odeslat e-mail">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </a>
             <button class="btn-action" type="button" onclick="showHistory('${o.id}')" title="Historie verzí">
               <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
@@ -472,11 +520,23 @@
   document.getElementById("tabs").addEventListener("click", e => {
     const tab = e.target.closest(".tab");
     if (!tab) return;
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    activeFilter = tab.dataset.filter;
+
+    if (tab.dataset.source !== undefined) {
+      // Source filter tab
+      document.querySelectorAll("[data-source]").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeSource = tab.dataset.source;
+    } else if (tab.dataset.filter !== undefined) {
+      // Status filter tab
+      document.querySelectorAll("[data-filter]").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeFilter = tab.dataset.filter;
+    }
     render();
   });
+
+  // Mark "Všechny zdroje" active by default
+  document.getElementById("src-all").classList.add("active");
 
   load();
 </script>
