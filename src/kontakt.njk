@@ -277,21 +277,49 @@ eleventyComputed:
       success.hidden = true;
       errEl.hidden   = true;
 
-      const fileNames = [...fileInput.files].map(f => f.name);
-      const messageWithFiles = form.querySelector('#ct-message').value
-        + (fileNames.length ? '\n\n[Přílohy: ' + fileNames.join(', ') + ']' : '');
+      // Generate offer ID client-side so attachments can be stored under the same ID
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+      const offerId = `${stamp}-${rand}`;
+
+      // Upload each attachment to GitHub via Netlify function
+      const attachments = [];
+      btn.textContent = 'Nahrávám přílohy…';
+      for (const file of fileInput.files) {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const upResp = await fetch('/.netlify/functions/upload-attachment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: offerId, filename: file.name, data: base64 }),
+        });
+        const upData = await upResp.json();
+        if (upData.success) {
+          attachments.push({ name: upData.name, url: upData.url });
+        }
+      }
+
+      btn.textContent = 'Odesílám…';
 
       try {
         const resp = await fetch('/.netlify/functions/submit-contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            id:      offerId,
             name:    form.querySelector('#ct-name').value,
             company: form.querySelector('#ct-company').value,
             email:   form.querySelector('#ct-email').value,
             phone:   form.querySelector('#ct-phone').value,
             subject: form.querySelector('#ct-subject').value,
-            message: messageWithFiles,
+            message: form.querySelector('#ct-message').value,
+            attachments,
           }),
         });
         const data = await resp.json();
