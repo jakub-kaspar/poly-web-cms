@@ -39,22 +39,86 @@ eleventyComputed:
   </section>
 
   <!-- TIMELINE -->
-  <section class="ab-timeline">
-    <p class="ab-timeline__eyebrow">{{ o_nas.timeline_eyebrow }}</p>
-    <h2 class="ab-timeline__heading">{{ o_nas.timeline_heading }}<br><em>{{ o_nas.timeline_heading_em }}</em></h2>
-    <div class="ab-timeline__track">
-      {% for item in o_nas.timeline %}
-      <div class="ab-timeline__item{% if loop.last %} ab-timeline__item--last{% endif %}">
-        <div class="ab-timeline__year{% if item.accent %} ab-timeline__year--accent{% endif %}">{{ item.year }}</div>
-        <div class="ab-timeline__dot{% if item.accent %} ab-timeline__dot--accent{% endif %}"></div>
-        <div class="ab-timeline__content">
+  <section class="ab-timeline" id="ab-timeline">
+    <div class="ab-timeline__sticky">
+      <div class="ab-timeline__head">
+        <p class="ab-timeline__eyebrow">{{ o_nas.timeline_eyebrow }}</p>
+        <h2 class="ab-timeline__heading">{{ o_nas.timeline_heading }}<br><em>{{ o_nas.timeline_heading_em }}</em></h2>
+      </div>
+      <div class="ab-timeline__track" id="ab-track">
+        {% for item in o_nas.timeline %}
+        <div class="ab-timeline__item{% if item.accent %} ab-timeline__item--accent{% endif %}">
+          <div class="ab-timeline__year">{{ item.year }}</div>
+          <div class="ab-timeline__dot"></div>
           <h3 class="ab-timeline__title">{{ item.title }}</h3>
           <p class="ab-timeline__text">{{ item.text }}</p>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+      <div class="ab-timeline__bar-wrap">
+        <div class="ab-timeline__bar" id="ab-bar"></div>
+      </div>
     </div>
   </section>
+  <script>
+  (function () {
+    var section = document.getElementById('ab-timeline');
+    var sticky  = section && section.querySelector('.ab-timeline__sticky');
+    var track   = document.getElementById('ab-track');
+    var bar     = document.getElementById('ab-bar');
+    if (!section || !sticky || !track) return;
+
+    var items = track.querySelectorAll('.ab-timeline__item');
+
+    function maxShift() {
+      /* Measure from actual item positions, not scrollWidth (which is inflated by ::before) */
+      if (!items.length) return 0;
+      var last = items[items.length - 1];
+      return Math.max(0, last.offsetLeft + last.offsetWidth - window.innerWidth);
+    }
+
+    function alignSpine() {
+      /* --spine-y must be relative to the ITEM top (used in item::before), not track top */
+      var firstItem = items[0];
+      var firstDot  = firstItem && firstItem.querySelector('.ab-timeline__dot');
+      if (!firstDot) return;
+      var itemTop  = firstItem.getBoundingClientRect().top;
+      var dotRect  = firstDot.getBoundingClientRect();
+      var dotCenter = dotRect.top - itemTop + dotRect.height / 2;
+      track.style.setProperty('--spine-y', dotCenter + 'px');
+    }
+
+    function setHeight() {
+      /* section = content height + maxShift — no extra dead scroll */
+      section.style.height = (sticky.offsetHeight + maxShift()) + 'px';
+    }
+
+    function onScroll() {
+      var top   = section.getBoundingClientRect().top;
+      var total = section.offsetHeight - sticky.offsetHeight;
+      if (total <= 0) return;
+      var p = Math.min(1, Math.max(0, -top / total));
+      track.style.transform = 'translateX(' + (-p * maxShift()) + 'px)';
+      if (bar) bar.style.transform = 'scaleX(' + p + ')';
+
+      /* Light up each dot as its item scrolls into view */
+      var n = items.length;
+      items.forEach(function (item, i) {
+        if (p >= i / n) {
+          item.classList.add('ab-timeline__item--active');
+        } else {
+          item.classList.remove('ab-timeline__item--active');
+        }
+      });
+    }
+
+    alignSpine();
+    setHeight();
+    onScroll();
+    window.addEventListener('resize', function () { alignSpine(); setHeight(); onScroll(); }, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+  </script>
 
   <!-- HALL HIGHLIGHT -->
   <section class="ab-hall">
