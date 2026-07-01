@@ -539,14 +539,28 @@
 
     const { date, time } = formatDate(o.submitted_at);
 
-    // Extract attachment filenames from message (appended as "[Přílohy: ...]")
-    const rawNote = o.contact_note || "";
-    const attachMatch = rawNote.match(/\[Přílohy: ([^\]]+)\]$/);
-    const attachList  = attachMatch ? attachMatch[1].split(", ") : [];
-    const cleanNote   = rawNote.replace(/\n?\[Přílohy:[^\]]+\]$/, "").trim();
+    const note = o.contact_note || "";
+
+    // Support both new (attachments array) and old (filenames in message text) formats
+    let attachments = [];
+    if (Array.isArray(o.attachments) && o.attachments.length) {
+      attachments = o.attachments; // [{name, url}]
+    } else {
+      const legacyMatch = note.match(/\[Přílohy: ([^\]]+)\]$/);
+      if (legacyMatch) {
+        attachments = legacyMatch[1].split(", ").map(name => ({ name, url: null }));
+      }
+    }
+    const cleanNote = note.replace(/\n?\[Přílohy:[^\]]+\]$/, "").trim();
 
     const row = (label, value) =>
       value ? `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${value}</span></div>` : "";
+
+    const attachHtml = attachments.map(a =>
+      a.url
+        ? `<a href="${esc(a.url)}" target="_blank" rel="noopener" style="display:block">${esc(a.name)}</a>`
+        : `<span style="display:block">${esc(a.name)}</span>`
+    ).join("");
 
     document.getElementById("details-body").innerHTML = `
       ${row("Jméno",    esc(o.contact_name))}
@@ -556,7 +570,7 @@
       ${row("Oblast",   esc(o.contact_subject))}
       ${row("Přijato",  `${esc(date)} ${esc(time)}`)}
       ${row("Zpráva",   esc(cleanNote))}
-      ${attachList.length ? row("Přílohy", attachList.map(f => `<span style="display:block">${esc(f)}</span>`).join("")) : ""}
+      ${attachments.length ? row("Přílohy", attachHtml) : ""}
     `;
 
     document.getElementById("details-backdrop").classList.add("active");

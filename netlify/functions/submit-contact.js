@@ -29,24 +29,28 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { name, company, email, phone, subject, message } = JSON.parse(event.body);
+    const { id: clientId, name, company, email, phone, subject, message, attachments } = JSON.parse(event.body);
 
-    const now   = new Date();
-    const pad   = (n) => String(n).padStart(2, "0");
-    const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    const rand  = Math.random().toString(36).slice(2, 6).toUpperCase();
-    const id    = `${stamp}-${rand}`;
+    const now = new Date();
+    // Use client-provided ID (generated before file uploads) or fall back to server-generated
+    const id = clientId || (() => {
+      const pad   = (n) => String(n).padStart(2, "0");
+      const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const rand  = Math.random().toString(36).slice(2, 6).toUpperCase();
+      return `${stamp}-${rand}`;
+    })();
 
     const meta = {
       id,
       source:          "contact",
       submitted_at:    now.toISOString(),
-      contact_name:    name  || "",
-      contact_company: company || "",
-      contact_email:   email || "",
-      contact_phone:   phone || "",
-      contact_subject: subject || "",
-      contact_note:    message || "",
+      contact_name:    name     || "",
+      contact_company: company  || "",
+      contact_email:   email    || "",
+      contact_phone:   phone    || "",
+      contact_subject: subject  || "",
+      contact_note:    message  || "",
+      attachments:     Array.isArray(attachments) ? attachments : [],
       status:          "new",
     };
 
