@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Polymont CMS</title>
   <style>
+    /* ── Dashboard link bar ───────────────────────────────── */
     #dashboard-link {
       position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
       background: #1a1a18; color: rgba(255,255,255,.7);
@@ -13,6 +14,38 @@
     }
     #dashboard-link a { color: #fff; text-decoration: none; font-weight: 600; }
     #dashboard-link a:hover { text-decoration: underline; }
+
+    /* ── Polymont brand overrides for Decap CMS UI ────────── */
+    /* Top toolbar */
+    header[class] {
+      background: #1a1a18 !important;
+    }
+    /* Left sidebar */
+    [class*="AppHeader"] ~ div > nav,
+    [class*="Sidebar"] {
+      background: #f5f3f0 !important;
+    }
+    /* Sidebar nav links — active state */
+    [class*="NavLink"][class*="active"],
+    [class*="NavItem"][aria-current] {
+      color: #e62a20 !important;
+      border-color: #e62a20 !important;
+    }
+    /* Primary / save / publish buttons */
+    button[class*="primary"],
+    [class*="PublishButton"] button,
+    [class*="ToolbarButton"][class*="active"] {
+      background: #e62a20 !important;
+      border-color: #e62a20 !important;
+    }
+    /* Focus rings */
+    *:focus-visible {
+      outline-color: #e62a20 !important;
+    }
+    /* Body background */
+    body > div > div > div:last-child {
+      background: #f5f3f0 !important;
+    }
   </style>
 </head>
 <body>

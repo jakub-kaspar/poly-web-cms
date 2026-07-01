@@ -10,6 +10,10 @@ backend:
 # Run: npx decap-server  (in the project root)
 local_backend: true
 
+locale: cs
+show_preview_links: false
+logo_url: /polymont_logo_nav_new.png
+
 # Where uploaded media goes
 media_folder: "references_graded"
 public_folder: "references_graded"
