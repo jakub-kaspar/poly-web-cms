@@ -1850,7 +1850,6 @@ body {
 .service__heading em {
   color: var(--red);
   font-style: normal;
-  display: block;
 }
 
 .service__body {
