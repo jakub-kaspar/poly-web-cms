@@ -168,8 +168,8 @@ eleventyComputed:
       <p class="hv-proof__clients-label">Důvěřují nám společnosti po celé ČR</p>
       <div class="clients__track-wrap">
         <div class="clients__track">
-          {% for client in clients %}<span>{{ client }}</span>{% endfor %}
-          {% for client in clients %}<span aria-hidden="true">{{ client }}</span>{% endfor %}
+          {% for client in clients.items %}<span>{{ client }}</span>{% endfor %}
+          {% for client in clients.items %}<span aria-hidden="true">{{ client }}</span>{% endfor %}
         </div>
       </div>
     </div>

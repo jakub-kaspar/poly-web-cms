@@ -2,8 +2,9 @@
 layout: layouts/base.njk
 permalink: kontakt.html
 navActive: kontakt
-meta_title: "Kontakt – Polymont s.r.o. | Kutná Hora"
-meta_description: "Kontaktujte Polymont s.r.o. v Kutné Hoře. Hrnčířská 296, tel. 327 523 268, e-mail polymont@polymont.cz. Otevírací doba Po–Pá 7:00–16:00."
+eleventyComputed:
+  meta_title: "{{ settings.kontakt_meta_title }}"
+  meta_description: "{{ settings.kontakt_meta_description }}"
 ---
 
   <!-- PAGE HEADER -->
@@ -126,36 +127,22 @@ meta_description: "Kontaktujte Polymont s.r.o. v Kutné Hoře. Hrnčířská 296
         <p class="ct-form-desc">Pro zpracování Vaší poptávky potřebujeme základní technické a kontaktní informace. Popište prosím Váš záměr, doplňte orientační rozměry, fotografie prostoru či jinou dostupnou dokumentaci. Na došlou poptávku budeme v krátkém termínu reagovat. Pokud je to pro zpracování nabídky vhodné, nabízíme bezplatnou technickou konzultaci na místě montáže.</p>
 
         <div class="ct-accordion">
+          {% for section in settings.contact_accordion %}
           <details class="ct-accordion__item">
             <summary class="ct-accordion__summary">
-              <span>Garážová a průmyslová vrata</span>
+              <span>{{ section.title }}</span>
               <svg class="ct-accordion__chevron" viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </summary>
             <ul class="ct-accordion__list">
-              <li>Rozměr stavebního otvoru — šířka × výška</li>
-              <li>Typ vrat — sekční, rolovací, rychloběžná, posuvná</li>
-              <li>Výška překladu (od spodní hrany pod střechu)</li>
-              <li>Rozměr vpravo a vlevo od stavebního otvoru</li>
-              <li>Hloubka garáže</li>
-              <li>Barevný odstín</li>
-              <li class="ct-accordion__list-note">Případně použijte <a href="/images/Polymont-list-pro-zamereni-garazova-vrata.jpg" target="_blank" download="Polymont-list-pro-zamereni-garazova-vrata.jpg">list pro zaměření</a></li>
+              {% for item in section.items %}
+              <li>{{ item }}</li>
+              {% endfor %}
+              {% if section.note %}
+              <li class="ct-accordion__list-note">{{ section.note }} <a href="{{ section.note_link_url }}" target="_blank" download="{{ section.note_download }}">{{ section.note_link_label }}</a></li>
+              {% endif %}
             </ul>
           </details>
-          <details class="ct-accordion__item">
-            <summary class="ct-accordion__summary">
-              <span>Halové vestavby a příčky</span>
-              <svg class="ct-accordion__chevron" viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </summary>
-            <ul class="ct-accordion__list">
-              <li>Rozměry — délka × šířka × výška</li>
-              <li>Výběr stěnové konstrukce — panel s tvrzenou pěnou / přestavitelné příčky</li>
-              <li>Zastropení — nepochozí, pochozí pro údržbu, skladovací prostor, kancelář 2.&nbsp;NP</li>
-              <li>Prostředí v hale + účel místnosti</li>
-              <li>Vstupy, okna, vrata</li>
-              <li>Požadavky na zásuvkové okruhy, osvětlení, klimatizaci, vzduchotechniku atd.</li>
-              <li>Požadavky na interiérové vybavení</li>
-            </ul>
-          </details>
+          {% endfor %}
         </div>
 
         <div class="ct-form-details">

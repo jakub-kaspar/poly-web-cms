@@ -109,6 +109,27 @@ collections:
           - label: "Perex stránky Kontakt"
             name: kontakt_sub
             widget: text
+          - label: "Meta title stránky Kontakt"
+            name: kontakt_meta_title
+            widget: string
+            hint: "Např. Kontakt – Polymont s.r.o. | Kutná Hora"
+          - label: "Meta description stránky Kontakt"
+            name: kontakt_meta_description
+            widget: text
+          - label: "Průvodce poptávkou – sekce"
+            name: contact_accordion
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Nadpis sekce", name: title, widget: string }
+              - label: "Položky seznamu"
+                name: items
+                widget: list
+                field: { label: "Položka", name: item, widget: string }
+              - { label: "Text poznámky (nepovinné)", name: note, widget: string, required: false, hint: "Text před odkazem, např. 'Případně použijte'" }
+              - { label: "URL souboru k poznámce", name: note_link_url, widget: string, required: false }
+              - { label: "Text odkazu poznámky", name: note_link_label, widget: string, required: false }
+              - { label: "Název souboru ke stažení", name: note_download, widget: string, required: false }
           - label: "Kontaktní osoby"
             name: team
             widget: list
@@ -158,6 +179,53 @@ collections:
           - label: "O nás – text sloupec 2"
             name: about_col2
             widget: text
+          - label: "Hero – levý panel, nadpis řádek 1"
+            name: hero_left_title_1
+            widget: string
+            hint: "Např. Halové"
+          - label: "Hero – levý panel, nadpis řádek 2"
+            name: hero_left_title_2
+            widget: string
+            hint: "Např. vestavby"
+          - label: "Hero – levý panel, podnadpis"
+            name: hero_left_subtitle
+            widget: string
+          - label: "Hero – levý panel, alt text fotografie"
+            name: hero_left_img_alt
+            widget: string
+          - label: "Hero – levý panel, text tlačítka"
+            name: hero_left_btn
+            widget: string
+          - label: "Hero – levý panel, badge 'Novinka'"
+            name: hero_left_btn_new
+            widget: string
+          - label: "Hero – levý panel, tlačítko konfigurátor"
+            name: hero_left_btn_config
+            widget: string
+          - label: "Hero – pravý panel, nadpis řádek 1"
+            name: hero_right_title_1
+            widget: string
+          - label: "Hero – pravý panel, nadpis řádek 2"
+            name: hero_right_title_2
+            widget: string
+          - label: "Hero – pravý panel, podnadpis"
+            name: hero_right_subtitle
+            widget: string
+          - label: "Hero – pravý panel, alt text fotografie"
+            name: hero_right_img_alt
+            widget: string
+          - label: "Hero – pravý panel, text tlačítka"
+            name: hero_right_btn
+            widget: string
+          - label: "Hero – štítek 1 (vlevo dole)"
+            name: hero_label_1
+            widget: string
+          - label: "Hero – štítek 2 (střed)"
+            name: hero_label_2
+            widget: string
+          - label: "Hero – štítek 3 (vpravo)"
+            name: hero_label_3
+            widget: string
           - label: "Nadpis sekce Reference"
             name: refs_title
             widget: string
@@ -274,6 +342,38 @@ collections:
             name: tech_specs
             widget: list
             field: { label: "Položka", name: item, widget: string }
+          - label: "Statistiky"
+            name: proof_stats
+            widget: list
+            summary: "{{fields.num}}{{fields.suffix}} – {{fields.label}}"
+            fields:
+              - { label: "Číslo / text", name: num,    widget: string }
+              - { label: "Přípona",      name: suffix, widget: string, required: false, hint: "Např. + nebo prázdné" }
+              - { label: "Popisek",      name: label,  widget: string }
+          - label: "Reference – citát zákazníka"
+            name: proof_quote
+            widget: text
+          - label: "Reference – autor citátu"
+            name: proof_attribution
+            widget: string
+          - label: "CTA – eyebrow"
+            name: cta_eyebrow
+            widget: string
+          - label: "CTA – nadpis"
+            name: cta_heading
+            widget: string
+          - label: "CTA – nadpis kurzíva"
+            name: cta_heading_em
+            widget: string
+          - label: "CTA – popis"
+            name: cta_sub
+            widget: text
+          - label: "CTA – primární tlačítko"
+            name: cta_primary
+            widget: string
+          - label: "CTA – sekundární tlačítko"
+            name: cta_secondary
+            widget: string
 
   # ── Vrata a dveře ───────────────────────────────────────────────────────────
   - name: "vrata_dvere"
@@ -371,6 +471,24 @@ collections:
               - { label: "Popis",     name: label, widget: string }
               - { label: "PDF soubor", name: pdf,  widget: file,  media_folder: "/certs", public_folder: "certs" }
               - { label: "Náhled",    name: thumb, widget: image, media_folder: "/certs", public_folder: "certs" }
+          - label: "CTA – eyebrow"
+            name: cta_eyebrow
+            widget: string
+          - label: "CTA – nadpis"
+            name: cta_heading
+            widget: string
+          - label: "CTA – nadpis kurzíva"
+            name: cta_heading_em
+            widget: string
+          - label: "CTA – nadpis řádek 2"
+            name: cta_heading_2
+            widget: string
+          - label: "CTA – primární tlačítko"
+            name: cta_primary
+            widget: string
+          - label: "CTA – sekundární tlačítko"
+            name: cta_secondary
+            widget: string
 
   # ── Poptávky z konfigurátoru ────────────────────────────────────────────────
   - name: "offers"
@@ -575,3 +693,18 @@ collections:
           - label: "CTA – sekundární tlačítko"
             name: cta_secondary
             widget: string
+
+  # ── Zákazníci (ticker) ───────────────────────────────────────────────────────
+  - name: "clients"
+    label: "Zákazníci (ticker)"
+    files:
+
+      - name: "clients"
+        label: "Seznam zákazníků"
+        description: "Jména zákazníků zobrazovaná v pohyblivém pásku na úvodní stránce."
+        file: "_data/clients.json"
+        fields:
+          - label: "Zákazníci"
+            name: items
+            widget: list
+            field: { label: "Název zákazníka", name: item, widget: string }

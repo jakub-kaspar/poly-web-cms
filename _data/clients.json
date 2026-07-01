@@ -1,20 +1,22 @@
-[
-  "Philip Morris",
-  "Foxconn",
-  "ŘSD",
-  "ZKL Brno",
-  "Silnice Čáslav",
-  "MUBEA",
-  "ALTIC Point",
-  "SSI Technologies",
-  "UNIKOM Kutná Hora",
-  "PZP Heating",
-  "Zambelli České Budějovice",
-  "DEXION Praha",
-  "LINDE Material Handling",
-  "JMB Aircraft",
-  "STEELAG Praha",
-  "BEG Bohemia Brno",
-  "SUMITOMO",
-  "EUROPTEC"
-]
+{
+  "items": [
+    "Philip Morris",
+    "Foxconn",
+    "ŘSD",
+    "ZKL Brno",
+    "Silnice Čáslav",
+    "MUBEA",
+    "ALTIC Point",
+    "SSI Technologies",
+    "UNIKOM Kutná Hora",
+    "PZP Heating",
+    "Zambelli České Budějovice",
+    "DEXION Praha",
+    "LINDE Material Handling",
+    "JMB Aircraft",
+    "STEELAG Praha",
+    "BEG Bohemia Brno",
+    "SUMITOMO",
+    "EUROPTEC"
+  ]
+}
