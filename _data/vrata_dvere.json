@@ -1,14 +1,55 @@
 {
-  "meta_title": "Vrata a dveře HÖRMANN – prodej, montáž, servis | Polymont",
   "meta_description": "Certifikovaný partner HÖRMANN v Kutné Hoře. Prodej, montáž a servis průmyslových i garážových vrat a vchodových dveří. Servisní výjezd zpravidla do 48 hodin.",
-
-  "hero_image": "hero-2.png",
-  "hero_heading": "Vrata",
+  "proof_stats": [
+    {
+      "num": "30",
+      "suffix": "+",
+      "label": "let na trhu"
+    },
+    {
+      "num": "2000",
+      "suffix": "+",
+      "label": "realizovaných vrat a dveří"
+    },
+    {
+      "num": "HÖRMANN",
+      "suffix": "",
+      "label": "Certifikovaný partner"
+    }
+  ],
+  "cta_secondary": "Zavolat: 327 523 268",
+  "cta_heading_2": "nebo si vyžádejte nabídku",
+  "service_lead": "Jako certifikovaný partner HÖRMANN s pravidelně školenými techniky provádíme kompletní instalaci, nastavení i opravy — od garážových vrat až po průmyslové rychloběžné systémy. S originálními díly a rychlým výjezdem.",
+  "service_heading_1": "Zajišťujeme",
   "hero_heading_em": "dveře",
-  "hero_sub": "Jsme certifikovaný partner HÖRMANN s pravidelně školenými pracovníky. Zajišťujeme prodej, montáž a servis pro průmyslové objekty, rodinné domy i komerční stavby.",
-
-  "portfolio_eyebrow": "Naše portfolio",
+  "service_heading_2": "záruční",
   "portfolio_heading": "Co dodáváme",
+  "service_heading_3": "servis",
+  "certs": [
+    {
+      "label": "Partner HÖRMANN 2026",
+      "pdf": "certs/hormann_cert.pdf",
+      "thumb": "certs/hormann_cert_thumb.png"
+    },
+    {
+      "label": "Ocelové konstrukce",
+      "pdf": "certs/ocel.pdf",
+      "thumb": "certs/ocel_thumb.png"
+    },
+    {
+      "label": "Certifikát Hilti",
+      "pdf": "certs/hilti.pdf",
+      "thumb": "certs/hilti_thumb.png"
+    },
+    {
+      "label": "Suchá výstavba",
+      "pdf": "certs/rigips.pdf",
+      "thumb": "certs/rigips_thumb.png"
+    }
+  ],
+  "service_heading_em": "i pozáruční",
+  "certs_heading": "Naše certifikace",
+  "portfolio_eyebrow": "Naše portfolio",
   "portfolio_categories": [
     {
       "num": "01",
@@ -18,10 +59,26 @@
       "desc": "Výkonná vrata pro sklady, výrobní haly a logistická centra. Rychloběžná vrata minimalizují tepelné ztráty a zajišťují plynulost provozu. Protipožární provedení splňuje nejpřísnější normy.",
       "reverse": false,
       "tiles": [
-        { "name": "Rychloběžná vrata",           "image": "hormann_tiles/rychlobezna.jpg",      "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/rychlobezna-vrata/" },
-        { "name": "Průmyslová sekční vrata",      "image": "hormann_tiles/prumyslova-sekcni.jpg","url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/prumyslova-sekcni-vrata/" },
-        { "name": "Rolovací vrata a rolovací mříže","image": "hormann_tiles/rolovaci.jpg",       "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/rolovaci-vrata-a-rolovaci-mrize/" },
-        { "name": "Ocelové objektové dveře OD",   "image": "hormann_tiles/ocelove-dvere.jpg",   "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/dvere/kyvne-dvere/" }
+        {
+          "name": "Rychloběžná vrata",
+          "image": "hormann_tiles/rychlobezna.jpg",
+          "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/rychlobezna-vrata/"
+        },
+        {
+          "name": "Průmyslová sekční vrata",
+          "image": "hormann_tiles/prumyslova-sekcni.jpg",
+          "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/prumyslova-sekcni-vrata/"
+        },
+        {
+          "name": "Rolovací vrata a rolovací mříže",
+          "image": "hormann_tiles/rolovaci.jpg",
+          "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/prumyslova-vrata/rolovaci-vrata-a-rolovaci-mrize/"
+        },
+        {
+          "name": "Ocelové objektové dveře OD",
+          "image": "hormann_tiles/ocelove-dvere.jpg",
+          "url": "https://www.hormann.cz/prumysl-remesla-a-verejny-sektor/dvere/kyvne-dvere/"
+        }
       ]
     },
     {
@@ -32,20 +89,33 @@
       "desc": "Elegantní a spolehlivá vrata v celé šíři barev, povrchových úprav a zasklení. Modely LPU 42 a LPU 67 nabízejí vynikající tepelnou izolaci. Tepelně izolované vchodové dveře Thermo65 a Thermo46 pro rodinné domy.",
       "reverse": true,
       "tiles": [
-        { "name": "Sekční garážová vrata",                    "image": "hormann_tiles/sekcni-garazova.jpg","url": "https://www.hormann.cz/novostavby-a-rekonstrukce/garazova-vrata/sekcni-garazova-vrata/" },
-        { "name": "Garážová vrata RollMatic",                 "image": "hormann_tiles/rollmatic.jpg",      "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/garazova-vrata/rolovaci-garazova-vrata-rollmatic/" },
-        { "name": "Domovní a vchodové dveře Thermo65 / Thermo46","image": "hormann_tiles/thermo.jpg",     "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/dvere/funkcni-dvere-pro-vas-dum/" },
-        { "name": "Hliníkové domovní dveře",                  "image": "hormann_tiles/hlinikove.jpg",     "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/dvere/domovni-dvere/" }
+        {
+          "name": "Sekční garážová vrata",
+          "image": "hormann_tiles/sekcni-garazova.jpg",
+          "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/garazova-vrata/sekcni-garazova-vrata/"
+        },
+        {
+          "name": "Garážová vrata RollMatic",
+          "image": "hormann_tiles/rollmatic.jpg",
+          "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/garazova-vrata/rolovaci-garazova-vrata-rollmatic/"
+        },
+        {
+          "name": "Domovní a vchodové dveře Thermo65 / Thermo46",
+          "image": "hormann_tiles/thermo.jpg",
+          "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/dvere/funkcni-dvere-pro-vas-dum/"
+        },
+        {
+          "name": "Hliníkové domovní dveře",
+          "image": "hormann_tiles/hlinikove.jpg",
+          "url": "https://www.hormann.cz/novostavby-a-rekonstrukce/dvere/domovni-dvere/"
+        }
       ]
     }
   ],
-
-  "service_eyebrow": "Servis",
-  "service_heading_1": "Zajišťujeme",
-  "service_heading_2": "záruční",
-  "service_heading_em": "i pozáruční",
-  "service_heading_3": "servis",
-  "service_lead": "Jako certifikovaný partner HÖRMANN s pravidelně školenými techniky provádíme kompletní instalaci, nastavení i opravy — od garážových vrat až po průmyslové rychloběžné systémy. S originálními díly a rychlým výjezdem.",
+  "cta_heading": "Navštivte nás",
+  "cta_primary": "Vyžádat cenovou nabídku",
+  "cta_heading_em": "v Kutné Hoře",
+  "hero_image": "hero-2.png",
   "service_items": [
     "Záruční opravy a seřízení pohonů a vodících systémů",
     "Pozáruční servis s originálními náhradními díly HÖRMANN",
@@ -53,26 +123,10 @@
     "Modernizace starších systémů — pohony, ovládání, zabezpečení",
     "Servisní výjezd zpravidla do 48 hodin od nahlášení"
   ],
-
   "certs_eyebrow": "Certifikáty a partnerství",
-  "certs_heading": "Naše certifikace",
-  "certs": [
-    { "label": "Partner HÖRMANN 2026", "pdf": "certs/hormann_cert.pdf", "thumb": "certs/hormann_cert_thumb.png" },
-    { "label": "Ocelové konstrukce",   "pdf": "certs/ocel.pdf",         "thumb": "certs/ocel_thumb.png" },
-    { "label": "Certifikát Hilti",     "pdf": "certs/hilti.pdf",        "thumb": "certs/hilti_thumb.png" },
-    { "label": "Suchá výstavba",       "pdf": "certs/rigips.pdf",       "thumb": "certs/rigips_thumb.png" }
-  ],
-
-  "proof_stats": [
-    { "num": "30",      "suffix": "+", "label": "let na trhu" },
-    { "num": "250",     "suffix": "+", "label": "realizovaných vrat a dveří" },
-    { "num": "HÖRMANN", "suffix": "",  "label": "Certifikovaný partner" }
-  ],
-
   "cta_eyebrow": "Neváhejte nás kontaktovat",
-  "cta_heading": "Navštivte nás",
-  "cta_heading_em": "v Kutné Hoře",
-  "cta_heading_2": "nebo si vyžádejte nabídku",
-  "cta_primary": "Vyžádat cenovou nabídku",
-  "cta_secondary": "Zavolat: 327 523 268"
+  "hero_sub": "Jsme certifikovaný partner HÖRMANN s pravidelně školenými pracovníky. Zajišťujeme prodej, montáž a servis pro průmyslové objekty, rodinné domy i komerční stavby.",
+  "hero_heading": "Vrata",
+  "meta_title": "Vrata a dveře HÖRMANN – prodej, montáž, servis | Polymont",
+  "service_eyebrow": "Servis"
 }
