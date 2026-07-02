@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "state": {
     "modules": [
       {
@@ -220,7 +220,7 @@
           "front": "full",
           "back": "door_l_w1",
           "left": "solid",
-          "right": "solid"
+          "right": "full"
         },
         "doors": 0,
         "partition": true,
@@ -234,11 +234,11 @@
         "stairs": false,
         "elevated": true,
         "ceiling": false,
-        "price": 175640
+        "price": 199560
       }
     ],
     "selectedId": null,
     "discountPercent": 9,
-    "discountAmount": 129963.59999999999
+    "discountAmount": 132116.4
   }
 }
