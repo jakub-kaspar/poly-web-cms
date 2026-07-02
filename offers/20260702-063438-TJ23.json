@@ -6,7 +6,16 @@
   "contact_phone": "721070229",
   "contact_note": "kjbfnsndflkndslsdfkls",
   "pricelist_version": "07/26",
-  "offer_version": 1,
+  "offer_version": 2,
   "status": "new",
-  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260702-063438-TJ23)"
+  "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260702-063438-TJ23)",
+  "history": [
+    {
+      "version": 2,
+      "date": "2026-07-02T06:37:00.614Z",
+      "changes": [
+        "Modul 1 (DUO): přední stěna změněno z „plná stěna“ na „dveře vpravo + 2 okna“"
+      ]
+    }
+  ]
 }
