@@ -4092,3 +4092,68 @@ body {
 .ct-check__link:hover {
   color: var(--red);
 }
+
+/* ── Cookie banner ── */
+.cookie-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  width: min(calc(100vw - 32px), 680px);
+  background: var(--dark);
+  color: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+}
+
+.cookie-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.cookie-banner__text {
+  flex: 1 1 260px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.8);
+  margin: 0;
+}
+
+.cookie-banner__text a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cookie-banner__btn {
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.cookie-banner__btn:hover { opacity: 0.85; }
+
+.cookie-banner__btn--primary {
+  background: var(--red);
+  color: #fff;
+}
+
+.cookie-banner__btn--secondary {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.85);
+}

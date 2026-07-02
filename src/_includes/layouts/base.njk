@@ -80,5 +80,69 @@
     if (y) y.textContent = new Date().getFullYear();
   </script>
 
+  <!-- ── Cookie consent ── -->
+  <div id="cookie-banner" class="cookie-banner" hidden aria-live="polite" role="region" aria-label="Souhlas s cookies">
+    <div class="cookie-banner__inner">
+      <p class="cookie-banner__text">
+        Používáme cookies pro analýzu návštěvnosti (Google Analytics), měření výkonu reklam (Google Ads) a analýzu chování uživatelů (Hotjar). Více informací v <a href="/ochrana-osobnich-udaju.html">zásadách ochrany osobních údajů</a>.
+      </p>
+      <div class="cookie-banner__actions">
+        <button id="cookie-decline" class="cookie-banner__btn cookie-banner__btn--secondary" type="button">Odmítnout</button>
+        <button id="cookie-accept"  class="cookie-banner__btn cookie-banner__btn--primary"   type="button">Přijmout vše</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // ── Replace these IDs with real values before going live ──
+      var GA_ID      = 'G-XXXXXXXXXX';   // Google Analytics 4 Measurement ID
+      var GADS_ID    = 'AW-XXXXXXXXXX';  // Google Ads Conversion ID
+      var HOTJAR_ID  = 0;                // Hotjar Site ID (number)
+
+      var KEY = 'pm_cookie_consent';
+
+      function loadTracking() {
+        // Google tag (GA4 + Ads)
+        var s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        s.async = true;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', GA_ID,   { anonymize_ip: true });
+        gtag('config', GADS_ID, { anonymize_ip: true });
+
+        // Hotjar
+        (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:HOTJAR_ID,hjsv:6};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+      }
+
+      var consent = localStorage.getItem(KEY);
+      if (consent === 'accepted') {
+        loadTracking();
+      } else if (consent === null) {
+        document.getElementById('cookie-banner').hidden = false;
+        document.getElementById('cookie-accept').addEventListener('click', function () {
+          localStorage.setItem(KEY, 'accepted');
+          document.getElementById('cookie-banner').hidden = true;
+          loadTracking();
+        });
+        document.getElementById('cookie-decline').addEventListener('click', function () {
+          localStorage.setItem(KEY, 'declined');
+          document.getElementById('cookie-banner').hidden = true;
+        });
+      }
+    })();
+  </script>
+
 </body>
 </html>

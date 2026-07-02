@@ -258,6 +258,20 @@
         background-color: #f5f5f4 !important;
         border-color: #1a1a18 !important;
       }
+      @media (pointer: coarse) {
+        #btn-add-duo-canvas,
+        #btn-add-trio-canvas {
+          padding: 10px 16px !important;
+          font-size: 13px !important;
+          gap: 6px !important;
+          min-width: 72px;
+          justify-content: center;
+        }
+        #canvas-add-menu {
+          gap: 10px !important;
+          transform: translate(-50%, -50%);
+        }
+      }
 
       /* Remap remaining Tailwind blue → dark brand tones */
       .bg-blue-100  { background-color: #e8e7e5 !important; }
@@ -883,6 +897,9 @@
       let dragTargetGrid = null;
       let currentHoveredWall = null;
       let hoveredUIWallDir = null;
+      // On touch devices the menu sticks after a tap on a wall face
+      let stickyMenu = false;
+      const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
 
       // --- 2. HISTORIE (Undo/Redo) ---
       function saveState() {
@@ -1096,6 +1113,7 @@
 
         state.modules.push(newMod);
         currentHoveredWall = null;
+        stickyMenu = false;
         document.getElementById("canvas-add-menu").style.display = "none";
 
         recalculate();
@@ -2152,6 +2170,20 @@
 
         if (isDraggingCamera) return;
 
+        // On touch: suppress wall-face detection while panning the camera
+        // (finger has moved significantly since pointerdown = camera pan, not a tap)
+        const moveDist = Math.hypot(
+          event.clientX - pointerDownPos.x,
+          event.clientY - pointerDownPos.y
+        );
+        if (isTouchDevice() && !draggedModuleId && moveDist > 10 && !stickyMenu) {
+          currentHoveredWall = null;
+          let menu = document.getElementById('canvas-add-menu');
+          menu.style.opacity = '0';
+          setTimeout(() => { if (menu.style.opacity === '0') menu.style.display = 'none'; }, 100);
+          return;
+        }
+
         raycaster.setFromCamera(mouse, camera);
 
         if (isActuallyDragging && draggedModuleId) {
@@ -2368,7 +2400,8 @@
 
           menu.style.display = "flex";
           menu.style.opacity = "1";
-        } else {
+        } else if (!stickyMenu) {
+          // Only hide the menu if it's not sticky (i.e. the user tapped a wall on touch)
           menu.style.opacity = "0";
           setTimeout(() => {
             if (menu.style.opacity === "0") menu.style.display = "none";
@@ -2376,9 +2409,99 @@
         }
       }
 
+      // Show the floating DUO/TRIO canvas menu for the given hoveredWall object.
+      function showCanvasAddMenu(wall) {
+        let menu   = document.getElementById("canvas-add-menu");
+        let btnDuo = document.getElementById("btn-add-duo-canvas");
+        let btnTrio = document.getElementById("btn-add-trio-canvas");
+        let dir  = wall.dir;
+        let type = wall.mod.type;
+
+        if (dir === "front" || dir === "back" || dir === "roof") {
+          if (type === "DUO") { btnDuo.style.display = "flex"; btnTrio.style.display = "none"; }
+          else                { btnDuo.style.display = "none"; btnTrio.style.display = "flex"; }
+        } else {
+          btnDuo.style.display  = "flex";
+          btnTrio.style.display = "flex";
+        }
+
+        let pos = getScreenPos(wall.mod, wall.dir);
+        menu.style.left    = pos.x + "px";
+        menu.style.top     = pos.y + "px";
+        menu.style.display = "flex";
+        menu.style.opacity = "1";
+      }
+
+      // Raycast at the given client position and update currentHoveredWall + hoveredModuleId.
+      // Returns true if a wall face with an empty adjacent slot was found.
+      function detectWallAtPointer(clientX, clientY) {
+        const container = document.getElementById("canvas-container");
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(mainGroup.children, true);
+        let foundModId = null;
+        let foundWall = null;
+
+        for (let i = 0; i < intersects.length; i++) {
+          let obj = intersects[i].object;
+          if (obj.name === "hallWall" || obj.name === "ghost") continue;
+          let group = obj.parent;
+          while (group && !group.userData.moduleId) group = group.parent;
+          if (group) {
+            foundModId = group.userData.moduleId;
+            let faceGroup = obj;
+            while (faceGroup && !faceGroup.userData.faceDir) faceGroup = faceGroup.parent;
+            if (faceGroup && ["front","back","left","right","roof"].includes(faceGroup.userData.faceDir)) {
+              foundWall = { mod: state.modules.find(m => m.id === foundModId), dir: faceGroup.userData.faceDir };
+            }
+            break;
+          }
+        }
+
+        if (foundModId !== hoveredModuleId) {
+          hoveredModuleId = foundModId;
+          highlight3DModule(state.selectedId);
+        }
+
+        if (foundWall) {
+          let m = foundWall.mod;
+          let nx = m.ix, nz = m.iz, ny = m.iy;
+          if (foundWall.dir === "front")  nz += 1;
+          if (foundWall.dir === "back")   nz -= 1;
+          if (foundWall.dir === "left")   nx -= 1;
+          if (foundWall.dir === "right")  nx += 1;
+          if (foundWall.dir === "roof")   ny += 1;
+          let empty = !state.modules.some(x => x.ix === nx && x.iy === ny && x.iz === nz);
+          if (empty && ny <= 1) {
+            currentHoveredWall = { mod: m, dir: foundWall.dir, newIx: nx, newIy: ny, newIz: nz };
+            return true;
+          }
+        }
+        currentHoveredWall = null;
+        return false;
+      }
+
       function onPointerDown(event) {
+        // Clear sticky menu on any new touch/click so the menu doesn't linger
+        if (stickyMenu) {
+          stickyMenu = false;
+          currentHoveredWall = null;
+          let menu = document.getElementById('canvas-add-menu');
+          menu.style.opacity = '0';
+          menu.style.display = 'none';
+        }
+
         pointerDownPos = { x: event.clientX, y: event.clientY };
         isDraggingCamera = false;
+
+        // On touch: run wall detection immediately on tap-down so currentHoveredWall
+        // is populated even if pointermove never fires (quick tap)
+        if (isTouchDevice() && event.target.tagName === "CANVAS") {
+          detectWallAtPointer(event.clientX, event.clientY);
+        }
 
         if (hoveredModuleId && state.selectedId === hoveredModuleId) {
           draggedModuleId = hoveredModuleId;
@@ -2405,7 +2528,12 @@
           }
           saveState();
         } else if (dx < 5 && dy < 5) {
-          if (hoveredModuleId) {
+          if (currentHoveredWall && isTouchDevice()) {
+            // On touch: tap on a wall face with an empty adjacent slot →
+            // make the add-menu sticky so user can tap DUO/TRIO after lifting finger
+            stickyMenu = true;
+            showCanvasAddMenu(currentHoveredWall);
+          } else if (hoveredModuleId) {
             selectModule(hoveredModuleId);
           } else if (event.target.tagName === "CANVAS") {
             closeEditView();
