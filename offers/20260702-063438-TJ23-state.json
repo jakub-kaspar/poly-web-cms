@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "state": {
     "modules": [
       {
@@ -9,7 +9,7 @@
         "iy": 0,
         "iz": 0,
         "windows": {
-          "front": "solid",
+          "front": "door_r_w2",
           "back": "solid",
           "left": "solid",
           "right": "solid"
@@ -26,7 +26,7 @@
         "stairs": false,
         "elevated": false,
         "ceiling": false,
-        "price": 105690
+        "price": 132920
       },
       {
         "id": "nlsnif1bc",
@@ -109,6 +109,6 @@
     ],
     "selectedId": null,
     "discountPercent": 4,
-    "discountAmount": 18130
+    "discountAmount": 19219.2
   }
 }
