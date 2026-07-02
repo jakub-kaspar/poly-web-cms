@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "state": {
     "modules": [
       {
@@ -9,7 +9,7 @@
         "iy": 0,
         "iz": 0,
         "windows": {
-          "front": "solid",
+          "front": "double",
           "back": "solid",
           "left": "solid",
           "right": "solid"
@@ -18,7 +18,7 @@
         "partition": false,
         "placement": "2",
         "roof": "mezipatro_250",
-        "floor": "osb",
+        "floor": "pvc",
         "light": true,
         "power": true,
         "fan": false,
@@ -26,7 +26,7 @@
         "stairs": true,
         "elevated": false,
         "ceiling": false,
-        "price": 152470
+        "price": 173630
       },
       {
         "id": "4l4trzfxj",
@@ -35,7 +35,7 @@
         "iy": 0,
         "iz": 0,
         "windows": {
-          "front": "solid",
+          "front": "double",
           "back": "solid",
           "left": "solid",
           "right": "solid"
@@ -44,7 +44,7 @@
         "partition": false,
         "placement": "3B",
         "roof": "mezipatro_250",
-        "floor": "osb",
+        "floor": "pvc",
         "light": true,
         "power": true,
         "fan": false,
@@ -52,7 +52,7 @@
         "stairs": false,
         "elevated": false,
         "ceiling": false,
-        "price": 109700
+        "price": 130860
       },
       {
         "id": "q6a68en8o",
@@ -70,7 +70,7 @@
         "partition": false,
         "placement": "3B",
         "roof": "mezipatro_250",
-        "floor": "osb",
+        "floor": "pvc",
         "light": true,
         "power": true,
         "fan": false,
@@ -78,7 +78,7 @@
         "stairs": false,
         "elevated": false,
         "ceiling": false,
-        "price": 222490
+        "price": 237370
       },
       {
         "id": "baqwagfpf",
@@ -239,6 +239,6 @@
     ],
     "selectedId": null,
     "discountPercent": 9,
-    "discountAmount": 124815.59999999999
+    "discountAmount": 129963.59999999999
   }
 }
