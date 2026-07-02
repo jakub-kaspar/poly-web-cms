@@ -6,7 +6,7 @@
   "contact_phone": "721070229",
   "contact_note": "Test jfldjlf dlfjldfj ldsflů dfůk dsůfksdůflksdf ů dfů",
   "pricelist_version": "06/26",
-  "offer_version": 2,
+  "offer_version": 3,
   "status": "new",
   "configurator_link": "[Otevřít v konfigurátoru](/konfigurator.html?offer=20260702-050428-SW4V)",
   "history": [
@@ -19,6 +19,17 @@
         "Modul 5 (DUO): podlahová krytina změněno z „standardní PVC 2,0 mm“ na „vinylové desky 5,5 mm“",
         "Modul 6 (TRIO): pravá stěna změněno z „plná stěna“ na „celoprosklená stěna“",
         "Modul 6 (TRIO): podlahová krytina změněno z „standardní PVC 2,0 mm“ na „vinylové desky 5,5 mm“"
+      ]
+    },
+    {
+      "version": 3,
+      "date": "2026-07-02T05:09:37.593Z",
+      "changes": [
+        "Modul 1 (DUO): přední stěna změněno z „plná stěna“ na „dvojité okno“",
+        "Modul 1 (DUO): podlahová krytina změněno z „základní (OSB deska, bez příplatku)“ na „standardní PVC 2,0 mm“",
+        "Modul 2 (DUO): přední stěna změněno z „plná stěna“ na „dvojité okno“",
+        "Modul 2 (DUO): podlahová krytina změněno z „základní (OSB deska, bez příplatku)“ na „standardní PVC 2,0 mm“",
+        "Modul 3 (TRIO): podlahová krytina změněno z „základní (OSB deska, bez příplatku)“ na „standardní PVC 2,0 mm“"
       ]
     }
   ]
